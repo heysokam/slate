@@ -1,1 +1,0 @@
-import ./minc/t001
