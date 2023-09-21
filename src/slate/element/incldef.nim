@@ -12,7 +12,7 @@ import ../nimc
 type Elem *{.pure.}= enum Module
 converter toInt *(d :Elem) :int= d.ord
 
-func getModule *(code :PNode) :string=
+proc getModule *(code :PNode) :string=
   assert code.kind == nkIncludeStmt
   let module = code[Elem.Module]
   assert module.kind == nkStrLit

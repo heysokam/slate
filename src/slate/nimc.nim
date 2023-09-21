@@ -23,8 +23,8 @@ export renderTree
 # proc debugAST *(node :ast.PNode) :string=  debug(node)
 #______________________________________________________
 # AST formatting
-func treeRepr *(node :PNode; ident :int= 0) :string # fw declare for strvalue
-func strValue *(node :PNode) :string=
+proc treeRepr *(node :PNode; ident :int= 0) :string # fw declare for strvalue
+proc strValue *(node :PNode) :string=
   if node == nil: return
   case node.kind
   of nkSym                     : result = node.sym.name.s
@@ -32,9 +32,10 @@ func strValue *(node :PNode) :string=
   of nkCharLit..nkUInt64Lit    : result = $node.intVal
   of nkFloatLit..nkFloat128Lit : result = $node.floatVal
   of nkStrLit..nkTripleStrLit  : result = node.strVal
+  of nkCommentStmt             : result = node.comment() # assert false, debugEcho(node.treeRepr & "\n\n" & $node[] & "\n" & node.renderTree)
   else:raise newException(ASTError, &"Tried to get the strValue of a node that doesn't have one.\n  {$node.kind}\n{node.treeRepr}\n")
 #_____________________________
-func treeRepr *(node :PNode; ident :int= 0) :string=
+proc treeRepr *(node :PNode; ident :int= 0) :string=
   ## Returns the treeRepr of the given AST.
   ## Similar to NimNode.treeRepr, but for PNode.
   # Base Case
@@ -47,6 +48,12 @@ func treeRepr *(node :PNode; ident :int= 0) :string=
   result.add "\n"
   # Recurse all subnodes
   for child in node: result.add child.treeRepr(ident+1)
+#_____________________________
+proc report *(node :PNode) :void=
+  ## Writes CLI information about the given node
+  ## Useful for developing and debugging the compilers
+  debugEcho node.treeRepr
+  debugEcho node.renderTree,"\n"
 
 
 #______________________________________________________

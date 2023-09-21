@@ -9,20 +9,23 @@ import ./base
 import ./error
 
 # Elements
-type Elem *{.pure.}= enum Name, Type, Value
+type Elem *{.pure.}= enum Name
 converter toInt *(d :Elem) :int= d.ord
+const VarType  = ^2
+const VarValue = ^1
+type VariableType * = tuple[isPtr:bool, name:string]
 
 #_________________________________________________
 # General
 #_____________________________
-func isPrivate *(code :PNode; indent :int) :bool=
+proc isPrivate *(code :PNode; indent :int) :bool=
   assert code.kind in [nkConstDef, nkIdentDefs]
-  if indent > 0: return true
+  if indent > 0: return false
   let sym = code[Elem.Name]
   assert sym.kind in {nkIdent,nkPostfix}
   return base.isPrivate(sym, indent, VarDefError)
 #_____________________________
-func getName *(code :PNode) :string=
+proc getName *(code :PNode) :string=
   assert code.kind in [nkConstDef, nkIdentDefs]
   let sym = code[Elem.Name]
   assert sym.kind in {nkIdent,nkPostfix}
@@ -31,11 +34,13 @@ func getName *(code :PNode) :string=
   of nkPostfix : result = sym[1].strValue
   else: raise newException(VarDefError, &"Tried to get the name of a variable, but its symbol has an unknown format.\n  {sym.kind}\n")
 #_____________________________
-func getType *(code :PNode) :string=
+proc getType *(code :PNode) :VariableType=
   assert code.kind in [nkConstDef, nkIdentDefs]
-  code[Elem.Type].strValue
+  result.isPtr = code[VarType].kind == nkPtrTy
+  if result.isPtr : result.name = code[VarType][0].strValue # ptr MyType
+  else            : result.name = code[VarType].strValue    # MyType
 #_____________________________
-func getValue *(code :PNode) :string=
+proc getValue *(code :PNode) :string=
   assert code.kind in [nkConstDef, nkIdentDefs]
-  code[Elem.Value].strValue
+  code[VarValue].strValue
 

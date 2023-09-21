@@ -5,7 +5,7 @@
 #_________________________________________________|
 import ../nimc
 
-func isPrivate *(sym :PNode; indent :int; err :typedesc[CatchableError]) :bool=
+proc isPrivate *(sym :PNode; indent :int; err :typedesc[CatchableError]) :bool=
   if indent > 0: return false
   assert sym.kind in {nkIdent,nkPostfix}
   case sym.kind
