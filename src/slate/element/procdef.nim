@@ -16,8 +16,21 @@ converter toInt *(d :Elem) :int= d.ord
 const Arg1 = 1 # Arg1 id number inside the node
 const ArgT = ^2
 
-type ArgType  * = tuple[isPtr:bool, name:string]
+type ArgType  * = tuple[isPtr:bool, isMut:bool, name:string]
 type Argument * = tuple[first:bool, last:bool, node:PNode, typ:ArgType, name:string]
+
+#_________________________________________________
+# Properties
+#_____________________________
+proc isPrivate *(code :PNode; indent :int= 0) :bool=
+  assert code.kind == nkProcDef
+  if indent > 0: return true # All inner procs are private
+  result = base.isPrivate(code[Elem.Symbol], indent, ProcDefError)
+#_____________________________
+proc hasPragma *(code :PNode) :bool=
+  assert code.kind == nkProcDef
+  result = code[Elem.Pragma].kind != nkEmpty
+
 
 #_________________________________________________
 # General
@@ -37,10 +50,10 @@ proc getRetT *(code :PNode) :string=
   assert params.kind == nkFormalParams and params[0].kind == nkIdent
   params[0].strValue  # First parameter is always its return type
 #_____________________________
-proc isPrivate *(code :PNode; indent :int= 0) :bool=
-  assert code.kind == nkProcDef
-  if indent > 0: return true # All inner procs are private
-  result = base.isPrivate(code[Elem.Symbol], indent, ProcDefError)
+proc getPragma *(code :PNode) :PNode=
+  assert code.kind == nkProcDef and code[Elem.Pragma].kind == nkPragma
+  code[Elem.Pragma]
+
 
 #_________________________________________________
 # Arguments
@@ -61,10 +74,12 @@ proc getArgCount *(code :PNode) :int=
 proc getArgT *(code :PNode) :ArgType=
   assert code.kind == nkIdentDefs
   if code[ArgT].kind == nkEmpty: raise newException(ProcDefError, &"Declaring ProcDef arguments without type is currently not supported. The argument's code is:\n{code.renderTree}\n")
-  assert code[ArgT].kind in [nkIdent,nkPtrTy], "\n" & code.treeRepr & "\n" & code.renderTree
-  result.isPtr = code[ArgT].kind == nkPtrTy
-  if result.isPtr : result.name = code[ArgT][0].strValue()  # Access the nkPtrTy value
-  else            : result.name = code[ArgT].strValue()     # Second entry is always the argument type
+  assert code[ArgT].kind in [nkIdent,nkPtrTy,nkVarTy], "\n" & code.treeRepr & "\n" & code.renderTree
+  result.isMut = code[ArgT].kind == nkVarTy
+  result.isPtr = if result.isMut: code[ArgT][0].kind == nkPtrTy else: code[ArgT].kind == nkPtrTy
+  if   result.isPtr and result.isMut : result.name = code[ArgT][0][0].strValue() # Access the nkVarTy.nkPtrTy value
+  elif result.isPtr or  result.isMut : result.name = code[ArgT][0].strValue()    # Access the nkPtrTy or nkVarTy value
+  else                               : result.name = code[ArgT].strValue()       # Second entry is always the argument type
 #_____________________________
 proc getArgName *(code :PNode; id :int= 0) :string=
   ## Gets the argument name of the given id entry of an nkIdentDefs block
@@ -72,7 +87,7 @@ proc getArgName *(code :PNode; id :int= 0) :string=
   ## For arguments with N values, like `(val :int; A,B,C :int)`, the id must point to the position of the sub-argument
   ## nkIdentDefs always have 3 entries (name,  type, value).
   ## Multi-arguments take the shape of (A,B,C, type, value).
-  assert code.kind == nkIdentDefs and code[id].kind == nkIdent, code.treeRepr
+  assert code.kind == nkIdentDefs and code[id].kind == nkIdent and id <= code.sons.len-2, code.treeRepr
   code[id].strValue()
 #_____________________________
 iterator args *(code :PNode) :Argument=
