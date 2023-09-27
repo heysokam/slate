@@ -36,16 +36,27 @@ proc getName *(code :PNode) :string=
     else:""
   assert result != "", &"Failed to identify the name of a type node. Its tree is:\n{code.treeRepr}"
 #_____________________________
-proc getType *(code :PNode) :TypeInfo=
+proc getType *(code :PNode; allowedMultiwords :openArray[string]= @[]) :TypeInfo=
   assert code.kind == nkTypeDef
   result.isPtr  = code[Elem.Type].kind == nkPtrTy
   result.isRead = code[Elem.Symbol].kind == nkPragmaExpr
   result.isPriv =
     if result.isRead : types.isPrivate(code[0])
     else             : types.isPrivate(code)
+  if code[Elem.Type].kind == nkCommand: assert code[Elem.Type][0].strValue in allowedMultiwords,
+    &"Failed to identify the TypeName of a type node. Its tree is:\n{code.treeRepr}"
   result.name =
-    if   result.isPtr                    : code[Elem.Type][0].strValue
-    elif code[Elem.Type].kind == nkIdent : code[Elem.Type].strValue
+    if   result.isPtr                    : code[Elem.Type][0].strValue  # ptr case
+    elif code[Elem.Type].kind == nkIdent : code[Elem.Type].strValue     # single type case
+    # 2x worded type case
+    elif code[Elem.Type].kind == nkCommand and code[Elem.Type][1].kind == nkIdent:
+      code[Elem.Type][0].strValue & " " & code[Elem.Type][1].strValue
+    # 3x worded type case
+    elif code[Elem.Type].kind == nkCommand and code[Elem.Type][1].kind == nkCommand and code[Elem.Type][1][1].kind == nkIdent:
+      code[Elem.Type][0].strValue & " " & code[Elem.Type][1][0].strValue & " " & code[Elem.Type][1][1].strValue
+    # 4x worded type case
+    elif code[Elem.Type].kind == nkCommand and code[Elem.Type][1].kind == nkCommand and code[Elem.Type][1][1].kind == nkCommand and code[Elem.Type][1][1][1].kind == nkIdent:
+      code[Elem.Type][0].strValue & " " & code[Elem.Type][1][0].strValue & " " & code[Elem.Type][1][1][0].strValue  & " " & code[Elem.Type][1][1][1].strValue
     else:""
   assert result.name != "", &"Failed to identify the TypeName of a type node. Its tree is:\n{code.treeRepr}"
 
