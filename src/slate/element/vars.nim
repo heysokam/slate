@@ -13,7 +13,7 @@ type Elem *{.pure.}= enum Name
 converter toInt *(d :Elem) :int= d.ord
 const VarType  = ^2
 const VarValue = ^1
-type VariableType * = tuple[isPtr:bool, name:string]
+type VariableType * = tuple[isPtr:bool, isArr:bool, arrSize,name:string]
 
 #_________________________________________________
 # General
@@ -37,8 +37,12 @@ proc getName *(code :PNode) :string=
 proc getType *(code :PNode) :VariableType=
   assert code.kind in [nkConstDef, nkIdentDefs]
   result.isPtr = code[VarType].kind == nkPtrTy
-  if result.isPtr : result.name = code[VarType][0].strValue # ptr MyType
-  else            : result.name = code[VarType].strValue    # MyType
+  result.isArr = code[VarType].kind == nkBracketExpr and code[VarType][0].strValue == "array"
+  if result.isArr:
+    result.arrSize = code[VarType][1].strValue
+    result.name    = code[VarType][2].strValue
+  elif result.isPtr : result.name = code[VarType][0].strValue # ptr MyType
+  else              : result.name = code[VarType].strValue    # MyType
 #_____________________________
 proc getValue *(code :PNode) :string=
   assert code.kind in [nkConstDef, nkIdentDefs]

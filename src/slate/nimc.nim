@@ -33,6 +33,11 @@ proc strValue *(node :PNode) :string=
   of nkFloatLit..nkFloat128Lit : result = $node.floatVal
   of nkStrLit..nkTripleStrLit  : result = node.strVal
   of nkCommentStmt             : result = node.comment() # assert false, debugEcho(node.treeRepr & "\n\n" & $node[] & "\n" & node.renderTree)
+  of nkBracket                 :
+    for id,entry in node.pairs:
+      assert entry.kind in nkCharLit..nkTripleStrLit or entry.kind == nkIdent
+      result.add entry.strValue
+      if id != node.sons.len-1: result.add " " # Skip adding " " at the end for the last entry
   else:raise newException(ASTError, &"Tried to get the strValue of a node that doesn't have one.\n  {$node.kind}\n{node.treeRepr}\n")
 #_____________________________
 proc treeRepr *(node :PNode; ident :int= 0) :string=
