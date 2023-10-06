@@ -29,7 +29,8 @@ proc getName *(code :PNode; indent :int= 0) :string=
 proc getArgCount *(code :PNode) :int=
   assert code.kind in [nkCall, nkCommand]
   if code.sons.len < 2: return 0
-  assert code[Elem.Arg1].kind in nkCharLit..nkNilLit or code[Elem.Arg1].kind == nkIdent, code.treeRepr & "\n" & code.renderTree
+  assert code[Elem.Arg1].kind in nkCharLit..nkNilLit or code[Elem.Arg1].kind in [nkIdent, nkInfix],
+    &"\n{code.treeRepr}\n{code.renderTree}\n"
   for id,child in code.pairs:
     if id == 0: continue  # First parameter is always the function name
     result.inc
@@ -41,12 +42,16 @@ iterator args *(code :PNode) :Argument=
   for id in 0..argc:
     if id == Elem.Symbol: continue # First entry is always the function name
     let arg = code[id]
-    if arg.kind notin nkCharLit..nkNilLit and arg.kind != nkIdent: raise newException(CallsError,
+    if arg.kind notin nkCharLit..nkNilLit and arg.kind notin [nkIdent, nkCall, nkCommand, nkInfix]: raise newException(CallsError,
       &"Declaring non-literal or non-identifier arguments for function calls is currently not supported.\nIts tree is:\n{arg.treeRepr}\nIts code is:\n{arg.renderTree}\n")
+    if arg.kind in [nkCall, nkCommand] and arg.len > 2: raise newException(CallsError,
+      &"Multi-identifier command/call arguments for function calls is currently not supported.\nIts tree is:\n{arg.treeRepr}\nIts code is:\n{arg.renderTree}\n")
     let name =
       if   arg.kind == nkIdent:  arg.strValue
       elif arg.kind == nkNilLit: "NULL"
       elif arg.kind in nkCharLit..nkTripleStrLit: arg.strValue
+      elif arg.kind in [nkCall, nkCommand]: arg[1].strValue
+      elif arg.kind == nkInfix: &"{arg[1].strValue} {arg[0].strValue} {arg[2].strValue}"
       else: arg.sons[0..^2].mapIt( # Names of all entries in this arg, without the value(^1) or the type(^2)
         if it.kind == nkPtrTy : it[0].strValue # ptr MyType
         else                  : it.strValue    # MyType

@@ -5,6 +5,8 @@
 #_________________________________________________|
 import ../nimc
 
+const SlateObject * = "__SlateObject__"  ## Placeholder TypeName for objects
+
 proc isPrivate *(sym :PNode; indent :int; err :typedesc[CatchableError]) :bool=
   if indent > 0: return false
   assert sym.kind in {nkIdent,nkPostfix}

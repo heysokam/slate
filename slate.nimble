@@ -3,9 +3,9 @@
 #:______________________________________________________
 # Package
 packageName   = "slate"
-version       = "0.0.11"
+version       = "0.0.12"
 author        = "sOkam"
-description   = "*Slate | StoS Compiler for Nim"
+description   = "*Slate | StoS Compiler Helper for Nim syntax"
 license       = "MIT"
 srcDir        = "src"
 skipFiles     = @["build.nim", "nim.cfg"]

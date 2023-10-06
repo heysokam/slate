@@ -39,7 +39,12 @@ proc getType *(code :PNode) :VariableType=
   result.isPtr = code[VarType].kind == nkPtrTy
   result.isArr = code[VarType].kind == nkBracketExpr and code[VarType][0].strValue == "array"
   if result.isArr:
-    result.arrSize = code[VarType][1].strValue
+    result.arrSize =
+      if   code[VarType][1].kind == nkIdent: code[VarType][1].strValue
+      elif code[VarType][1].kind == nkInfix:
+        &"{code[VarType][1][1].strValue} {code[VarType][1][0].strValue} {code[VarType][1][2].strValue}"
+      else:"" # TODO: Better infix resolution
+    if result.arrSize == "": raise newException(VarDefError, &"Tried to get the size of an array variable, but its size has an unknown format.\n{code[VarType][1].treeRepr}\n")
     result.name    = code[VarType][2].strValue
   elif result.isPtr : result.name = code[VarType][0].strValue # ptr MyType
   else              : result.name = code[VarType].strValue    # MyType
