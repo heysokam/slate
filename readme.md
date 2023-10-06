@@ -3,6 +3,16 @@
 The tools provided can be used to convert the Nim AST into any language.  
 Its current complete compiler goals are `minc` and `wgsl` generation.  
 
+## Current state
+Probably not too useful yet, compared to just working with PNodes directly.  
+The library has some very useful functions, but the abstraction is -very- thin.  
+A proper ergonomic IR system with objects needs to be well thought out before this lib can be its own thing.  
+
+Until that day, please take reference from the [MinC Compiler](https://github.com/heysokam/minc) implementation.  
+It uses this same API, but it has a lot more features built on top.  
+
+
+## StoS Compiler -vs- Nim Backend Compiler
 ```md
 # Source-to-Source:
 The target language owns the rules. All of them.
@@ -16,4 +26,10 @@ The backend is not really running the target language, it is running Nim as a co
 The target language is just the host that communicates to the computer how to do things.
 But in the end its nim, not the backend, who dictates how the logic of an application is written
 The backend compiler translates every feature of nim so that the backend lang understands what Nim is dictating it should do.
+```
+
+---
+```md
+# Notes
+https://github.com/haxscramper/hnimast
 ```

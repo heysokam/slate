@@ -23,7 +23,7 @@ export renderTree
 # proc debugAST *(node :ast.PNode) :string=  debug(node)
 #______________________________________________________
 # AST formatting
-proc treeRepr *(node :PNode; ident :int= 0) :string # fw declare for strvalue
+proc treeRepr *(node :PNode; indent :int= 0) :string # fw declare for strvalue
 proc strValue *(node :PNode) :string=
   if node == nil: return
   case node.kind
@@ -40,19 +40,19 @@ proc strValue *(node :PNode) :string=
       if id != node.sons.len-1: result.add " " # Skip adding " " at the end for the last entry
   else:raise newException(ASTError, &"Tried to get the strValue of a node that doesn't have one.\n  {$node.kind}\n{node.treeRepr}\n")
 #_____________________________
-proc treeRepr *(node :PNode; ident :int= 0) :string=
+proc treeRepr *(node :PNode; indent :int= 0) :string=
   ## Returns the treeRepr of the given AST.
   ## Similar to NimNode.treeRepr, but for PNode.
   # Base Case
   if node == nil: return
    # Process this node
-  result.add &"{ident*Sep}{$node.kind}"
+  result.add &"{indent*Sep}{$node.kind}"
   case node.kind
   of nkSym, nkIdent, nkCharLit..nkTripleStrLit: result.add &"{Spc}{node.strValue}"
   else:discard
   result.add "\n"
   # Recurse all subnodes
-  for child in node: result.add child.treeRepr(ident+1)
+  for child in node: result.add child.treeRepr(indent+1)
 #_____________________________
 proc report *(node :PNode) :void=
   ## Writes CLI information about the given node
