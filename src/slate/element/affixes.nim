@@ -1,6 +1,8 @@
 #:______________________________________________________
 #  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  :
 #:______________________________________________________
+# std dependencies
+import std/strformat
 # *Slate dependencies
 import ../nimc
 
@@ -21,16 +23,20 @@ proc getPrefix *(code :PNode) :Affix=
     right : code[1].strValue,
     )
 #_______________________________________
+proc getSideString *(side :PNode) :string=
+  # TODO: Probably remove
+  case side.kind
+  of nkEmpty : ""
+  of nkInfix : &"{side[1].getSideString()} {side[0].strValue} {side[2].getSideString()}"
+  else       : side.strValue
+
 proc getInfix *(code :PNode) :Affix=
   assert code.kind == nkInfix
   result = Affix(
     kind  : Infix,
     fix   : code[0].strValue,
-    left  : code[1].strValue,
-    right :
-      if code[2].kind == nkEmpty : ""
-      else                       : code[2].strValue,
-    )
+    left  : code[1].renderTree,
+    right : code[2].renderTree    )
 #_______________________________________
 proc getPostfix *(code :PNode) :Affix=
   ## WARNING: Nim parser interprets no postfixes, other than `*` for visibility

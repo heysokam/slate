@@ -95,7 +95,6 @@ iterator args *(code :PNode) :Argument=
   assert code.kind == nkProcDef
   let params = code[Elem.Args]
   assert params.kind == nkFormalParams
-  let argc   = code.getArgCount()
   let paramc = params.sons.len
   for paramID in 0..<paramc:
     if paramID == 0: continue  # First parameter is always the type of the proc
@@ -104,7 +103,7 @@ iterator args *(code :PNode) :Argument=
     let subc = params[paramID].sons.len - 2
     for subID in 0..<subc:
       yield (first : paramID == 0,
-             last  : paramID + subID == argc,
+             last  : paramID == paramc-1 and subID == subc-1,
              node  : params[paramID],
              typ   : typ,
              name  : params[paramID][subID].strValue )
