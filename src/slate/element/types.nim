@@ -17,6 +17,7 @@ type TypeInfo * = object
   isPriv  *:bool
   isRead  *:bool
   isObj   *:bool
+  isArr   *:bool
   name    *:string
 
 
@@ -24,7 +25,7 @@ type TypeInfo * = object
 # Properties
 #_____________________________
 proc isPrivate *(code :PNode) :bool=
-  assert code.kind in [nkTypeDef, nkPragmaExpr], code.treeRepr
+  assert code.kind in {nkTypeDef, nkIdentDefs, nkPragmaExpr}, &"\n{code.treeRepr}"
   result = base.isPrivate(code[Elem.Symbol], 0, TypeDefError)
 
 
@@ -42,9 +43,10 @@ proc getName *(code :PNode) :string=
   assert result != "", &"Failed to identify the name of a type node. Its tree is:\n{code.treeRepr}"
 #_____________________________
 proc getType *(code :PNode; allowedMultiwords :openArray[string]= @[]) :TypeInfo=
-  assert code.kind == nkTypeDef
+  assert code.kind in {nkTypeDef,nkIdentDefs}, &"\n{code.treeRepr}"
   result.isPtr  = code[Elem.Type].kind == nkPtrTy
   result.isObj  = code[Elem.Type].kind == nkObjectTy
+  result.isArr  = code.kind == nkIdentDefs and code[1].kind == nkBracketExpr and code[1][0].strValue == "array"
   result.isRead = code[Elem.Symbol].kind == nkPragmaExpr
   result.isPriv =
     if result.isRead : types.isPrivate(code[0])
@@ -53,6 +55,7 @@ proc getType *(code :PNode; allowedMultiwords :openArray[string]= @[]) :TypeInfo
     &"Failed to identify the TypeName of a multiword type node. Its tree is:\n{code.treeRepr}"
   result.name =
     if   result.isPtr                    : code[Elem.Type][0].strValue  # ptr case
+    elif result.isArr                    : code[0].renderTree
     elif code[Elem.Type].kind == nkIdent : code[Elem.Type].strValue     # single type case
     # 2x worded type case
     elif code[Elem.Type].kind == nkCommand and code[Elem.Type][1].kind == nkIdent:

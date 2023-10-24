@@ -47,8 +47,12 @@ proc getName *(code :PNode) :string=
 proc getRetT *(code :PNode) :string=
   assert code.kind == nkProcDef
   let params = code[Elem.Args]
-  assert params.kind == nkFormalParams and params[0].kind == nkIdent
-  params[0].strValue  # First parameter is always its return type
+  assert params.kind == nkFormalParams and params[0].kind in {nkIdent,nkPtrTy}
+  result =
+    if   params[0].kind == nkPtrTy : params[0][0].strValue
+    elif params[0].kind == nkIdent : params[0].strValue    # First parameter is always its return type
+    else:""
+  assert result != "", &"\n{code.treeRepr}\n{code.renderTree}\n"
 #_____________________________
 proc getPragma *(code :PNode) :PNode=
   assert code.kind == nkProcDef and code[Elem.Pragma].kind == nkPragma
@@ -74,7 +78,7 @@ proc getArgCount *(code :PNode) :int=
 proc getArgT *(code :PNode) :ArgType=
   assert code.kind == nkIdentDefs
   if code[ArgT].kind == nkEmpty: raise newException(ProcDefError, &"Declaring ProcDef arguments without type is currently not supported. The argument's code is:\n{code.renderTree}\n")
-  assert code[ArgT].kind in [nkIdent,nkPtrTy,nkVarTy], "\n" & code.treeRepr & "\n" & code.renderTree
+  assert code[ArgT].kind in {nkIdent,nkPtrTy,nkVarTy}, "\n" & code.treeRepr & "\n" & code.renderTree
   result.isMut = code[ArgT].kind == nkVarTy
   result.isPtr = if result.isMut: code[ArgT][0].kind == nkPtrTy else: code[ArgT].kind == nkPtrTy
   if   result.isPtr and result.isMut : result.name = code[ArgT][0][0].strValue() # Access the nkVarTy.nkPtrTy value
@@ -102,9 +106,12 @@ iterator args *(code :PNode) :Argument=
     let typ  = params[paramID].getArgT()
     let subc = params[paramID].sons.len - 2
     for subID in 0..<subc:
+      let name =
+        if params[paramID][subID].kind == nkPragmaExpr : params[paramID][subID][0].strValue
+        else                                           : params[paramID][subID].strValue
       yield (first : paramID == 0,
              last  : paramID == paramc-1 and subID == subc-1,
              node  : params[paramID],
              typ   : typ,
-             name  : params[paramID][subID].strValue )
+             name  : name )
 

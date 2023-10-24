@@ -40,7 +40,7 @@ proc getType *(code :PNode) :VariableType=
   result.isArr = code[VarType].kind == nkBracketExpr and code[VarType][0].strValue == "array"
   if result.isArr:
     result.arrSize =
-      if   code[VarType][1].kind == nkIdent: code[VarType][1].strValue
+      if   code[VarType][1].kind in {nkIdent}+SomeValueLit: code[VarType][1].strValue
       elif code[VarType][1].kind == nkInfix:
         &"{code[VarType][1][1].strValue} {code[VarType][1][0].strValue} {code[VarType][1][2].strValue}"
       else:"" # TODO: Better infix resolution
@@ -48,8 +48,21 @@ proc getType *(code :PNode) :VariableType=
     result.name    = code[VarType][2].strValue
   elif result.isPtr : result.name = code[VarType][0].strValue # ptr MyType
   else              : result.name = code[VarType].strValue    # MyType
+
 #_____________________________
-proc getValue *(code :PNode) :string=
-  assert code.kind in [nkConstDef, nkIdentDefs]
-  code[VarValue].strValue
+proc getValueFmt (code :PNode) :string=
+  case code.kind
+  of nkStrLit    : &"\"{code.strValue}\""
+  of nkCharLit   : &"'{code.strValue}'"
+  of nkDotExpr   : code.renderTree
+  of nkObjConstr : code.renderTree
+  else           : code.strValue
+#_____________________________
+proc getValue *(code :PNode; formatStr :bool= false) :string=
+  assert code.kind in {nkConstDef, nkIdentDefs, nkBracket}
+  if not formatStr: return code[VarValue].strValue
+  # Formatted case
+  if code[VarValue].kind == nkBracket:
+    for it in code[VarValue]: result.add it.getValueFmt()
+  else: result = code[VarValue].getValueFmt()
 

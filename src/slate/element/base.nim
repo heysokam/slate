@@ -3,6 +3,7 @@
 #:______________________________________________________
 # Base module used by all of the *Slate elements  |
 #_________________________________________________|
+import std/strformat
 import ../nimc
 
 #_____________________________
@@ -33,7 +34,7 @@ proc getDotExprRec (code :PNode; idents :var seq[PNode]) :void=
     base.getDotExprRec(code[0], idents)
   elif code.kind == nkIdent:
     idents.add code
-  else: assert false, code.treeRepr
+  else: assert false, &"\n{code.treeRepr}\n"
 #_____________________________
 iterator dotExpr *(code :PNode) :PNode=
   ## Yields every node entry of a given dotExpr node
