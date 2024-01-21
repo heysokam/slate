@@ -47,7 +47,7 @@ proc getInfixValue (arg :PNode) :string=
       &"Failed to find the code for an InfixValue side.\nIts tree is:\n{side.treeRepr}\nIts code is:\n{side.renderTree}\n")
   &"{arg[1].getSideValue()} {arg[0].strValue} {arg[2].getSideValue()}"
 
-const ValidCallArgs = SomeLit+{nkIdent, nkCall, nkCommand, nkInfix, nkCast, nkObjConstr, nkDotExpr, nkBracketExpr}
+const ValidCallArgs = SomeLit+{nkIdent, nkCall, nkCommand, nkInfix, nkCast, nkObjConstr, nkDotExpr, nkBracketExpr, nkIfExpr}
 iterator args *(code :PNode) :Argument=
   ## Iterates over the Arguments of a Call node, and yields them one by one
   assert code.kind in [nkCall, nkCommand]
@@ -67,6 +67,7 @@ iterator args *(code :PNode) :Argument=
       elif arg.kind == nkInfix                    : arg.getInfixValue()
       elif arg.kind == nkObjConstr                : arg[0].renderTree
       elif arg.kind in {nkDotExpr, nkBracketExpr} : arg.renderTree
+      elif arg.kind in {nkIfExpr}                 : arg.renderTree
       else: arg.sons[0..^2].mapIt( # Names of all entries in this arg, without the value(^1) or the type(^2)
         if it.kind == nkPtrTy : it[0].strValue # ptr MyType
         else                  : it.strValue    # MyType
