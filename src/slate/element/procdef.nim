@@ -16,7 +16,7 @@ converter toInt *(d :Elem) :int= d.ord
 const Arg1 = 1 # Arg1 id number inside the node
 const ArgT = ^2
 
-type ArgType  * = tuple[isPtr:bool, isMut:bool, name:string]
+type ArgType  * = tuple[isPtr:bool, isMut:bool, isArr:bool, name:string]
 type Argument * = tuple[first:bool, last:bool, node:PNode, typ:ArgType, name:string]
 
 #_________________________________________________
@@ -78,11 +78,13 @@ proc getArgCount *(code :PNode) :int=
 proc getArgT *(code :PNode) :ArgType=
   assert code.kind == nkIdentDefs
   if code[ArgT].kind == nkEmpty: raise newException(ProcDefError, &"Declaring ProcDef arguments without type is currently not supported. The argument's code is:\n{code.renderTree}\n")
-  assert code[ArgT].kind in {nkIdent,nkPtrTy,nkVarTy}, "\n" & code.treeRepr & "\n" & code.renderTree
+  assert code[ArgT].kind in {nkIdent,nkPtrTy,nkVarTy,nkBracketExpr}, "\n" & code.treeRepr & "\n" & code.renderTree
   result.isMut = code[ArgT].kind == nkVarTy
   result.isPtr = if result.isMut: code[ArgT][0].kind == nkPtrTy else: code[ArgT].kind == nkPtrTy
+  result.isArr = code[ArgT].kind == nkBracketExpr
   if   result.isPtr and result.isMut : result.name = code[ArgT][0][0].strValue() # Access the nkVarTy.nkPtrTy value
   elif result.isPtr or  result.isMut : result.name = code[ArgT][0].strValue()    # Access the nkPtrTy or nkVarTy value
+  elif result.isArr                  : result.name = code[ArgT].renderTree
   else                               : result.name = code[ArgT].strValue()       # Second entry is always the argument type
 #_____________________________
 proc getArgName *(code :PNode; id :int= 0) :string=
