@@ -26,10 +26,11 @@ proc getName *(code :PNode; indent :int= 0) :string=
   assert code.kind in [nkCall, nkCommand]
   code[Elem.Symbol].strValue
 
+const ValidCallArgs = SomeLit+{nkIdent, nkCall, nkCommand, nkInfix, nkCast, nkObjConstr, nkDotExpr, nkBracketExpr, nkIfExpr}
 proc getArgCount *(code :PNode) :int=
   assert code.kind in [nkCall, nkCommand]
   if code.sons.len < 2: return 0
-  assert code[Elem.Arg1].kind in SomeLit+{nkIdent, nkInfix, nkCall, nkCommand, nkCast, nkObjConstr, nkDotExpr, nkBracketExpr},
+  assert code[Elem.Arg1].kind in ValidCallArgs,
     &"\n{code.treeRepr}\n{code.renderTree}\n"
   for id,child in code.pairs:
     if id == 0: continue  # First parameter is always the function name
@@ -47,7 +48,6 @@ proc getInfixValue (arg :PNode) :string=
       &"Failed to find the code for an InfixValue side.\nIts tree is:\n{side.treeRepr}\nIts code is:\n{side.renderTree}\n")
   &"{arg[1].getSideValue()} {arg[0].strValue} {arg[2].getSideValue()}"
 
-const ValidCallArgs = SomeLit+{nkIdent, nkCall, nkCommand, nkInfix, nkCast, nkObjConstr, nkDotExpr, nkBracketExpr, nkIfExpr}
 iterator args *(code :PNode) :Argument=
   ## Iterates over the Arguments of a Call node, and yields them one by one
   assert code.kind in [nkCall, nkCommand]
