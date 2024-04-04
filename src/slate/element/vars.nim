@@ -33,7 +33,9 @@ proc isPersist *(code :PNode; indent :int) :bool=
   echo sym.renderTree
   assert sym.kind in {nkIdent, nkPostfix, nkPragmaExpr}, &"\n{code.treeRepr}\n{code.renderTree}"
   const Pragma = 1
-  return sym.kind == nkPragmaExpr and sym[Pragma][Elem.Name].strValue == "persist"
+  return sym.kind == nkPragmaExpr and
+         sym[Pragma][Elem.Name].kind != nkEmpty and
+         sym[Pragma][Elem.Name].strValue == "persist"
 #_____________________________
 proc getName *(code :PNode) :string=
   assert code.kind in {nkConstDef, nkIdentDefs, nkPragmaExpr}, &"\n{code.treeRepr}\n{code.renderTree}"
