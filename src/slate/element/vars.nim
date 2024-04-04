@@ -29,8 +29,6 @@ proc isPersist *(code :PNode; indent :int) :bool=
   assert code.kind in {nkConstDef, nkIdentDefs, nkPragmaExpr}, &"\n{code.treeRepr}\n{code.renderTree}"
   if indent < 1: return false
   let sym = code[Elem.Name]
-  echo sym.treeRepr
-  echo sym.renderTree
   assert sym.kind in {nkIdent, nkPostfix, nkPragmaExpr}, &"\n{code.treeRepr}\n{code.renderTree}"
   const Pragma = 1
   return sym.kind == nkPragmaExpr and

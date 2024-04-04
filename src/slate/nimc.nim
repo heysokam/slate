@@ -27,6 +27,7 @@ proc treeRepr *(node :PNode; indent :int= 0) :string # fw declare for strvalue
 proc strValue *(node :PNode) :string=
   if node == nil: return
   case node.kind
+  of nkEmpty                   : result = ""
   of nkSym                     : result = node.sym.name.s
   of nkIdent                   : result = node.ident.s
   of nkCharLit..nkUInt64Lit    : result = $node.intVal
