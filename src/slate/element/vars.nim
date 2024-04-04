@@ -19,23 +19,35 @@ type VariableType * = tuple[isPtr:bool, isArr:bool, arrSize,name:string]
 # General
 #_____________________________
 proc isPrivate *(code :PNode; indent :int) :bool=
-  assert code.kind in [nkConstDef, nkIdentDefs]
+  assert code.kind in {nkConstDef, nkIdentDefs}, &"\n{code.treeRepr}\n{code.renderTree}"
   if indent > 0: return false
   let sym = code[Elem.Name]
   assert sym.kind in {nkIdent,nkPostfix}
   return base.isPrivate(sym, indent, VarDefError)
 #_____________________________
-proc getName *(code :PNode) :string=
-  assert code.kind in [nkConstDef, nkIdentDefs]
+proc isPersist *(code :PNode; indent :int) :bool=
+  assert code.kind in {nkConstDef, nkIdentDefs, nkPragmaExpr}, &"\n{code.treeRepr}\n{code.renderTree}"
+  if indent < 1: return false
   let sym = code[Elem.Name]
-  assert sym.kind in {nkIdent,nkPostfix}
+  echo sym.treeRepr
+  echo sym.renderTree
+  assert sym.kind in {nkIdent, nkPostfix, nkPragmaExpr}, &"\n{code.treeRepr}\n{code.renderTree}"
+  const Pragma = 1
+  return sym.kind == nkPragmaExpr and sym[Pragma][Elem.Name].strValue == "persist"
+#_____________________________
+proc getName *(code :PNode) :string=
+  assert code.kind in {nkConstDef, nkIdentDefs, nkPragmaExpr}, &"\n{code.treeRepr}\n{code.renderTree}"
+  let sym =
+    if code[Elem.Name].kind == nkPragmaExpr : code[Elem.Name][Elem.Name]  # Name of the variable is inside the name of the nkPragmaExpr
+    else                                    : code[Elem.Name]
+  assert sym.kind in {nkIdent,nkPostfix}, &"\n{code.treeRepr}\n{code.renderTree}"
   case sym.kind
   of nkIdent   : result = sym.strValue
   of nkPostfix : result = sym[1].strValue
   else: raise newException(VarDefError, &"Tried to get the name of a variable, but its symbol has an unknown format.\n  {sym.kind}\n")
 #_____________________________
 proc getType *(code :PNode) :VariableType=
-  assert code.kind in [nkConstDef, nkIdentDefs]
+  assert code.kind in {nkConstDef, nkIdentDefs}, &"\n{code.treeRepr}\n{code.renderTree}"
   result.isPtr = code[VarType].kind == nkPtrTy
   result.isArr = code[VarType].kind == nkBracketExpr and code[VarType][0].strValue == "array"
   if result.isArr:
@@ -59,7 +71,7 @@ proc getValueFmt (code :PNode) :string=
   else           : code.strValue
 #_____________________________
 proc getValue *(code :PNode; formatStr :bool= false) :string=
-  assert code.kind in {nkConstDef, nkIdentDefs, nkBracket}
+  assert code.kind in {nkConstDef, nkIdentDefs, nkBracket}, &"\n{code.treeRepr}\n{code.renderTree}"
   if not formatStr: return code[VarValue].strValue
   # Formatted case
   if code[VarValue].kind == nkBracket:
