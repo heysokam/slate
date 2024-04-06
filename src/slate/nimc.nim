@@ -28,6 +28,7 @@ proc strValue *(node :PNode) :string=
   if node == nil: return
   case node.kind
   of nkEmpty                   : result = ""
+  of nkAccQuoted               : result = node[0].strValue
   of nkSym                     : result = node.sym.name.s
   of nkIdent                   : result = node.ident.s
   of nkCharLit..nkUInt64Lit    : result = $node.intVal
