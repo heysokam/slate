@@ -10,28 +10,52 @@ from   "$nim"/compiler/renderer import renderTree
 # *Slate dependencies
 import ./format
 
+#_______________________________________
+# @section Ergonomics
+#_____________________________
+const Char     * = {nkCharLit}
+const Float    * = {nkFloatLit, nkFloat32Lit, nkFloat64Lit, nkFloat128Lit}
+const Int      * = {nkIntLit, nkInt8Lit, nkInt16Lit, nkInt32Lit, nkInt64Lit}
+const UInt     * = {nkUIntLit, nkUInt8Lit, nkUInt16Lit, nkUInt32Lit, nkUInt64Lit}
+const Str      * = {nkStrLit, nkRStrLit, nkTripleStrLit}
+const Nil      * = {nkNilLit}
+const Literals * = Char + Float + Int + UInt + Str
+const SomeLit  * = Nil + Literals
+const SomeCall * = {nkCommand, nkCall, nkCallStrLit}
 
+
+#_______________________________________
+# @section Error Management
+#_____________________________
 type ASTError = object of CatchableError
-#______________________________________________________
+
+
+#_______________________________________
+# @section Forward Exports
+#_____________________________
 # Forward what we need outside to manage the AST
 export ast
 export renderTree
+
 #______________________________________________________
+# @section AST formatting
+#_____________________________
 # broken. Needs the ConfigRef generated from the parsing process
 # from   "$nim"/compiler/astalgo  import treeToYaml, debug
 # proc treeToYaml *(node :PNode) :string= treeToYaml(options.newConfigRef(), node).string
 # proc debugAST *(node :ast.PNode) :string=  debug(node)
-#______________________________________________________
-# AST formatting
+#_____________________________
 proc treeRepr *(node :PNode; indent :int= 0) :string # fw declare for strvalue
 proc strValue *(node :PNode) :string=
   if node == nil: return
   case node.kind
   of nkEmpty                   : result = ""
-  of nkAccQuoted               : result = node[0].strValue
+  of nkAccQuoted               :
+    for entry in node          : result.add entry.strValue
   of nkSym                     : result = node.sym.name.s
   of nkIdent                   : result = node.ident.s
-  of nkCharLit..nkUInt64Lit    : result = $node.intVal
+  of nkCharLit                 : result = $char(node.intVal)
+  of nkIntLit..nkUInt64Lit     : result = $node.intVal
   of nkFloatLit..nkFloat128Lit : result = $node.floatVal
   of nkStrLit..nkTripleStrLit  : result = node.strVal
   of nkCommentStmt             : result = node.comment() # assert false, debugEcho(node.treeRepr & "\n\n" & $node[] & "\n" & node.renderTree)
@@ -64,10 +88,10 @@ proc report *(node :PNode) :void=
 
 
 #______________________________________________________
-# AST Reading
+# @section AST Reading
 #_____________________________
 proc readASTall *(file :Path) :ast.PNode=
-  # Alternative version of readAST using parser.parseAll()
+  ## @descr Alternative version of readAST using parser.parseAll()
   var conf    = options.newConfigRef()
   let fileIdx = msgs.fileInfoIdx(conf, pathutils.AbsoluteFile file.string)
   var pars :parser.Parser
@@ -82,7 +106,7 @@ proc errorAST (conf :options.ConfigRef; info :lineinfos.TLineInfo; msg :lineinfo
     debugEcho errorStr
 #_____________________________
 proc getAST *(code :string; file :string= "") :ast.PNode=
-  ## Gets the AST of the given code. The given file path is used for error messages.
+  ## @descr Gets the AST of {@arg code}. The given {@arg file} path is used for error messages.
   var cache  = idents.newIdentCache()
   var config = options.newConfigRef()
   result = parser.parseString(
