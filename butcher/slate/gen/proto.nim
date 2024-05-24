@@ -10,6 +10,9 @@ import ../nimc as nim
 import ../types
 import ../format
 
+type Lang * = object
+  name *:string
+  pfx  *:string
 
 #___________________________________________________________
 # Generator Codegen Templates
