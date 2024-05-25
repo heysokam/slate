@@ -24,6 +24,6 @@ func toKind *(name :string) :Kind=
   of "assign"           : result = Kind.Asgn
   of "literal"          : result = Kind.Literal
   of "return"           : result = Kind.Return
-  of "include"          : result = Kind.Include
+  of "include","import" : result = Kind.Module
   else: raise newException(KindError, "Tried to access and unmapped Node Kind:  " & name)
 

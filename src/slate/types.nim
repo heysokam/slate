@@ -11,9 +11,11 @@ type KindError       * = object of CatchableError
 type Kind *{.pure.}= enum
   ## @descr Describes a type of an AST Node, as understood by *Slate
   None, Empty,
-  Include, #Import,
+  Module, # @note aka. Include and Import
+  Ident,
   Proc, Func, Call,
   Var, Let, Const, Asgn
   Literal, RawStr,
   Return,
+  Pragma,
 

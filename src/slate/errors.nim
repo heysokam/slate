@@ -67,8 +67,8 @@ proc ensure *(
   ## @descr Raises a {@link NodeAccessError} when none of the {@arg args} {@link Kind}s match the {@link TNodeKind} of {@arg code}.
   for kind in kinds:
     case kind
-    of Include:
-      if check(code, nkIncludeStmt): return true else: continue
+    of Module:
+      if check(code, nkIncludeStmt, nkImportStmt): return true else: continue
     of Proc:
       if check(code, nkProcDef): return true else: continue
     of Func:
@@ -89,6 +89,8 @@ proc ensure *(
       if check(code, nim.SomeLit): return true else: continue
     of RawStr:
       if check(code, nkCallStrLit): return true else: continue
+    of Pragma:
+      if check(code, nkPragma): return true else: continue
     else: code.err &"Tried to access an unmapped Node kind:  {kind}"
   code.err msg&cfg.Sep&fmt"Node {code.kind} is not a valid kind:  {kinds}."
 #___________________
