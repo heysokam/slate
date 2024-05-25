@@ -6,3 +6,4 @@ import ./element/general   ; export general
 import ./element/statement ; export statement
 import ./element/procs     ; export procs
 import ./element/vars      ; export vars
+import ./element/pragmas   ; export pragmas
