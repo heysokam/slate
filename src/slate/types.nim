@@ -17,5 +17,5 @@ type Kind *{.pure.}= enum
   Var, Let, Const, Asgn
   Literal, RawStr,
   Return,
-  Pragma, Discard,
+  Pragma, Discard, Comment
 
