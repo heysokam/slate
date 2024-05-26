@@ -95,6 +95,10 @@ proc ensure *(
       if check(code, nkDiscardStmt): return true else: continue
     of Comment:
       if check(code, nkCommentStmt): return true else: continue
+    of Continue:
+      if check(code, nkContinueStmt): return true else: continue
+    of Break:
+      if check(code, nkBreakStmt): return true else: continue
     else: code.err &"Tried to access an unmapped Node kind:  {kind}"
   code.err msg&cfg.Sep&fmt"Node {code.kind} is not a valid kind:  {kinds}."
 #___________________

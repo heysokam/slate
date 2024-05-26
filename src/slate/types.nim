@@ -16,6 +16,6 @@ type Kind *{.pure.}= enum
   Proc, Func, Call,
   Var, Let, Const, Asgn
   Literal, RawStr,
-  Return,
-  Pragma, Discard, Comment
+  Return, Continue, Break,
+  Pragma, Discard, Comment,
 
