@@ -91,6 +91,8 @@ proc ensure *(
       if check(code, nkCallStrLit): return true else: continue
     of Pragma:
       if check(code, nkPragma): return true else: continue
+    of Discard:
+      if check(code, nkDiscardStmt): return true else: continue
     else: code.err &"Tried to access an unmapped Node kind:  {kind}"
   code.err msg&cfg.Sep&fmt"Node {code.kind} is not a valid kind:  {kinds}."
 #___________________
