@@ -22,19 +22,19 @@ type ArgumentType * = tuple[isPtr:bool, typ:string]
 #_________________________________________________
 # Function Calls
 #_____________________________
-proc getName *(code :PNode; indent :int= 0) :string=
-  assert code.kind in [nkCall, nkCommand]
-  code[Elem.Symbol].strValue
+# proc getName *(code :PNode; indent :int= 0) :string=
+#   assert code.kind in [nkCall, nkCommand]
+#   code[Elem.Symbol].strValue
 
 const ValidCallArgs = SomeLit+{nkIdent, nkCall, nkCommand, nkInfix, nkCast, nkObjConstr, nkDotExpr, nkBracketExpr, nkIfExpr}
-proc getArgCount *(code :PNode) :int=
-  assert code.kind in [nkCall, nkCommand]
-  if code.sons.len < 2: return 0
-  assert code[Elem.Arg1].kind in ValidCallArgs,
-    &"\n{code.treeRepr}\n{code.renderTree}\n"
-  for id,child in code.pairs:
-    if id == 0: continue  # First parameter is always the function name
-    result.inc
+# proc getArgCount *(code :PNode) :int=
+#   assert code.kind in [nkCall, nkCommand]
+#   if code.sons.len < 2: return 0
+#   assert code[Elem.Arg1].kind in ValidCallArgs,
+#     &"\n{code.treeRepr}\n{code.renderTree}\n"
+#   for id,child in code.pairs:
+#     if id == 0: continue  # First parameter is always the function name
+#     result.inc
 
 proc getInfixValue (arg :PNode) :string=
   proc getSideValue (side :PNode) :string=

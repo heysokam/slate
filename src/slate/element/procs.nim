@@ -27,19 +27,25 @@ const Pragmas * = 4
 const Reserved * = 5 # Field reserved for the future
 # 6. Proc's Body  (aka Statement List)
 const Body * = 6
-
+#___________________
+proc getArgs (code :PNode) :PNode=
+  ## @desc Returns the {@arg code} call PNode with its identifier removed, preserving only its arguments
+  let args = code[Args]
+  result = nim.newNodeI(args.kind, args.info)
+  result.sons =
+    if args.sons.len > 1: args.sons[1..^1]
+    else: @[]
 
 #_______________________________________
 # @section Procs
 #_____________________________
-const UnknownID :int= int.high
 proc get *(code :PNode; field :string; id :SomeInteger= UnknownID) :PNode=
   # Access the requested field
   case field
   of "name"     : return code.getName()
   of "generics" : return code[Generics]
   of "returnT"  : return code[Args][RetT]
-  of "args"     : return code[Args]
+  of "args"     : return procs.getArgs(code)
   of "arg"      :
     if id == UnknownID: code.err "Tried to access an Argument of a nkProcDef, but its ID was not passed."
     return code[Args][id]
@@ -48,5 +54,5 @@ proc get *(code :PNode; field :string; id :SomeInteger= UnknownID) :PNode=
     if id == UnknownID: code.err "Tried to access a Pragma of a nkProcDef, but its ID was not passed."
     return code[Pragmas][id]
   of "body"     : return code[Body]
-  else: code.err "Tried to access an unmapped field of nkProcDef: " & field
+  else: code.err "Tried to access an unmapped field of nkProcDef:  " & field
 

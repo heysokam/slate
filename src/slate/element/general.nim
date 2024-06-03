@@ -13,7 +13,7 @@ import ../nimc as nim
 # @section Node Access: General Fields
 #_____________________________
 proc getName *(code :PNode) :PNode=
-  const (Name, Publ, PublName, Pragma) = (0, 0, 1, 0)
+  const (Name, PublName, Pragma) = (0, 1, 0)
   let name = code[Name]
   if   name.kind == nkIdent      : return code[Name]
   elif name.kind == nkPostFix    : return code[Name][PublName]
@@ -34,7 +34,7 @@ proc getType *(code :PNode) :PNode=
 #_____________________________
 proc isPublic *(code :PNode) :bool=
   ## @descr Returns true if the name of the {@arg code} is marked as public
-  const (Name, Publ, PublName) = (0, 0, 1)
+  const (Name, Publ) = (0, 0)
   code[Name].kind != nkIdent and code[Name][Publ].strValue == "*"
 #___________________
 proc isPersist *(
