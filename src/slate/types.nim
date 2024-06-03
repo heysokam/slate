@@ -4,6 +4,9 @@
 ## @fileoverview Types used for the *Slate API and its internal tools
 
 #_____________________________
+const UnknownID *:int= int.high
+
+#_____________________________
 type NodeAccessError * = object of CatchableError
 type KindError       * = object of CatchableError
 
@@ -13,6 +16,7 @@ type Kind *{.pure.}= enum
   None, Empty,
   Module, # @note aka. Include and Import
   Ident,
+  Type,
   Proc, Func, Call,
   Var, Let, Const, Asgn
   Literal, RawStr,
