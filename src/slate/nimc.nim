@@ -4,6 +4,7 @@
 # std dependencies
 import std/paths
 import std/strformat
+import std/strutils
 # nimc dependencies
 import "$nim"/compiler/[ ast, parser, idents, options, lineinfos, msgs, pathutils, syntaxes ]
 from   "$nim"/compiler/renderer import renderTree
@@ -58,7 +59,8 @@ proc strValue *(node :PNode) :string=
   of nkCharLit                 : result = $char(node.intVal)
   of nkIntLit..nkUInt64Lit     : result = $node.intVal
   of nkFloatLit..nkFloat128Lit : result = $node.floatVal
-  of nkStrLit..nkTripleStrLit  : result = node.strVal
+  of nkStrLit                  : result = node.strVal.replace("\n", "\\n")
+  of nkRStrLit..nkTripleStrLit : result = node.strVal
   of nkCommentStmt             : result = node.comment() # assert false, debugEcho(node.treeRepr & "\n\n" & $node[] & "\n" & node.renderTree)
   of nkBracket                 :
     for id,entry in node.pairs:
