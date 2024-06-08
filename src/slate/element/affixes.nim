@@ -15,6 +15,7 @@ const Name * = 0
 const PrefixBody = 1
 const InfixLeft  = 1
 const InfixRight = 2
+const PostBody = 1
 
 
 #_______________________________________
@@ -28,8 +29,8 @@ func getName (code :PNode) :PNode= code[Name]
 #_____________________________
 proc getPrefix *(code :PNode; field :string) :PNode=
   case field
-  of "name": return affixes.getName(code)
-  of "body": return code[PrefixBody]
+  of "name" : return affixes.getName(code)
+  of "body" : return code[PrefixBody]
   else: code.err "Tried to access an unmapped field of Prefix nodes:  " & field
 
 
@@ -42,4 +43,14 @@ proc getInfix *(code :PNode; field :string) :PNode=
   of "left"  : return code[InfixLeft]
   of "right" : return code[InfixRight]
   else: code.err "Tried to access an unmapped field of Prefix nodes:  " & field
+
+
+#_______________________________________
+# @section Postfixes
+#_____________________________
+proc getPostfix *(code :PNode; field :string) :PNode=
+  case field
+  of "name" : return affixes.getName(code)
+  of "body" : return code[PostBody]
+  else: code.err "Tried to access an unmapped field of Postfix nodes:  " & field
 
