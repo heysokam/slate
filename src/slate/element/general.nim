@@ -16,6 +16,7 @@ proc getName *(code :PNode) :PNode=
   const (Name, PublName, Pragma) = (0, 1, 0)
   let name = code[Name]
   if   name.kind == nkIdent      : return code[Name]
+  elif name.kind == nkDotExpr    : return code[Name]
   elif name.kind == nkPostFix    : return code[Name][PublName]
   elif name.kind == nkPragmaExpr : return code[Pragma].getName()
   else: code.err &"Something went wrong when accessing the Name of a {code.kind}. The name field is:  " & $code[Name].kind
@@ -26,6 +27,7 @@ proc getType *(code :PNode) :PNode=
   if   code.kind in {nkIdent,nkEmpty}   : return code
   elif code[Type].kind in TypeSlotKinds : return code[Type]
   elif code[Type].kind == nkBracketExpr : return code[Type][ArrayType].getType()
+  elif code.kind == nkBracketExpr       : return code[ArrayType].getType()
   else: code.err &"Something went wrong when accessing the Type of a {code.kind}. The type field is:  " & $code[Type].kind
 
 
