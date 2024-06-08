@@ -22,7 +22,7 @@ const Nil      * = {nkNilLit}
 const Literals * = Char + Float + Int + UInt + Str
 const SomeLit  * = Nil + Literals
 const SomeCall * = {nkCommand, nkCall, nkCallStrLit}
-const SomeType * = {nkPtrTy, nkVarTy, nkProcTy, nkIteratorTy, nkDistinctTy, nkConstTy, nkRefTy, nkStaticTy, nkOutTy}
+const SomeType * = {nkPtrTy, nkVarTy, nkObjectTy, nkProcTy, nkIteratorTy, nkDistinctTy, nkConstTy, nkRefTy, nkStaticTy, nkOutTy}
 
 
 #_______________________________________

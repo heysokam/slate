@@ -16,7 +16,7 @@ type Kind *{.pure.}= enum
   None, Empty,
   Module, # @note aka. Include and Import
   Ident,
-  Type,
+  Type, TypeDef,
   Proc, Func, Call,
   Var, Let, Const, Asgn
   Literal, RawStr,
