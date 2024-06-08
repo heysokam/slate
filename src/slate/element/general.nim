@@ -60,6 +60,20 @@ proc isPersist *(
          name[Pragma][Name].kind != nkEmpty and
          name[Pragma][Name].strValue == "persist"
 #___________________
+proc isReadonly *(code :PNode) :bool=
+  case code.kind
+  of nkIdent: return false
+  of nkPragmaExpr:
+    const (Name,Pragma) = (0,1)
+    return code.kind == nkPragmaExpr and
+           code[Pragma][Name].kind != nkEmpty and
+           code[Pragma][Name].strValue == "readonly"
+  of nkIdentDefs:
+    const (Type,Value,LastArg) = (^2,^1,^3)
+    for id,arg in code.sons[0..LastArg].pairs:
+      if arg.isReadonly: return true
+  else: code.err "Tried to find readonly condition of an ummapped node kind."
+#___________________
 proc isMutable *(code :PNode; kind :Kind) :bool=
   ## @descr Returns true if the {@arg code} defines a mutable kind
   ensure code, Const, Let, Var, msg= &"Tried to check for mutability of a kind that doesn't support it:  {kind}"
