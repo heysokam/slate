@@ -10,18 +10,15 @@ import ./general
 #_______________________________________
 # @section AST Node Fields
 #_____________________________
+const Name    = 0
+const Inherit = 1
+const Type    = ^1
+const Pragma  = ^1
+const Body    = ^1
 
 
 #_______________________________________
-# @section Affixes: Common Tools
-#_____________________________
-const Type   = ^1
-const Pragma = ^1
-const Name   = 0
-
-
-#_______________________________________
-# @section Prefixes
+# @section Types Node Access
 #_____________________________
 proc get *(code :PNode; field :string) :PNode=
   case field
@@ -32,4 +29,12 @@ proc get *(code :PNode; field :string) :PNode=
     if  hasPragma : return code[Name][Pragma]
     else          : return newNodeI(nkEmpty, code.info)
   else: code.err "Tried to access an unmapped field of Typedef nodes:  " & field
+
+
+#_______________________________________
+# @section Node Properties: Types
+#_____________________________
+proc isPtr *(code :PNode) :bool=
+  ## @descr Returns true if the {@arg code} defines a ptr type
+  result = code.kind == nkPtrTy
 
