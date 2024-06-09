@@ -47,3 +47,36 @@ proc isObj *(code :PNode) :bool=  code.isKind(nkObjectTy)
 proc isProc *(code :PNode) :bool=  code.isKind(nkProcTy)
   ## @descr Returns true if the {@arg code} defines a proc type
 
+
+#_______________________________________
+# @section Proc Types Node Access
+#_____________________________
+##[
+# TODO: Remove
+type Elem *{.pure.}= enum Symbol, Generics, Type
+converter toInt *(d :Elem) :int= d.ord
+#_____________________________
+# TODO: Proc Type access
+proc procRetT  *(code :PNode) :PNode=
+  # Alias for un-confusing property access
+  const Params     = 0
+  const ReturnType = 0
+  # Error check
+  assert code[Elem.Type].kind == nkProcTy
+  assert code[Elem.Type][Params].kind == nkFormalParams
+  assert code[Elem.Type][Params][ReturnType].kind == nkIdent
+  # Return the result
+  result = code[Elem.Type][Params][ReturnType]
+#___________________
+proc procArgs *(code :PNode) :seq[PNode]=
+  # Alias for un-confusing property access
+  const Params     = 0
+  const ReturnType = 0
+  # Error check
+  assert code[Elem.Type].kind == nkProcTy
+  # Return the result
+  for id,arg in code[Elem.Type][Params].pairs:
+    if id == ReturnType: continue
+    result.add arg
+]##
+
