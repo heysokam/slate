@@ -56,3 +56,11 @@ proc get *(code :PNode; field :string; id :SomeInteger= UnknownID) :PNode=
   of "body"     : return code[Body]
   else: code.err "Tried to access an unmapped field of nkProcDef:  " & field
 
+
+#_______________________________________
+# @section Node Properties: Procs
+#_____________________________
+proc hasPragma *(code :PNode) :bool=
+  if code.kind != nkProcDef: code.err "Tried to find if a proc has a pragma, but the node passed is not a proc."
+  result = code[Pragmas].kind != nkEmpty
+
