@@ -34,7 +34,16 @@ proc get *(code :PNode; field :string) :PNode=
 #_______________________________________
 # @section Node Properties: Types
 #_____________________________
-proc isPtr *(code :PNode) :bool=
+proc isKind *(code :PNode; kind :TNodeKind) :bool=
+  if code.kind notin nim.SomeType : return false
+  if   code.kind == kind          : result = true
+  elif code.kind == nkTypeDef     : result = code[Type].isKind(kind)
+  else: code.err "Tried to find if a node is a type, but found an unmapped node kind."
+#_____________________________
+proc isPtr *(code :PNode) :bool=  code.isKind(nkPtrTy)
   ## @descr Returns true if the {@arg code} defines a ptr type
-  result = code.kind == nkPtrTy
+proc isObj *(code :PNode) :bool=  code.isKind(nkObjectTy)
+  ## @descr Returns true if the {@arg code} defines an object type
+proc isProc *(code :PNode) :bool=  code.isKind(nkProcTy)
+  ## @descr Returns true if the {@arg code} defines a proc type
 
