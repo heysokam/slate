@@ -3,8 +3,8 @@
 The tools provided can be used to convert the Nim AST into any language.  
 
 ## How to use
-> _TODO: Example showcase of the API_
-See the [MinC Compiler](https://github.com/heysokam/minc) implementation for a reference of how *Slate is used.  
+> _TODO: Example showcase of the API_  
+> See the [MinC Compiler](https://github.com/heysokam/minc) implementation for a reference of how *Slate is used.  
 
 ## StoS Compiler -vs- Nim Backend Compiler
 ``` md
