@@ -1,7 +1,10 @@
 #:______________________________________________________
 #  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  :
 #:______________________________________________________
+# @deps std
+import std/strformat
 # @deps *Slate
+import ../types
 import ../errors
 import ../nimc as nim
 import ./general
@@ -15,6 +18,12 @@ const Inherit = 1
 const Type    = ^1
 const Pragma  = ^1
 const Body    = ^1
+const Proc    = (
+  Params  : 0,
+  ReturnT : 0,
+  First   : 1,
+  Last    : ^1,
+  ) # << Proc = ( ... )
 
 
 #_______________________________________
@@ -35,10 +44,8 @@ proc get *(code :PNode; field :string) :PNode=
 # @section Node Properties: Types
 #_____________________________
 proc isKind *(code :PNode; kind :TNodeKind) :bool=
-  if code.kind notin nim.SomeType : return false
-  if   code.kind == kind          : result = true
-  elif code.kind == nkTypeDef     : result = code[Type].isKind(kind)
-  else: code.err "Tried to find if a node is a type, but found an unmapped node kind."
+  if code.kind == nkTypeDef : return code[Type].isKind(kind) # Recurse for Typedef
+  if code.kind == kind      : return true
 #_____________________________
 proc isPtr *(code :PNode) :bool=  code.isKind(nkPtrTy)
   ## @descr Returns true if the {@arg code} defines a ptr type
@@ -51,32 +58,29 @@ proc isProc *(code :PNode) :bool=  code.isKind(nkProcTy)
 #_______________________________________
 # @section Proc Types Node Access
 #_____________________________
-##[
-# TODO: Remove
-type Elem *{.pure.}= enum Symbol, Generics, Type
-converter toInt *(d :Elem) :int= d.ord
-#_____________________________
-# TODO: Proc Type access
-proc procRetT  *(code :PNode) :PNode=
-  # Alias for un-confusing property access
-  const Params     = 0
-  const ReturnType = 0
-  # Error check
-  assert code[Elem.Type].kind == nkProcTy
-  assert code[Elem.Type][Params].kind == nkFormalParams
-  assert code[Elem.Type][Params][ReturnType].kind == nkIdent
-  # Return the result
-  result = code[Elem.Type][Params][ReturnType]
+proc getProcRetT (code :PNode) :PNode=
+  let typ = case code.kind
+    of nkTypeDef : code[Type]
+    of nkProcTy  : code
+    else         : code.err "Tried to get the Return Type of a proc type, but the node passed is not a proc."; nil
+  result = typ[Proc.Params][Proc.ReturnT]
 #___________________
-proc procArgs *(code :PNode) :seq[PNode]=
-  # Alias for un-confusing property access
-  const Params     = 0
-  const ReturnType = 0
-  # Error check
-  assert code[Elem.Type].kind == nkProcTy
-  # Return the result
-  for id,arg in code[Elem.Type][Params].pairs:
-    if id == ReturnType: continue
+proc getProcArgs (code :PNode) :PNode=
+  let typ = case code.kind
+    of nkTypeDef : code[Type]
+    of nkProcTy  : code
+    else         : code.err "Tried to get the Args of a proc type, but the node passed is not a proc."; nil
+  result = nim.newNodeI(typ[Proc.Params].kind, code.info)
+  for arg in typ[Proc.Params].sons[Proc.First..Proc.Last]:
     result.add arg
-]##
+#___________________
+proc getProc *(code :PNode; field :string; id :SomeInteger= UnknownID) :PNode=
+  case field
+  of "name"    : return code.getName()
+  of "returnT" : return code.getProcRetT()
+  of "args"    : return code.getProcArgs()
+  of "arg"      :
+    if id == UnknownID: code.err "Tried to access an Argument of a nkProcDef, but its ID was not passed."
+    return code.getProcArgs()[id]
+  else: code.err "Tried to access an unmapped field of Typedef nodes:  " & field
 

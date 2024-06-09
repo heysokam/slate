@@ -100,7 +100,7 @@ proc ensure *(
     of Break:
       if check(code, nkBreakStmt): return true else: continue
     of Type:
-      if check(code, nkPtrTy, nkVarTy, nkObjectTy): return true else: continue
+      if check(code, nkPtrTy, nkVarTy, nkObjectTy, nkProcTy): return true else: continue
     of TypeDef:
       if check(code, nkTypeDef): return true else: continue
     else: code.err &"Tried to access an unmapped Node kind:  {kind}"
