@@ -70,7 +70,7 @@ proc ensure *(
     of Module:
       if check(code, nkIncludeStmt, nkImportStmt): return true else: continue
     of Proc:
-      if check(code, nkProcDef): return true else: continue
+      if check(code, nkProcDef, nkFuncDef): return true else: continue
     of Func:
       if check(code, nkFuncDef): return true else: continue
     of Return:
