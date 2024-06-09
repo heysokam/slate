@@ -10,6 +10,7 @@ import ./element/pragmas   ; export pragmas
 import ./element/calls     ; export calls
 import ./element/affixes   ; export affixes
 import ./element/types     ; export types
+import ./element/arrays    ; export arrays
 
 
 #_______________________________________

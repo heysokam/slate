@@ -74,14 +74,6 @@ proc isReadonly *(code :PNode) :bool=
       if arg.isReadonly: return true
   else: code.err "Tried to find readonly condition of an ummapped node kind."
 #___________________
-proc isMutable *(code :PNode; kind :Kind) :bool=
-  ## @descr Returns true if the {@arg code} defines a mutable kind
-  ensure code, Const, Let, Var, msg= &"Tried to check for mutability of a kind that doesn't support it:  {kind}"
-  result = kind == Kind.Var
-#___________________
-proc isPtr *(code :PNode) :bool=
-  ## @descr Returns true if the {@arg code} defines a ptr type
-  result = code.kind == nkPtrTy
 proc hasStubPragma *(code :PNode) :bool=
   ## @descr Returns true if the given {@arg code} meets all the conditions to be a name that contains a `stub` pragma
   const (Name,Pragma) = (0,1)
@@ -92,21 +84,4 @@ proc hasStubPragma *(code :PNode) :bool=
 #___________________
 proc isDeref *(code :PNode) :bool=  code.kind == nkBracketExpr and code.len == 1
   ## @descr Returns true if the {@arg code} defines a pointer dereference
-#___________________
-proc isArrAccess *(code :PNode) :bool= code.kind == nkBracketExpr and code.len == 2
-  ## @descr Returns true if the {@arg code} defines an array access
-#___________________
-proc isArr *(code :PNode) :bool=
-  ## @descr Returns true if the {@arg code} defines an array type
-  const TypeSlotKinds = {nkIdentDefs, nkConstDef}          # Kinds that contain a valid type at slot [Type]
-  const NameSlotKinds = {nkBracketExpr, nkPtrTy, nkVarTy}  # Kinds that contain a valid type at slot [Name]
-  const (Name,Type) = (0,1)
-  if   code.isArrAccess           : result = false
-  elif code.isDeref               : result = false
-  elif code.kind in nim.SomeLit   : result = false
-  elif code.kind == nkCommand     : result = false  # Commands are considered literals (multi-word types)
-  elif code.kind == nkIdent       : result = code.strValue == "array"
-  elif code.kind in TypeSlotKinds : result = code[Type].isArr()
-  elif code.kind in NameSlotKinds : result = code[Name].isArr()
-  else: code.err &"Tried to check if a node is an array, but found an unmapped kind:  {code.kind}"
 

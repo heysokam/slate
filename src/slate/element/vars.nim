@@ -16,6 +16,7 @@ import ./general
 # 2. Variable's Body  (aka Statement List)
 const Body * = 2
 
+
 #_______________________________________
 # @section Node Access: Variables
 #_____________________________
@@ -25,4 +26,13 @@ proc get *(code :PNode; field :string) :PNode=
   of "type" : return code.getType()
   of "body" : return code[Body]
   else: code.err &"Tried to access an unmapped field of {code.kind}: " & field
+
+
+#_______________________________________
+# @section Node Properties: Variables
+#_____________________________
+proc isMutable *(code :PNode; kind :Kind) :bool=
+  ## @descr Returns true if the {@arg code} defines a mutable kind
+  ensure code, Const, Let, Var, msg= &"Tried to check for mutability of a kind that doesn't support it:  {kind}"
+  result = kind == Kind.Var
 
