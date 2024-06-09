@@ -85,3 +85,25 @@ proc hasStubPragma *(code :PNode) :bool=
 proc isDeref *(code :PNode) :bool=  code.kind == nkBracketExpr and code.len == 1
   ## @descr Returns true if the {@arg code} defines a pointer dereference
 
+
+#_______________________________________
+# @section DotExpr
+#_____________________________
+proc getDotExprRec (code :PNode; idents :var seq[PNode]) :void=
+  ## @descr Recursive add ident nodes from {@arg code} dotExpr into the {@arg idents} list
+  if code.kind == nkDotExpr:
+    const (Next,Name) = (0,^1)
+    if code[Name].kind != nkIdent: code.err &"The dotExpr.getDotExprRec recursive function found a kind that it doesn't understand:  {code[Name].kind}"
+    idents.add code[Name]
+    code[Next].getDotExprRec(idents)
+  elif code.kind == nkIdent:
+    idents.add code
+  else: code.err "The dotExpr.getDotExprRec recursive function reached a not-mapped or unreachable case."
+#_____________________________
+iterator dotExpr *(code :PNode) :PNode=
+  ## @descr Yields every node entry of the {@arg code} dotExpr node
+  if code.kind != nkDotExpr: code.err "The dotExpr iterator only accepts nkDotExpr nodes."
+  var idents :seq[PNode]
+  code.getDotExprRec(idents)
+  for id in countdown(idents.high, idents.low): yield idents[id]
+
