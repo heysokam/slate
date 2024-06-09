@@ -82,6 +82,13 @@ proc isMutable *(code :PNode; kind :Kind) :bool=
 proc isPtr *(code :PNode) :bool=
   ## @descr Returns true if the {@arg code} defines a ptr type
   result = code.kind == nkPtrTy
+proc hasStubPragma *(code :PNode) :bool=
+  ## @descr Returns true if the given {@arg code} meets all the conditions to be a name that contains a `stub` pragma
+  const (Name,Pragma) = (0,1)
+  code.kind == nkPragmaExpr and
+  code[Pragma].kind == nkPragma and
+  code[Pragma][Name].kind == nkIdent and
+  code[Pragma][Name].strValue == "stub"
 #___________________
 proc isDeref *(code :PNode) :bool=  code.kind == nkBracketExpr and code.len == 1
   ## @descr Returns true if the {@arg code} defines a pointer dereference
