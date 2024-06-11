@@ -4,7 +4,6 @@
 # @deps std
 import std/strformat
 # @deps *Slate
-import ../types
 import ../errors
 import ../nimc as nim
 import ./general
@@ -20,12 +19,10 @@ const Name  * = 0
 const Body  * = 1
 
 #_______________________________________
-# @section Node Access: Variables
+# @section Node Access: Pragmas
 #_____________________________
 proc get *(code :PNode; field :string) :PNode=
   ensure code, nkPragma
-  if code[First].kind != nkExprColonExpr and code[First].len != 2:
-    code.err &"Only {{.key:val.}} pragmas are currently supported."
   case field
   of "name" : return code[First].getName()
   of "body" : return code[First][Body]

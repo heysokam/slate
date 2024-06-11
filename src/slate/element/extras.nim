@@ -7,6 +7,7 @@
 import ../errors
 import ../nimc as nim
 import ./general
+import ./pragmas
 
 
 #_______________________________________
@@ -67,4 +68,16 @@ proc isStub *(code :PNode) :bool=
   of nkTypeDef  : return code[Type].kind == nkObjectTy and code[Name].hasStubPragma and code[Type].isStubInherit
   of nkObjectTy : return code.isStubInherit
   else: code.err "Tried to get the stub condition of an unmapped node kind."
+
+
+#_______________________________________
+# @section Extra Node Properties: Pragmas
+#_____________________________
+const FallThrough * = ["fallthrough", "fall_through"]
+proc isFallthrough *(code :PNode) :bool=
+  case code.kind
+  of nkPragma     : pragmas.get(code, "name").strValue() in FallThrough
+  of nkPragmaExpr : code.err "Found a node kind in isFallthrough, but support is not implemented yet."; false
+  of nkStmtList   : code.err "Found a node kind in isFallthrough, but support is not implemented yet."; false
+  else            : false
 
