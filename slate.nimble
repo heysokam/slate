@@ -3,7 +3,7 @@
 #:______________________________________________________
 # Package
 packageName   = "slate"
-version       = "0.5.2"
+version       = "0.5.3"
 author        = "sOkam"
 description   = "*Slate | StoS Compiler Helper for Nim syntax"
 license       = "MIT"

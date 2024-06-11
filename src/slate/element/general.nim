@@ -4,7 +4,6 @@
 # @deps std
 import std/strformat
 # @deps *Slate
-import ../types
 import ../errors
 import ../nimc as nim
 
@@ -14,6 +13,7 @@ import ../nimc as nim
 #_____________________________
 proc getName *(code :PNode) :PNode=
   const (Name, PublName, Pragma) = (0, 1, 0)
+  if code.kind == nkIdent: return code
   let name = code[Name]
   if   name.kind == nkIdent      : return code[Name]
   elif name.kind == nkDotExpr    : return code[Name]
