@@ -61,13 +61,15 @@ proc isPersist *(
          name[Pragma][Name].strValue == "persist"
 #___________________
 proc isReadonly *(code :PNode) :bool=
+  proc ronly(code:PNode):bool= code.kind != nkEmpty and code.strValue == "readonly"
   case code.kind
-  of nkIdent: return false
+  of nkIdent, nkEmpty: return false
   of nkPragmaExpr:
     const (Name,Pragma) = (0,1)
-    return code.kind == nkPragmaExpr and
-           code[Pragma][Name].kind != nkEmpty and
-           code[Pragma][Name].strValue == "readonly"
+    return code[Pragma][Name].ronly
+  of nkPragma:
+    const (Name,) = (0,)
+    return code[Name].ronly
   of nkIdentDefs:
     const (Type,Value,LastArg) = (^2,^1,^3)
     for id,arg in code.sons[0..LastArg].pairs:

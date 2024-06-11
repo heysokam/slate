@@ -13,8 +13,12 @@ import ./general
 #_______________________________________
 # @section AST Node Fields
 #_____________________________
+# 0. Variable's name
+const Name    * = 0
+# 0.^1 Variable's Pragmas
+const Pragmas * = ^1
 # 2. Variable's Body  (aka Statement List)
-const Body * = 2
+const Body    * = 2
 
 
 #_______________________________________
@@ -22,9 +26,13 @@ const Body * = 2
 #_____________________________
 proc get *(code :PNode; field :string) :PNode=
   case field
-  of "name" : return code.getName()
-  of "type" : return code.getType()
-  of "body" : return code[Body]
+  of "name"    : return code.getName()
+  of "type"    : return code.getType()
+  of "body"    : return code[Body]
+  of "pragmas" :
+    let hasPragma = code[Name].kind == nkPragmaExpr
+    if  hasPragma : return code[Name][Pragmas]
+    else          : return newNodeI(nkEmpty, code.info)
   else: code.err &"Tried to access an unmapped field of {code.kind}: " & field
 
 
