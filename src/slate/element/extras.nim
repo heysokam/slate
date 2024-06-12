@@ -65,7 +65,7 @@ proc isStub *(code :PNode) :bool=
   ##  5. Its body must be empty
   const (Name,Inherit,Type, Pragma,Body) = (0,1,^1, ^1,^1)
   case code.kind
-  of nkTypeDef  : return code[Type].kind == nkObjectTy and code[Name].hasStubPragma and code[Type].isStubInherit
+  of nkTypeDef  : return code[Type].kind == nkObjectTy and code[Name].hasPragma("stub") and code[Type].isStubInherit
   of nkObjectTy : return code.isStubInherit
   else: code.err "Tried to get the stub condition of an unmapped node kind."
 

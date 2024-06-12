@@ -39,6 +39,16 @@ proc isPublic *(code :PNode) :bool=
   const (Name, Publ) = (0, 0)
   code[Name].kind != nkIdent and code[Name][Publ].strValue == "*"
 #___________________
+proc hasPragma *(
+    code   : PNode;
+    name   : string;
+  ) :bool=
+  ## @descr Returns true if the {@arg code} is marked with the {@arg name} pragma.
+  const (Name,Pragma) = (0,1)
+  code.kind == nkPragmaExpr and
+  code[Pragma][Name].kind != nkEmpty and
+  code[Pragma][Name].strValue == name
+#___________________
 proc isPersist *(
     code   : PNode;
     indent : SomeInteger;
@@ -56,17 +66,13 @@ proc isPersist *(
   if name.kind notin {nkIdent, nkPostfix, nkPragmaExpr}:
     if crash: name.err "Tried to get the persist pragma from an unmapped name node kind."
     return false
-  return name.kind == nkPragmaExpr and
-         name[Pragma][Name].kind != nkEmpty and
-         name[Pragma][Name].strValue == "persist"
+  return name.hasPragma("persist")
 #___________________
 proc isReadonly *(code :PNode) :bool=
   proc ronly(code:PNode):bool= code.kind != nkEmpty and code.strValue == "readonly"
   case code.kind
   of nkIdent, nkEmpty: return false
-  of nkPragmaExpr:
-    const (Name,Pragma) = (0,1)
-    return code[Pragma][Name].ronly
+  of nkPragmaExpr: return code.hasPragma("readonly")
   of nkPragma:
     const (Name,) = (0,)
     return code[Name].ronly
@@ -75,14 +81,6 @@ proc isReadonly *(code :PNode) :bool=
     for id,arg in code.sons[0..LastArg].pairs:
       if arg.isReadonly: return true
   else: code.err "Tried to find readonly condition of an ummapped node kind."
-#___________________
-proc hasStubPragma *(code :PNode) :bool=
-  ## @descr Returns true if the given {@arg code} meets all the conditions to be a name that contains a `stub` pragma
-  const (Name,Pragma) = (0,1)
-  code.kind == nkPragmaExpr and
-  code[Pragma].kind == nkPragma and
-  code[Pragma][Name].kind == nkIdent and
-  code[Pragma][Name].strValue == "stub"
 #___________________
 proc isDeref *(code :PNode) :bool=  code.kind == nkBracketExpr and code.len == 1
   ## @descr Returns true if the {@arg code} defines a pointer dereference
