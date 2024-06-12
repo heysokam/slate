@@ -100,11 +100,11 @@ proc ensure *(
     of Break:
       if check(code, nkBreakStmt): return true else: continue
     of Type:
-      if check(code, nkPtrTy, nkVarTy, nkObjectTy, nkProcTy): return true else: continue
+      if check(code, nkPtrTy, nkVarTy, nkObjectTy, nkProcTy, nkEnumTy): return true else: continue
     of TypeDef:
       if check(code, nkTypeDef): return true else: continue
     else: code.err &"Tried to access an unmapped Node kind:  {kind}"
-  code.err msg&cfg.Sep&fmt"Node {code.kind} is not a valid kind:  {kinds}."
+  code.err msg&cfg.Sep&fmt"Node {code.kind} is not a mapped or valid kind:  {kinds}."
 #___________________
 proc ensure *(code :PNode; field :string) :void=  ensure code, field.toKind
 
