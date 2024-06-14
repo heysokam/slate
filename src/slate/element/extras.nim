@@ -4,6 +4,7 @@
 # @fileoverview Syntax rules that are not natively defined by Nim
 #__________________________________________________________________|
 # @deps *Slate
+import ../cfg
 import ../errors
 import ../nimc as nim
 import ./general
@@ -16,7 +17,22 @@ import ./pragmas
 func isSpecialCall *(code :PNode) :bool=
   ## @descr Returns true if the {@arg code} meets the conditions to be a Special Call
   if code.kind != nkCall : return false  # Only Calls can be special calls
-  if code.len < 2        : return false  # Calls without arguments cannot be special calls
+  if code.len < 2        : return false  # Calls without arguments cannot be special
+  return true
+#_____________________________
+func isSpecialCommand *(code :PNode) :bool=
+  ## @descr Returns true if the {@arg code} meets the conditions to be a Special Command
+  if code.kind != nkCommand : return false  # Only Commands can be special commands
+  if code.len < 2           : return false  # Commands without arguments cannot be special
+  return true
+#___________________
+proc isDoWhile *(code :PNode) :bool=
+  ## @descr Returns true if the given {@arg code} meets all the conditions to be a doWhile SpecialCommand
+  const (Body,) = (^1,)
+  if not code.isSpecialCommand: return false
+  if not code.len == 3: return false
+  if code.getName().strValue != cfg.Keyword_DoWhile: return false
+  if code[Body].kind != nkStmtList: return false
   return true
 
 
