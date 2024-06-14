@@ -22,12 +22,14 @@ proc getName *(code :PNode) :PNode=
   else: code.err &"Something went wrong when accessing the Name of a {code.kind}. The name field is:  " & $code[Name].kind
 #___________________
 proc getType *(code :PNode) :PNode=
-  const TypeSlotKinds = {nkIdent, nkEmpty, nkCommand, nkPtrTy}  # Kinds that contain a valid type at slot [Type]
-  const (Type,ArrayType) = (1,2)
-  if   code.kind in {nkIdent,nkEmpty}   : return code
-  elif code[Type].kind in TypeSlotKinds : return code[Type]
-  elif code[Type].kind == nkBracketExpr : return code[Type][ArrayType].getType()
-  elif code.kind == nkBracketExpr       : return code[ArrayType].getType()
+  const (Name,Type,ArrayType) = (0,1,2)
+  const TypeSlotKinds = {nkIdentDefs, nkConstDef}  # Kinds that contain a valid type at slot [Type]
+  const SpecialTypes  = {nkCommand}
+  if   code.kind in nim.SomeType  : return code
+  elif code.kind in nim.SomeIdent : return code
+  elif code.kind in SpecialTypes  : return code
+  elif code.kind in TypeSlotKinds : return code[Type].getType()
+  elif code.kind == nkBracketExpr : return code[ArrayType].getType()
   else: code.err &"Something went wrong when accessing the Type of a {code.kind}. The type field is:  " & $code[Type].kind
 
 
