@@ -1,18 +1,22 @@
 //:___________________________________________________________________
 //  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  LGPLv3 or higher  :
 //:___________________________________________________________________
-pub const C = @This();
+pub const C      = @This();
+pub const Func   = @import("./C/func.zig");
+pub const Stmt   = @import("./C/statement.zig").Stmt;
+pub const Expr   = @import("./C/expression.zig").Expr;
+pub const Ident  = @import("./C/ident.zig").Ident;
 pub usingnamespace @import("./C/rules.zig");
-pub const Func  = @import("./C/func.zig");
-pub const Stmt  = @import("./C/statement.zig").Stmt;
-pub const Expr  = @import("./C/expression.zig").Expr;
-pub const Ident = @import("./C/ident.zig").Ident;
+
 
 //______________________________________
 // @section Unit Tests
 //____________________________
 // @deps std
-const std = @import("std");
+const std   = @import("std");
+const prnt  = std.debug.print;
+const check = std.testing.expect;
+const eq    = std.mem.eql;
 
 test "hello.42" {
   var A = std.heap.ArenaAllocator.init(std.heap.page_allocator);
@@ -30,8 +34,8 @@ test "hello.42" {
     .body= body,
     }; // << Func{ ... }
   const out = try std.fmt.allocPrint(A.allocator(), "{s}", .{f});
-  std.debug.print("{s}", .{f});
+  // prnt("{s}", .{f});
 
-  try std.testing.expect(std.mem.eql(u8, out, retT++" "++fname++"(void) { return "++result++"; }\n"));
+  try check(eq(u8, out, retT++" "++fname++"(void) { return "++result++"; }\n"));
 }
 
