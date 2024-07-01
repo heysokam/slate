@@ -1,7 +1,8 @@
-#:______________________________________________________
-#  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  :
-#:______________________________________________________
+#:___________________________________________________________________
+#  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  LGPLv3 or higher  :
+#:___________________________________________________________________
 ## @fileoverview Cable connector to all Element modules
+#_______________________________________________________|
 import ./element/general   ; export general
 import ./element/statement ; export statement
 import ./element/procs     ; export procs

@@ -1,14 +1,14 @@
-#:______________________________________________________
-#  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  :
-#:______________________________________________________
-# std dependencies
+#:___________________________________________________________________
+#  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  LGPLv3 or higher  :
+#:___________________________________________________________________
+# @deps std
 import std/paths
 import std/strformat
 import std/strutils
-# nimc dependencies
+# @deps nimc
 import "$nim"/compiler/[ ast, parser, idents, options, lineinfos, msgs, pathutils, syntaxes ]
 from   "$nim"/compiler/renderer import renderTree
-# *Slate dependencies
+# @deps *Slate
 import ./format
 
 #_______________________________________

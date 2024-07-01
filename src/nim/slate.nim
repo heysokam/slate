@@ -1,6 +1,6 @@
-#:______________________________________________________
-#  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  :
-#:______________________________________________________
+#:___________________________________________________________________
+#  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  LGPLv3 or higher  :
+#:___________________________________________________________________
 ## @fileoverview Cable connector to all *Slate Modules
 import ./slate/types    ; export types     ## @descr Types for the internal and external API
 import ./slate/format   ; export format    ## @descr General text formatting tools
