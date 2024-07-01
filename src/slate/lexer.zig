@@ -170,3 +170,11 @@ pub fn process(L:*Lex) !void {
   }
 }
 
+pub fn report(L:*Lex) void {
+  std.debug.print("--- slate.Lexer ---\n", .{});
+  for (L.res.items(.id), L.res.items(.val)) | id, val | {
+    std.debug.print("{s} : {s}\n", .{@tagName(id), val.items});
+  }
+  std.debug.print("-------------------\n", .{});
+}
+
