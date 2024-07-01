@@ -29,10 +29,9 @@
   //  Only listed files will remain on disk when using the zig package manager.
   .paths = .{
     // Buildsystem
-    "build.zig.zon",
+    "build.zig", "build.zig.zon",
     // Source Code
-    "src/zig/C",
-    "src/zig/C.zig",
+    "src/zig", // Add everything inside folder  ./src/zig/*
     // Documentation
     "license.md",
     "readme.md",
