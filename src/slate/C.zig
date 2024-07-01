@@ -6,6 +6,7 @@ pub const Func   = @import("./C/func.zig");
 pub const Stmt   = @import("./C/statement.zig").Stmt;
 pub const Expr   = @import("./C/expression.zig").Expr;
 pub const Ident  = @import("./C/ident.zig").Ident;
+pub const Ast    = @import("./C/ast.zig");
 pub usingnamespace @import("./C/rules.zig");
 
 
