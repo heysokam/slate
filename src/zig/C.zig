@@ -2,11 +2,12 @@
 //  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  LGPLv3 or higher  :
 //:___________________________________________________________________
 const std  = @import("std");
-const prnt = std.debug.print;
-const cstr = []const u8;
-const Seq  = std.ArrayList;
-const Str  = Seq(u8);
-const todo = ?u8;
+const zstd = @import("./zstd.zig");
+const cstr = zstd.cstr;
+const Seq  = zstd.Seq;
+const todo = zstd.todo;
+const prnt = zstd.prnt;
+
 
 const Include = todo;
 
