@@ -24,6 +24,7 @@ write :bool= true,
 pub const Type = union(enum) {
   number  :Value.Type.Number,
   string  :Value.Type.String,
+  void    :Value.Type.Void,
 
   pub const Number = struct {
     size  :usize,
@@ -34,6 +35,12 @@ pub const Type = union(enum) {
   pub const String = struct {
     kind  :Value.Type.String.Kind,
     pub const Kind = enum { normal, multiline, raw, char };
+  };
+
+  pub const Void = struct { _:void=undefined,
+    pub fn new() Value.Type {
+      return Value.Type{.void= Value.Type.Void{}};
+    }
   };
 };
 
