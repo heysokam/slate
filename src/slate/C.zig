@@ -37,6 +37,6 @@ test "hello.42" {
   const out = try std.fmt.allocPrint(A.allocator(), "{s}", .{f});
   // prnt("{s}", .{f});
 
-  try check(eq(u8, out, retT++" "++fname++"(void) { return "++result++"; }\n"));
+  try check(eq(u8, out, retT++" const "++fname++"(void) { return "++result++"; }\n"));
 }
 

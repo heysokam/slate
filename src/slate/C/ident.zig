@@ -18,6 +18,7 @@ pub const Ident = union(enum) {
 
   pub const Name = struct {
     name :cstr,
+    const Templ = "{s}";
     pub fn format(N :*const Ident.Name, comptime _:[]const u8, _:std.fmt.FormatOptions, writer :anytype) !void {
       try writer.print(Ident.Templ, .{N.name});
     }
@@ -26,8 +27,12 @@ pub const Ident = union(enum) {
   pub const Type = struct {
     name :cstr,
     type :C.Type,
+    mut  :bool= false,
+    const Templ      = "{s}";
+    const ConstTempl = Ident.Type.Templ ++ " const";
     pub fn format(T :*const Ident.Type, comptime _:[]const u8, _:std.fmt.FormatOptions, writer :anytype) !void {
-      try writer.print(Ident.Templ, .{T.name});
+      if (T.mut) { try writer.print(Ident.Type.Templ,      .{T.name}); }
+      else       { try writer.print(Ident.Type.ConstTempl, .{T.name}); }
     }
   };
 
