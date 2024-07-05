@@ -12,7 +12,7 @@ const cstr = zstd.cstr;
 /// @descr Contains the value as a list of chars
 val  :cstr,
 /// @descr Metadata/Information about the Type of the Value
-/// @note A value of null means that it is not typed
+///  @note A value of null means that it is not typed
 typ  :?Value.Type= null,
 /// @descr Whether the value can be read from or not
 read  :bool= true,
@@ -25,6 +25,10 @@ pub const Type = union(enum) {
   number  :Value.Type.Number,
   string  :Value.Type.String,
   void    :Value.Type.Void,
+  any     :Value.Type.Any,
+
+  /// @descr Arbitrary Type. For sending the type-checking responsability to the target Lang compiler.
+  pub const Any = struct { name  :cstr };
 
   pub const Number = struct {
     size  :usize,
