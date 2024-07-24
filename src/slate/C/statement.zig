@@ -5,7 +5,8 @@
 const std = @import("std");
 // @deps zstd
 const zstd = @import("../../zstd.zig");
-const Seq  = zstd.Seq;
+const seq  = zstd.seq;
+const cstr = zstd.cstr;
 // @deps *Slate.C
 const Expr = @import("./expression.zig").Expr;
 
@@ -27,7 +28,7 @@ pub const Stmt = union(enum) {
   // Incl    :Stmt.Include,
   // Blck    :Stmt.Block,
 
-  pub fn format(S :*const Stmt, comptime f:[]const u8, o:std.fmt.FormatOptions, writer :anytype) !void {
+  pub fn format (S :*const Stmt, comptime f:cstr, o:std.fmt.FormatOptions, writer :anytype) !void {
     switch (S.*) {
       .Retrn => try Stmt.Return.format(&S.Retrn,f,o,writer),
     }
@@ -36,12 +37,12 @@ pub const Stmt = union(enum) {
   pub const Return = struct {
     body  :?Expr= null,
 
-    pub fn new(E :Expr) Stmt {
+    pub fn new (E :Expr) Stmt {
       return Stmt{ .Retrn= Stmt.Return{ .body= E } };
     }
     const BaseTempl = "return";
     const Templ     = BaseTempl ++ " {?s}";
-    pub fn format(R :*const Stmt.Return, comptime _:[]const u8, _:std.fmt.FormatOptions, writer :anytype) !void {
+    pub fn format (R :*const Stmt.Return, comptime _:cstr, _:std.fmt.FormatOptions, writer :anytype) !void {
       if (R.body == null) { try writer.print(Stmt.Return.BaseTempl, .{});         }
       else                { try writer.print(Stmt.Return.Templ,     .{R.body}); }
     }
@@ -57,10 +58,11 @@ pub const Stmt = union(enum) {
   // const Block   = todo;
   const Templ = "{s};";
   pub const List = struct {
-    data  :?Seq(Stmt),
-    pub fn init(A :std.mem.Allocator) @This() { return List{.data= Seq(Stmt).init(A)}; }
-    pub fn append(L :*Stmt.List, val :Stmt) !void { try L.data.?.append(val); }
-    pub fn format(L :*const Stmt.List, comptime _:[]const u8, _:std.fmt.FormatOptions, writer :anytype) !void {
+    data  :?Data,
+    const Data = seq(Stmt);
+    pub fn create (A :std.mem.Allocator) @This() { return List{.data= Data.init(A)}; }
+    pub fn add (L :*Stmt.List, val :Stmt) !void { try L.data.?.append(val); }
+    pub fn format (L :*const Stmt.List, comptime _:cstr, _:std.fmt.FormatOptions, writer :anytype) !void {
       if (L.data == null or L.data.?.items.len == 0) return;
       for (L.data.?.items) | stmt | {
         try writer.print(Stmt.Templ, .{stmt});

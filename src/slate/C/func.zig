@@ -7,7 +7,7 @@ const std = @import("std");
 // @deps zstd
 const zstd = @import("../../zstd.zig");
 const cstr = zstd.cstr;
-const Seq  = zstd.Seq;
+const seq  = zstd.seq;
 // @deps *Slate.C
 const Ident = @import("./ident.zig").Ident;
 const Stmt  = @import("./statement.zig").Stmt;
@@ -22,9 +22,9 @@ body  :Func.Body= undefined,
 pub const Body = struct {
   data  :Stmt.List,
   const Templ = " {{ {s} }}\n";
-  pub fn init(A :std.mem.Allocator) @This() { return Body{.data= Stmt.List{.data= Seq(Stmt).init(A)}}; }
-  pub fn append(B :*Func.Body, val :Stmt) !void { try B.data.data.?.append(val); }
-  pub fn format(B :*const Func.Body, comptime _:[]const u8, _:std.fmt.FormatOptions, writer :anytype) !void {
+  pub fn create (A :std.mem.Allocator) @This() { return Body{.data= Stmt.List.create(A)}; }
+  pub fn add (B :*Func.Body, val :Stmt) !void { try B.data.data.?.append(val); }
+  pub fn format (B :*const Func.Body, comptime _:[]const u8, _:std.fmt.FormatOptions, writer :anytype) !void {
     if (B.data.data == null or B.data.data.?.items.len == 0) return;
     try writer.print(Func.Body.Templ, .{B.data});
   }
@@ -38,8 +38,9 @@ pub const Attr = enum {
   const Templ = "{s}";
 
   pub const List = struct {
-    data :?Seq(Attr),
-    pub fn format(L :*const Func.Attr.List, comptime _:[]const u8, _:std.fmt.FormatOptions, writer :anytype) !void {
+    data :?Data,
+    const Data = seq(Attr);
+    pub fn format (L :*const Func.Attr.List, comptime _:cstr, _:std.fmt.FormatOptions, writer :anytype) !void {
       if (L.data == null or L.data.?.items.len == 0) return;
       for (L.data.?.items, 0..) | A, id | { _=id;
         try writer.print(Attr.Templ, .{@tagName(A)});
@@ -53,15 +54,16 @@ pub const Arg = struct {
   name  :Ident.Name,
 
   const Templ = "{s} {s}";
-  pub fn format(arg :*const Func.Arg, comptime _:[]const u8, _:std.fmt.FormatOptions, writer :anytype) !void {
+  pub fn format(arg :*const Func.Arg, comptime _:cstr, _:std.fmt.FormatOptions, writer :anytype) !void {
     try writer.print(Func.Arg.Templ, .{arg.type, arg.name});
   }
 
   const List = struct {
-    data :?Seq(Func.Arg),
+    data :?Data,
+    const Data = seq(Func.Arg);
 
     const SepTempl = ", ";
-    pub fn format(L :*const Func.Arg.List, comptime _:[]const u8, _:std.fmt.FormatOptions, writer :anytype) !void {
+    pub fn format (L :*const Func.Arg.List, comptime _:cstr, _:std.fmt.FormatOptions, writer :anytype) !void {
       if (L.data == null or L.data.?.items.len == 0) {
         try writer.print("void", .{});
         return;
@@ -76,7 +78,7 @@ pub const Arg = struct {
   };
 };
 
-pub fn new(args :struct {
+pub fn new (args :struct {
   name :cstr,
   retT :cstr,
 }) Func {
@@ -87,7 +89,7 @@ pub fn new(args :struct {
 const BaseTempl  = "{s}{s} {s}({s})";
 const ProtoTempl = BaseTempl ++ ";\n";
 const DefTempl   = BaseTempl ++ "{s}";
-pub fn format(F :*const Func, comptime _:[]const u8, _:std.fmt.FormatOptions, writer :anytype) !void {
+pub fn format (F :*const Func, comptime _:cstr, _:std.fmt.FormatOptions, writer :anytype) !void {
   try writer.print(Func.DefTempl, .{
     F.attr,  // 0. Attributes
     F.retT,  // 1. Return type
