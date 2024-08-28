@@ -6,18 +6,21 @@ pub const Ast = @This();
 const std = @import("std");
 // @deps zstd
 const zstd = @import("../../zstd.zig");
-const Seq  = zstd.Seq;
+const seq  = zstd.seq;
+const cstr = zstd.cstr;
 // @deps minim
 pub usingnamespace @import("./rules.zig");
 pub const Node   = @import("./node.zig").Node;
 
+/// @descr Contains the allocator used by the AST
+A     :std.mem.Allocator,
 /// @descr Contains the list of Top-Level nodes of the AST
 list  :Node.List,
 
 /// @descr Returns an empty {@link Ast} object
-pub fn newEmpty () Ast { return Ast{.list = Ast.Node.List{}}; }
+pub fn newEmpty () Ast { return Ast{.list= Ast.Node.List{}, .A= std.heap.page_allocator}; }
 /// @descr Creates a new empty {@link Ast} object with its data correctly initialized.
-pub fn create (A :std.mem.Allocator) Ast { return Ast{.list= Node.List.create(A)}; }
+pub fn create (A :std.mem.Allocator) Ast { return Ast{.list= Node.List.create(A), .A= A}; }
 /// @descr Releases all memory used by the Node.List
 pub fn destroy (L :*Ast) void { L.list.destroy(); }
 /// @descr Returns true if the AST has no nodes in its {@link Ast.list} field
@@ -34,5 +37,12 @@ pub fn report (ast :*const Ast) void {
   std.debug.print("..*Slate.C.Codegen.........\n", .{});
   std.debug.print("{s}", .{ast});
   std.debug.print("...........................\n", .{});
+}
+
+pub fn write (ast :*const Ast, trg :cstr) !void {
+  const code = try std.fmt.allocPrint(ast.A, "{s}", .{ast});
+  defer ast.A.free(code);
+  try std.fs.cwd().makePath(std.fs.path.dirname(trg) orelse ".");
+  try zstd.files.write(code, trg, .{});
 }
 

@@ -27,8 +27,8 @@ test "hello.42" {
   const fname  = "main";
   const result = "42";
 
-  var body = Func.Body.init(A.allocator());
-  try body.append(Stmt.Return.new(Expr.Literal.Int.new(.{ .val= result })));
+  var body = Func.Body.create(A.allocator());
+  try body.add(Stmt.Return.new(Expr.Literal.Int.new(.{ .val= result })));
   const f = Func{
     .retT= Ident.Type{ .name= retT, .type= .i32 },
     .name= Ident.Name{ .name= fname },

@@ -5,6 +5,7 @@
 //_________________________________________________________________________________________|
 // @deps std
 const std = @import("std");
+const Dir = std.fs.Dir;
 
 //______________________________________
 // @section Types
@@ -21,4 +22,13 @@ pub const ByteBuffer = str;
 //____________________________
 pub const prnt = std.debug.print;
 pub const fail = std.debug.panic;
+
+
+pub const files = struct {
+  pub fn write (src :cstr, trg :cstr, args:struct{
+      dir :Dir= std.fs.cwd(),
+    }) !void {
+    try args.dir.writeFile(.{.sub_path= trg, .data= src});
+  }
+};
 
