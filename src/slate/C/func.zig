@@ -20,9 +20,10 @@ args  :Func.Arg.List= undefined,
 body  :Func.Body= undefined,
 
 pub const Body = struct {
-  data  :Stmt.List,
+  data  :Data,
+  const Data = Stmt.List;
   const Templ = " {{ {s} }}\n";
-  pub fn create (A :std.mem.Allocator) @This() { return Body{.data= Stmt.List.create(A)}; }
+  pub fn create (A :std.mem.Allocator) @This() { return @This(){.data= Data.create(A)}; }
   pub fn add (B :*Func.Body, val :Stmt) !void { try B.data.data.?.append(val); }
   pub fn format (B :*const Func.Body, comptime _:[]const u8, _:std.fmt.FormatOptions, writer :anytype) !void {
     if (B.data.data == null or B.data.data.?.items.len == 0) return;
@@ -35,11 +36,13 @@ pub const Attr = enum {
   static, Inline,
   Noreturn, noreturn_C11, noreturn_GNU,
 
-  const Templ = "{s}";
+  const Templ = "{s} ";
 
   pub const List = struct {
     data :?Data,
     const Data = seq(Attr);
+    pub fn create (A :std.mem.Allocator) @This() { return @This(){.data= Data.init(A)}; }
+    pub fn add (B :*Func.Attr.List, val :Attr) !void { try B.data.?.append(val); }
     pub fn format (L :*const Func.Attr.List, comptime _:cstr, _:std.fmt.FormatOptions, writer :anytype) !void {
       if (L.data == null or L.data.?.items.len == 0) return;
       for (L.data.?.items, 0..) | A, id | { _=id;
@@ -61,7 +64,7 @@ pub const Arg = struct {
   const List = struct {
     data :?Data,
     const Data = seq(Func.Arg);
-
+    pub fn create (A :std.mem.Allocator) @This() { return @This(){.data= Data.init(A)}; }
     const SepTempl = ", ";
     pub fn format (L :*const Func.Arg.List, comptime _:cstr, _:std.fmt.FormatOptions, writer :anytype) !void {
       if (L.data == null or L.data.?.items.len == 0) {

@@ -43,8 +43,8 @@ pub const Stmt = union(enum) {
     const BaseTempl = "return";
     const Templ     = BaseTempl ++ " {?s}";
     pub fn format (R :*const Stmt.Return, comptime _:cstr, _:std.fmt.FormatOptions, writer :anytype) !void {
-      if (R.body == null) { try writer.print(Stmt.Return.BaseTempl, .{});         }
-      else                { try writer.print(Stmt.Return.Templ,     .{R.body}); }
+      if (R.body == null or R.body.? == .Empty) try writer.print(Stmt.Return.BaseTempl, .{})
+      else                                      try writer.print(Stmt.Return.Templ,     .{R.body});
     }
   };
 
