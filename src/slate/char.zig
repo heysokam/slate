@@ -63,8 +63,27 @@ pub fn isQuote(C :u8) bool {
 }
 
 //__________________
+/// @descr Returns whether or not the {@arg C} is a parenthesis or a bracket symbol
+pub fn isPar(C :u8) bool {
+  return switch (C) {
+    '(',')', '[',']' , '{','}' => true,
+    else => false,
+  };
+}
+
+//__________________
+/// @descr Returns whether or not the {@arg C} is a parenthesis or a bracket symbol
+pub fn isSemicolon(C :u8) bool {
+  return switch (C) {
+    ';' => true,
+    else => false,
+  };
+}
+
+
+//__________________
 /// @descr Returns whether or not the {@arg C} is a character that should trigger a context switch
 pub fn isContextChange(C :u8) bool {
-  return isWhitespace(C) or isQuote(C) or isOperator(C);
+  return isWhitespace(C) or isQuote(C) or isOperator(C) or isPar(C) or isSemicolon(C);
 }
 

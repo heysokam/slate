@@ -144,6 +144,9 @@ fn star (L:*Lex) !void { try L.append_single(Lx.Id.star); }
 /// @descr Processes a single `:` character into a Lexeme, and adds it to the {@arg L.res} result.
 fn colon (L:*Lex) !void { try L.append_single(Lx.Id.colon); }
 //__________________________
+/// @descr Processes a single `:` character into a Lexeme, and adds it to the {@arg L.res} result.
+fn semicolon (L:*Lex) !void { try L.append_single(Lx.Id.semicolon); }
+//__________________________
 /// @descr Processes a single ` ` character into a Lexeme, and adds it to the {@arg L.res} result.
 fn space (L:*Lex) !void { try L.append_single(Lx.Id.space); }
 //__________________________
@@ -162,6 +165,7 @@ pub fn process(L:*Lex) !void {
     '*'                        => try L.star(),
     '(', ')'                   => try L.paren(),
     ':'                        => try L.colon(),
+    ';'                        => try L.semicolon(),
     '='                        => try L.eq(),
     ' '                        => try L.space(),
     '\n'                       => try L.newline(),

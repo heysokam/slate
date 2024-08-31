@@ -27,7 +27,7 @@ pub const Type = union(enum) {
   void    :Value.Type.Void,
   any     :Value.Type.Any,
 
-  /// @descr Arbitrary Type. For sending the type-checking responsability to the target Lang compiler.
+  /// @descr Arbitrary Type. For sending the type-checking responsibility to the target Lang compiler.
   pub const Any = struct { name  :cstr };
 
   pub const Number = struct {

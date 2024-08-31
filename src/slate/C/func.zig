@@ -42,7 +42,7 @@ pub const Attr = enum {
     data :?Data,
     const Data = seq(Attr);
     pub fn create (A :std.mem.Allocator) @This() { return @This(){.data= Data.init(A)}; }
-    pub fn add (B :*Func.Attr.List, val :Attr) !void { try B.data.?.append(val); }
+    pub fn add (L :*Func.Attr.List, val :Func.Attr) !void { try L.data.?.append(val); }
     pub fn format (L :*const Func.Attr.List, comptime _:cstr, _:std.fmt.FormatOptions, writer :anytype) !void {
       if (L.data == null or L.data.?.items.len == 0) return;
       for (L.data.?.items, 0..) | A, id | { _=id;
@@ -61,11 +61,13 @@ pub const Arg = struct {
     try writer.print(Func.Arg.Templ, .{arg.type, arg.name});
   }
 
-  const List = struct {
+  pub const List = struct {
     data :?Data,
     const Data = seq(Func.Arg);
     pub fn create (A :std.mem.Allocator) @This() { return @This(){.data= Data.init(A)}; }
+    pub fn add (L :*Func.Arg.List, val :Func.Arg) !void { try L.data.?.append(val); }
     const SepTempl = ", ";
+    fn last (L :*const Func.Arg.List, id :usize) bool { return id == L.data.?.items.len-1; }
     pub fn format (L :*const Func.Arg.List, comptime _:cstr, _:std.fmt.FormatOptions, writer :anytype) !void {
       if (L.data == null or L.data.?.items.len == 0) {
         try writer.print("void", .{});
@@ -73,9 +75,7 @@ pub const Arg = struct {
       }
       for (L.data.?.items, 0..) | arg, id | {
         try writer.print(Func.Arg.Templ, .{arg.type, arg.name});
-        if (id != 0 and id != L.data.?.items.len) {
-          try writer.print(Func.Arg.List.SepTempl, .{});
-        }
+        if (!L.last(id)) try writer.print(Func.Arg.List.SepTempl, .{});
       }
     }
   };
