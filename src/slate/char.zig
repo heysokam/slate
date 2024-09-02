@@ -73,44 +73,19 @@ pub fn isPar (C :u8) bool {
 
 //__________________
 /// @descr Returns whether or not the {@arg C} is a semicolon symbol
-pub fn isSemicolon (C :u8) bool {
-  return switch (C) {
-    ';' => true,
-    else => false,
-  };
-}
+pub fn isSemicolon (C :u8) bool { return C == ';'; }
 //__________________
 /// @descr Returns whether or not the {@arg C} is a colon symbol
-pub fn isColon (C :u8) bool {
-  return switch (C) {
-    ':' => true,
-    else => false,
-  };
-}
+pub fn isColon (C :u8) bool { return C == ':'; }
+//__________________
+/// @descr Returns whether or not the {@arg C} is a dot symbol
+pub fn isDot (C :u8) bool { return C == '.'; }
 //__________________
 /// @descr Returns whether or not the {@arg C} is a comma symbol
-pub fn isDot (C :u8) bool {
-  return switch (C) {
-    ',' => true,
-    else => false,
-  };
-}
+pub fn isComma (C :u8) bool { return C == ','; }
 //__________________
-/// @descr Returns whether or not the {@arg C} is a comma symbol
-pub fn isComma (C :u8) bool {
-  return switch (C) {
-    ',' => true,
-    else => false,
-  };
-}
-//__________________
-/// @descr Returns whether or not the {@arg C} is a comma symbol
-pub fn isHash (C :u8) bool {
-  return switch (C) {
-    '#' => true,
-    else => false,
-  };
-}
+/// @descr Returns whether or not the {@arg C} is a hash symbol
+pub fn isHash (C :u8) bool { return C == '#'; }
 
 //__________________
 /// @descr Returns whether or not the {@arg C} is a parenthesis or a bracket symbol
