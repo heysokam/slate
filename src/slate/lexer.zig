@@ -40,11 +40,11 @@ res  :Lx.List,
 
 //__________________________
 /// @descr Returns the character located in the current position of the buffer
-fn ch(L:*Lex) u8 { return L.buf.items[L.pos]; }
+fn ch (L:*Lex) u8 { return L.buf.items[L.pos]; }
 
 //__________________________
 /// @descr Creates a new empty Lexer object.
-pub fn create(A :std.mem.Allocator) Lex {
+pub fn create (A :std.mem.Allocator) Lex {
   return Lex {
     .A   = A,
     .pos = 0,
@@ -55,7 +55,7 @@ pub fn create(A :std.mem.Allocator) Lex {
 
 //__________________________
 /// @descr Creates a new Lexer object from the given {@arg data}.
-pub fn create_with(A :std.mem.Allocator, data :[]const u8) !Lex {
+pub fn create_with (A :std.mem.Allocator, data :[]const u8) !Lex {
   var result = Lex{
     .A   = A,
     .pos = 0,
@@ -69,21 +69,21 @@ pub fn create_with(A :std.mem.Allocator, data :[]const u8) !Lex {
 
 //__________________________
 /// @descr Frees all resources owned by the Lexer object.
-pub fn destroy(L:*Lex) void {
+pub fn destroy (L:*Lex) void {
   L.buf.deinit();
   L.res.deinit(L.A);
 }
 
 //__________________________
 /// @descr Adds a single character to the last lexeme of the {@arg L.res} Lexer result.
-fn append_toLast(L:*Lex, C :u8) !void {
+fn append_toLast (L:*Lex, C :u8) !void {
   const id = L.res.len-1;
   try L.res.items(.val)[id].append(C);
 }
 
 //__________________________
 /// @descr Processes an identifier into a Lexeme, and adds it to the {@arg L.res} result.
-fn ident(L:*Lex) !void {
+fn ident (L:*Lex) !void {
   try L.res.append(L.A, Lx{
     .id  = Lx.Id.ident,
     .val = ByteBuffer.init(L.A),
@@ -99,7 +99,7 @@ fn ident(L:*Lex) !void {
 
 //__________________________
 /// @descr Processes a number into a Lexeme, and adds it to the {@arg L.res} result.
-fn number(L:*Lex) !void {
+fn number (L:*Lex) !void {
   try L.res.append(L.A, Lx{
     .id  = Lx.Id.number,
     .val = ByteBuffer.init(L.A),
@@ -115,7 +115,7 @@ fn number(L:*Lex) !void {
 
 //__________________________
 /// @descr Adds a single {@arg Lx} lexeme with {@arg id} to the result, and appends a single character into its {@arg Lx.val} field.
-fn append_single(L:*Lex, id :Lx.Id) !void {
+fn append_single (L:*Lex, id :Lx.Id) !void {
   try L.res.append(L.A, Lx{
     .id  = id,
     .val = ByteBuffer.init(L.A),
@@ -124,12 +124,32 @@ fn append_single(L:*Lex, id :Lx.Id) !void {
 }
 
 //__________________________
-/// @descr Processes a single `(` character into a Lexeme, and adds it to the {@arg L.res} result.
-fn paren(L:*Lex) !void {
+/// @descr Processes a single `(` or `)` character into a Lexeme, and adds it to the {@arg L.res} result.
+fn paren (L:*Lex) !void {
   const id = switch(L.ch()) {
     '(' => Lx.Id.paren_L,
     ')' => Lx.Id.paren_R,
     else => |char| fail("Unknown Paren character '{c}' (0x{X})", .{char, char})
+  };
+  try L.append_single(id);
+}
+//__________________________
+/// @descr Processes a single `{` or `}` character into a Lexeme, and adds it to the {@arg L.res} result.
+fn brace (L:*Lex) !void {
+  const id = switch(L.ch()) {
+    '{' => Lx.Id.brace_L,
+    '}' => Lx.Id.brace_R,
+    else => |char| fail("Unknown Brace character '{c}' (0x{X})", .{char, char})
+  };
+  try L.append_single(id);
+}
+//__________________________
+/// @descr Processes a single `[` or `]` characte[ into a Lexeme, and adds it to the {@arg L.res} result.
+fn bracket (L:*Lex) !void {
+  const id = switch(L.ch()) {
+    '[' => Lx.Id.bracket_L,
+    ']' => Lx.Id.bracket_R,
+    else => |char| fail("Unknown Bracket character '{c}' (0x{X})", .{char, char})
   };
   try L.append_single(id);
 }
@@ -138,14 +158,35 @@ fn paren(L:*Lex) !void {
 /// @descr Processes a single `=` character into a Lexeme, and adds it to the {@arg L.res} result.
 fn eq (L:*Lex) !void { try L.append_single(Lx.Id.eq); }
 //__________________________
+/// @descr Processes a single `@` character into a Lexeme, and adds it to the {@arg L.res} result.
+fn at (L:*Lex) !void { try L.append_single(Lx.Id.at); }
+//__________________________
 /// @descr Processes a single `*` character into a Lexeme, and adds it to the {@arg L.res} result.
 fn star (L:*Lex) !void { try L.append_single(Lx.Id.star); }
 //__________________________
 /// @descr Processes a single `:` character into a Lexeme, and adds it to the {@arg L.res} result.
 fn colon (L:*Lex) !void { try L.append_single(Lx.Id.colon); }
 //__________________________
-/// @descr Processes a single `:` character into a Lexeme, and adds it to the {@arg L.res} result.
+/// @descr Processes a single `;` character into a Lexeme, and adds it to the {@arg L.res} result.
 fn semicolon (L:*Lex) !void { try L.append_single(Lx.Id.semicolon); }
+//__________________________
+/// @descr Processes a single `.` character into a Lexeme, and adds it to the {@arg L.res} result.
+fn dot (L:*Lex) !void { try L.append_single(Lx.Id.dot); }
+//__________________________
+/// @descr Processes a single `,` character into a Lexeme, and adds it to the {@arg L.res} result.
+fn comma (L:*Lex) !void { try L.append_single(Lx.Id.comma); }
+//__________________________
+/// @descr Processes a single `#` character into a Lexeme, and adds it to the {@arg L.res} result.
+fn hash (L:*Lex) !void { try L.append_single(Lx.Id.hash); }
+//__________________________
+/// @descr Processes a single `'` character into a Lexeme, and adds it to the {@arg L.res} result.
+fn quote_S (L:*Lex) !void { try L.append_single(Lx.Id.quote_S); }
+//__________________________
+/// @descr Processes a single `"` character into a Lexeme, and adds it to the {@arg L.res} result.
+fn quote_D (L:*Lex) !void { try L.append_single(Lx.Id.quote_D); }
+//__________________________
+/// @descr Processes a single '`' character into a Lexeme, and adds it to the {@arg L.res} result.
+fn quote_B (L:*Lex) !void { try L.append_single(Lx.Id.quote_B); }
 //__________________________
 /// @descr Processes a single ` ` character into a Lexeme, and adds it to the {@arg L.res} result.
 fn space (L:*Lex) !void { try L.append_single(Lx.Id.space); }
@@ -164,9 +205,18 @@ pub fn process(L:*Lex) !void {
     '0'...'9'                  => try L.number(),
     '*'                        => try L.star(),
     '(', ')'                   => try L.paren(),
+    '{', '}'                   => try L.brace(),
+    '[', ']'                   => try L.bracket(),
     ':'                        => try L.colon(),
     ';'                        => try L.semicolon(),
+    '.'                        => try L.dot(),
+    ','                        => try L.comma(),
     '='                        => try L.eq(),
+    '@'                        => try L.at(),
+    '#'                        => try L.hash(),
+    '\''                       => try L.quote_S(),
+    '\"'                       => try L.quote_D(),
+    '`'                        => try L.quote_B(),
     ' '                        => try L.space(),
     '\n'                       => try L.newline(),
     else => |char| fail("Unknown first character '{c}' (0x{X})", .{char, char})
