@@ -10,12 +10,24 @@ const Dir = std.fs.Dir;
 //______________________________________
 // @section Types
 //____________________________
-pub const todo = ?u8;
-pub const cstr = []const u8;
-pub const seq  = std.ArrayList;
-pub const str  = seq(u8);
-pub const List = std.MultiArrayList;
-pub const ByteBuffer = str;
+pub const todo        = ?u8;
+pub const cstr        = []const u8;
+pub const seq         = std.ArrayList;
+pub const str         = seq(u8);
+pub const List        = std.MultiArrayList;
+pub const ByteBuffer  = str;
+pub const Map         = std.StaticStringMap;
+pub const StringTable = std.StringHashMap;
+
+
+pub fn DataList (T :type) type {
+  return struct {
+    pub const Entries = seq(T);
+    entries :?Entries=  null,
+    pub fn create (A :std.mem.Allocator) @This() { return @This(){.entries= Entries.init(A)}; }
+    pub fn add (L :*@This(), val :T) !void { try L.entries.?.append(val); }
+  };
+}
 
 //______________________________________
 // @section Logging
