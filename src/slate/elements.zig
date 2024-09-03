@@ -4,5 +4,8 @@
 //! @fileoverview Cable connector to all of the element modules
 //______________________________________________________________|
 pub const Ident  = @import("./element/ident.zig").Ident;
-pub const Value  = @import("./element/value.zig").Value;
+pub const Type   = @import("./element/type.zig").Type;
+pub const Data   = @import("./element/data.zig").Data;
 pub const Pragma = @import("./element/pragma.zig").Pragma;
+pub const Expr   = @import("./element/expression.zig").Expr;
+pub const Stmt   = @import("./element/statement.zig").Stmt;
