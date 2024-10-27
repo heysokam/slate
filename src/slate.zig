@@ -3,7 +3,6 @@
 //:___________________________________________________________________
 //! @fileoverview Cable Connector to all *Slate Modules and tools.
 //_________________________________________________________________|
-pub const C      = @import("./slate/C.zig");
 pub const Ch     = @import("./slate/char.zig");
 pub const Lx     = @import("./slate/lexeme.zig");
 pub const Lex    = @import("./slate/lexer.zig");
@@ -13,3 +12,6 @@ pub const Data   = @import("./slate/elements.zig").Data;
 pub const Pragma = @import("./slate/elements.zig").Pragma;
 pub const Expr   = @import("./slate/elements.zig").Expr;
 pub const Stmt   = @import("./slate/elements.zig").Stmt;
+//__________________________________________________________
+pub const Node   = @import("./slate/elements.zig").Node;
+pub const Proc   = @import("./slate/elements.zig").Proc;

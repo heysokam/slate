@@ -9,3 +9,7 @@ pub const Data   = @import("./element/data.zig").Data;
 pub const Pragma = @import("./element/pragma.zig").Pragma;
 pub const Expr   = @import("./element/expression.zig").Expr;
 pub const Stmt   = @import("./element/statement.zig").Stmt;
+//__________________________________________________________
+pub const Node   = @import("./element/node.zig").Node;
+pub const Proc   = @import("./element/proc.zig").Proc;
+
