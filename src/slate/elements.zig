@@ -11,5 +11,6 @@ pub const Expr   = @import("./element/expression.zig").Expr;
 pub const Stmt   = @import("./element/statement.zig").Stmt;
 //__________________________________________________________
 pub const Node   = @import("./element/node.zig").Node;
+pub const Root   = @import("./element/root.zig").Root;
 pub const Proc   = @import("./element/proc.zig").Proc;
 
