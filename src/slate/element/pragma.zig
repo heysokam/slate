@@ -37,11 +37,13 @@ pub const Pragma = union(enum) {
     }
   }
 
-  pub const List = struct {
-    const Data = zstd.seq(Pragma);
-    data :?Data,
-    pub fn create (A :std.mem.Allocator) @This() { return @This(){.data= Data.init(A)}; }
-    pub fn add (L :*Pragma.List, val :Pragma) !void { try L.data.?.append(val); }
-  };
+  pub const List = zstd.set.Unordered(Pragma);
+  // pub const List = struct {
+  //   const Data = zstd.set.Unordered(Pragma);
+  //   data :?Data,
+  //   pub fn create (A :std.mem.Allocator) @This() { return @This(){.data= Data.create(A)}; }
+  //   pub fn add (L :*Pragma.List, val :Pragma) !void { try L.data.?.incl(val); }
+  //   pub fn has (L :*Pragma.List, val :Pragma) bool { return L.data != null and L.data.?.contains(val); }
+  // };
 };
 
