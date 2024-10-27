@@ -3,9 +3,10 @@
 //:___________________________________________________________________
 //! @fileoverview Cable Connector to all *Slate Modules and tools.
 //_________________________________________________________________|
+pub const Gen    = @import("./slate/gen.zig").Gen;
 pub const Ch     = @import("./slate/char.zig");
-pub const Lx     = @import("./slate/lexeme.zig");
-pub const Lex    = @import("./slate/lexer.zig");
+pub const Lx     = @import("./slate/lex/lexeme.zig");
+pub const Lex    = @import("./slate/lexer.zig").Lex;
 pub const Ident  = @import("./slate/elements.zig").Ident;
 pub const Type   = @import("./slate/elements.zig").Type;
 pub const Data   = @import("./slate/elements.zig").Data;

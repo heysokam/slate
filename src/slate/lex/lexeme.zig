@@ -6,14 +6,35 @@
 //! @in For the Tokenizer process of the target language.
 //________________________________________________________|
 pub const Lx = @This();
+// @deps std
+const std = @import("std");
 // @deps zstd
-const zstd = @import("../zstd.zig");
-const ByteBuffer = zstd.ByteBuffer;
+const zstd = @import("../../zstd.zig");
 
 /// @field {@link Lx.id} The Id of the Lexeme
-id   :Id,
+id   :Lx.Id,
 /// @field {@link Lx.val} The string value of the Lexeme
-val  :ByteBuffer,
+val  :zstd.ByteBuffer,
+
+
+pub fn create (
+    I : Lx.Id,
+    A : std.mem.Allocator
+  ) !Lx {
+  return Lx{
+    .id  = I,
+    .val = zstd.ByteBuffer.init(A)};
+} //:: Lx.create
+
+pub fn create_with (
+    I : Lx.Id,
+    V : zstd.ByteBuffer,
+  ) !Lx {
+  return Lx{.id= I, .val= try V.clone()};
+} //:: Lx.create
+
+pub fn destroy (L:*Lx) !void { L.val.deinit(); }
+
 
 /// @descr {@link Lx.id} Valid kinds for Lexemes
 pub const Id = enum {
