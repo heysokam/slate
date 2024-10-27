@@ -25,17 +25,6 @@ pub const Type = union(enum) {
     mut     :bool=     false,  // FIX: Should not be here
     ptr     :bool=     false,  // FIX: Should not be here
     pragma  :?Pragma=  null,
-
-    // const to = struct {
-    //   fn c (T :*const Type.Any, _:std.mem.Allocator) !C.Type {
-    //     return C.Type.Any.new(
-    //       T.name, .{
-    //       .mut = T.mut,
-    //       .ptr = T.ptr,
-    //       });
-    //   }
-    // };
-    // pub const toC = to.c;
   };
 
   /// @descr Arbitrary Type. For sending the type-checking responsibility to the target Lang compiler.
@@ -45,18 +34,6 @@ pub const Type = union(enum) {
     mut     :bool=     false,  // FIX: Should not be here
     ptr     :bool=     false,  // FIX: Should not be here
     pragma  :?Pragma=  null,
-
-    // const to = struct {
-    //   fn c (T :*const Type.Array, A :std.mem.Allocator) !C.Type {
-    //     return try C.Type.Array.new(
-    //       T.type.getName(), .{
-    //       .count = T.count orelse "",
-    //       .mut   = T.type.isMut(),
-    //       .ptr   = T.type.isPtr(),
-    //       }, A);
-    //   }
-    // };
-    // pub const toC = to.c;
   };
 
   pub const Number = struct {
@@ -76,17 +53,6 @@ pub const Type = union(enum) {
   pub const Void = struct { _:void=undefined,
     pub fn new() Type { return Type{.void= Type.Void{}}; }
   };
-
-  // const convert = struct {
-  //   fn toC (T :*const Type, A :std.mem.Allocator) !C.Type {
-  //     return switch (T.*) {   // TODO: Other non-any types
-  //       .any   => | t | try t.toC(A),
-  //       .array => | t | try t.toC(A),
-  //       else => unreachable,
-  //       };
-  //   }
-  // };
-  // pub const toC = Type.convert.toC;
 
   pub fn getName (T :*const Type) cstr {
     return switch (T.*) {
