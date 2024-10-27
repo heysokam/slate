@@ -28,9 +28,10 @@ pub const Node = union(enum) {
     pub fn add (L :*Node.List, val :Node) !void { try L.data.?.append(val); }
   };
 
+  const Templ = "{s}";
   pub fn format (N :*const Node, comptime _:[]const u8, _:std.fmt.FormatOptions, writer :anytype) !void {
     switch (N.*) {
-    .Func => try writer.print("{s}", .{N.*.Func}),
+    .Func => try writer.print(Node.Templ, .{N.*.Func}),
     // else  => |node| fail("Unknown C.Node Kind '{s}'", .{@tagName(node)})
     }
   }

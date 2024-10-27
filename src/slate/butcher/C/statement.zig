@@ -41,10 +41,10 @@ pub const Stmt = union(enum) {
       return Stmt{ .Retrn= Stmt.Return{ .body= E } };
     }
     const BaseTempl = "return";
-    const Templ     = BaseTempl ++ " {?s}";
+    const Templ     = BaseTempl ++ " {s}";
     pub fn format (R :*const Stmt.Return, comptime _:cstr, _:std.fmt.FormatOptions, writer :anytype) !void {
       if (R.body == null or R.body.? == .Empty) try writer.print(Stmt.Return.BaseTempl, .{})
-      else                                      try writer.print(Stmt.Return.Templ,     .{R.body});
+      else                                      try writer.print(Stmt.Return.Templ,     .{R.body orelse Expr{.Empty={}}});
     }
   };
 
@@ -59,15 +59,15 @@ pub const Stmt = union(enum) {
   const Templ = "{s};";
   pub const List = struct {
     data  :?Data,
-    const Data = seq(Stmt);
-    pub fn create (A :std.mem.Allocator) @This() { return List{.data= Data.init(A)}; }
-    pub fn add (L :*Stmt.List, val :Stmt) !void { try L.data.?.append(val); }
+    const Data = zstd.DataList(Stmt);
+    pub fn create (A :std.mem.Allocator) @This() { return List{.data= Data.create(A)}; }
+    pub fn add (L :*Stmt.List, val :Stmt) !void { try L.data.?.add(val); }
     pub fn format (L :*const Stmt.List, comptime _:cstr, _:std.fmt.FormatOptions, writer :anytype) !void {
-      if (L.data == null or L.data.?.items.len == 0) return;
-      for (L.data.?.items) | stmt | {
+      if (L.data == null or L.data.?.entries == null or L.data.?.entries.?.items.len == 0) return;
+      for (L.data.?.entries.?.items) | stmt | {
         try writer.print(Stmt.Templ, .{stmt});
       }
-      if (L.data.?.items.len > 1) { try writer.print("\n", .{}); }
+      if (L.data.?.entries.?.items.len > 1) { try writer.print("\n", .{}); }
     }
   };
 };

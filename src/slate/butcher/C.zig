@@ -6,8 +6,9 @@ pub const Func   = @import("./C/func.zig");
 pub const Stmt   = @import("./C/statement.zig").Stmt;
 pub const Expr   = @import("./C/expression.zig").Expr;
 pub const Ident  = @import("./C/ident.zig").Ident;
+pub const Type   = @import("./C/type.zig").Type;
+pub const Data   = @import("./C/data.zig").Data;
 pub const Ast    = @import("./C/ast.zig");
-pub usingnamespace @import("./C/rules.zig");
 
 
 //______________________________________
@@ -30,8 +31,8 @@ test "hello.42" {
   var body = Func.Body.create(A.allocator());
   try body.add(Stmt.Return.new(Expr.Literal.Int.new(.{ .val= result })));
   const f = Func{
-    .retT= Ident.Type{ .name= retT, .type= .i32 },
-    .name= Ident.Name{ .name= fname },
+    .retT= Type.Any.new(retT, .{}),
+    .name= Ident{ .name= fname },
     .body= body,
     }; // << Func{ ... }
   const out = try std.fmt.allocPrint(A.allocator(), "{s}", .{f});
