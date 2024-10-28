@@ -3,6 +3,7 @@
 //:___________________________________________________________________
 //! @fileoverview Minimal duplicate of `heysokam/zstd` tools, to not depend on any module.
 //_________________________________________________________________________________________|
+pub const zstd = @This();
 // @deps std
 const std = @import("std");
 const Dir = std.fs.Dir;
@@ -12,8 +13,9 @@ const Dir = std.fs.Dir;
 //____________________________
 pub const todo        = ?u8;
 pub const cstr        = []const u8;
-pub const seq         = std.ArrayList;
+pub const mstr        = []u8;
 pub const str         = seq(u8);
+pub const seq         = std.ArrayList;
 pub const List        = std.MultiArrayList;
 pub const ByteBuffer  = str;
 pub const Map         = std.StaticStringMap;
@@ -67,4 +69,22 @@ pub const set = struct {
     };
   }
 };
+
+
+//______________________________________
+// @section Assertions
+//____________________________
+pub const ensure = zstd.validate.always;
+pub const assert = zstd.validate.debug;
+pub const validate = struct {
+  const builtin = @import("builtin");
+  pub fn always (cond :bool, msg :zstd.cstr) void {
+    if (!cond) std.debug.panic(msg++"\n", .{});
+  } //:: zstd.validate.always
+
+  pub fn debug (cond :bool, msg :zstd.cstr) void {
+    if (!std.debug.runtime_safety) return;
+    if (!cond) std.debug.panic(msg++"\n", .{});
+  } //:: zstd.validate.debug
+}; //:: zstd.validate
 
