@@ -8,7 +8,9 @@ pub const zig = @This();
 // @deps zstd
 const zstd = @import("../../zstd.zig");
 // @deps *Slate
-const Node = @import("../../slate.zig").Node;
+const slate  = @import("../../slate.zig");
+const source = slate.source;
+const Node   = slate.Node;
 
 //______________________________________
 /// @descr
@@ -16,8 +18,10 @@ const Node = @import("../../slate.zig").Node;
 ///  The generated code will be appended to the {@arg result}.
 pub fn render (
     N      : Node,
+    src    : source.Code,
+    types  : slate.Type.List,
     result : *zstd.str,
-  ) !void {_=N;
+  ) !void {_=N; _=src; _=types;
   zstd.fail("TODO: UNIMPLEMENTED\n", .{});
   try result.appendSlice("TODO: UNIMPLEMENTED | Zig Codegen");
 }

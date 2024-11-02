@@ -8,8 +8,9 @@ pub const c = @This();
 // @deps zstd
 const zstd = @import("../../zstd.zig");
 // @deps *Slate
-const slate = @import("../../slate.zig");
-const proc  = @import("./C/proc.zig");
+const slate  = @import("../../slate.zig");
+const proc   = @import("./C/proc.zig");
+const source = slate.source;
 
 //______________________________________
 /// @descr
@@ -17,10 +18,12 @@ const proc  = @import("./C/proc.zig");
 ///  The generated code will be appended to the {@arg result}.
 pub fn render (
     N      : slate.Node,
+    src    : source.Code,
+    types  : slate.Type.List,
     result : *zstd.str,
   ) !void {
   switch (N) {
-    .Proc => try proc.render(N, result),
+    .Proc => try proc.render(N, src, types, result),
   }
 }
 
