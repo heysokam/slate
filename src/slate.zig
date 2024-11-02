@@ -4,6 +4,8 @@
 //! @fileoverview Cable Connector to all *Slate Modules and tools.
 //_________________________________________________________________|
 pub const Gen    = @import("./slate/gen.zig").Gen;
+pub const source = @import("./slate/source.zig").source;
+pub const Loc    = source.Loc;
 pub const Ch     = @import("./slate/char.zig");
 pub const Lx     = @import("./slate/lex/lexeme.zig");
 pub const Lex    = @import("./slate/lexer.zig").Lex;
