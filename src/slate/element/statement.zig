@@ -31,9 +31,7 @@ pub const Stmt = union(enum) {
   pub const Return = struct {
     body  :?Expr= null,
 
-    pub fn new(E :Expr) Stmt {
-      return Stmt{ .Retrn= Stmt.Return{ .body= E } };
-    }
+    pub fn create (E :Expr) Stmt { return Stmt{ .Retrn= Stmt.Return{ .body= E } }; }
   };
 
   // pub const Assign  = todo;
@@ -44,6 +42,13 @@ pub const Stmt = union(enum) {
   // pub const Discard = todo;
   // pub const Comment = todo;
   // pub const Block   = todo;
+
+  pub fn destroy (S :*Stmt) void {
+    switch (S.*) {
+      .Retrn => {},
+      }
+  } //:: slate.Stmt.destroy
+
   pub const List = zstd.DataList(Stmt);
 };
 

@@ -16,7 +16,7 @@ pub fn paren (L:*Lex) !void {
     ')' => Lx.Id.paren_R,
     else => |char| Lex.fail("Unknown Paren character '{c}' (0x{X})", .{char, char})
   };
-  try L.append_single(id);
+  try L.add_single(id);
 }
 //__________________________
 /// @descr Processes a single `{` or `}` character into a Lexeme, and adds it to the {@arg L.res} result.
@@ -26,7 +26,7 @@ pub fn brace (L:*Lex) !void {
     '}' => Lx.Id.brace_R,
     else => |char| Lex.fail("Unknown Brace character '{c}' (0x{X})", .{char, char})
   };
-  try L.append_single(id);
+  try L.add_single(id);
 }
 //__________________________
 /// @descr Processes a single `[` or `]` characte[ into a Lexeme, and adds it to the {@arg L.res} result.
@@ -36,39 +36,39 @@ pub fn bracket (L:*Lex) !void {
     ']' => Lx.Id.bracket_R,
     else => |char| Lex.fail("Unknown Bracket character '{c}' (0x{X})", .{char, char})
   };
-  try L.append_single(id);
+  try L.add_single(id);
 }
 //__________________________
 /// @descr Processes a single `=` character into a Lexeme, and adds it to the {@arg L.res} result.
-pub fn eq (L:*Lex) !void { try L.append_single(Lx.Id.eq); }
+pub fn eq (L:*Lex) !void { try L.add_single(Lx.Id.eq); }
 //__________________________
 /// @descr Processes a single `@` character into a Lexeme, and adds it to the {@arg L.res} result.
-pub fn at (L:*Lex) !void { try L.append_single(Lx.Id.at); }
+pub fn at (L:*Lex) !void { try L.add_single(Lx.Id.at); }
 //__________________________
 /// @descr Processes a single `*` character into a Lexeme, and adds it to the {@arg L.res} result.
-pub fn star (L:*Lex) !void { try L.append_single(Lx.Id.star); }
+pub fn star (L:*Lex) !void { try L.add_single(Lx.Id.star); }
 //__________________________
 /// @descr Processes a single `:` character into a Lexeme, and adds it to the {@arg L.res} result.
-pub fn colon (L:*Lex) !void { try L.append_single(Lx.Id.colon); }
+pub fn colon (L:*Lex) !void { try L.add_single(Lx.Id.colon); }
 //__________________________
 /// @descr Processes a single `;` character into a Lexeme, and adds it to the {@arg L.res} result.
-pub fn semicolon (L:*Lex) !void { try L.append_single(Lx.Id.semicolon); }
+pub fn semicolon (L:*Lex) !void { try L.add_single(Lx.Id.semicolon); }
 //__________________________
 /// @descr Processes a single `.` character into a Lexeme, and adds it to the {@arg L.res} result.
-pub fn dot (L:*Lex) !void { try L.append_single(Lx.Id.dot); }
+pub fn dot (L:*Lex) !void { try L.add_single(Lx.Id.dot); }
 //__________________________
 /// @descr Processes a single `,` character into a Lexeme, and adds it to the {@arg L.res} result.
-pub fn comma (L:*Lex) !void { try L.append_single(Lx.Id.comma); }
+pub fn comma (L:*Lex) !void { try L.add_single(Lx.Id.comma); }
 //__________________________
 /// @descr Processes a single `#` character into a Lexeme, and adds it to the {@arg L.res} result.
-pub fn hash (L:*Lex) !void { try L.append_single(Lx.Id.hash); }
+pub fn hash (L:*Lex) !void { try L.add_single(Lx.Id.hash); }
 //__________________________
 /// @descr Processes a single `'` character into a Lexeme, and adds it to the {@arg L.res} result.
-pub fn quote_S (L:*Lex) !void { try L.append_single(Lx.Id.quote_S); }
+pub fn quote_S (L:*Lex) !void { try L.add_single(Lx.Id.quote_S); }
 //__________________________
 /// @descr Processes a single `"` character into a Lexeme, and adds it to the {@arg L.res} result.
-pub fn quote_D (L:*Lex) !void { try L.append_single(Lx.Id.quote_D); }
+pub fn quote_D (L:*Lex) !void { try L.add_single(Lx.Id.quote_D); }
 //__________________________
 /// @descr Processes a single '`' character into a Lexeme, and adds it to the {@arg L.res} result.
-pub fn quote_B (L:*Lex) !void { try L.append_single(Lx.Id.quote_B); }
+pub fn quote_B (L:*Lex) !void { try L.add_single(Lx.Id.quote_B); }
 

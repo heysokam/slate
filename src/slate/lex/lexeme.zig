@@ -10,30 +10,24 @@ pub const Lx = @This();
 const std = @import("std");
 // @deps zstd
 const zstd = @import("../../zstd.zig");
+const cstr = zstd.cstr;
+// @deps *Slate
+const source = @import("../source.zig").source;
 
+/// @field {@link Lx.loc} The location (start,end) of the string value of the Lexeme in the referenced source string.
+loc  :source.Loc,
 /// @field {@link Lx.id} The Id of the Lexeme
 id   :Lx.Id,
-/// @field {@link Lx.val} The string value of the Lexeme
-val  :zstd.ByteBuffer,
 
 
-pub fn create (
-    I : Lx.Id,
-    A : std.mem.Allocator
-  ) !Lx {
-  return Lx{
-    .id  = I,
-    .val = zstd.ByteBuffer.init(A)};
-} //:: Lx.create
+pub fn create2 (I :Lx.Id, L :source.Loc) Lx { return Lx{.id= I, .loc= L}; }
+pub fn create  (I :Lx.Id, start :source.Pos, end :source.Pos) Lx { return Lx.create2(I, source.Loc{.start= start, .end= end}); }
 
-pub fn create_with (
-    I : Lx.Id,
-    V : zstd.ByteBuffer,
-  ) !Lx {
-  return Lx{.id= I, .val= try V.clone()};
-} //:: Lx.create
-
-pub fn destroy (L:*Lx) !void { L.val.deinit(); }
+pub const slice = struct {
+  /// @descr Returns the string value of the Lexeme located at the {@arg L.loc} of {@arg src}.
+  pub fn from (L :*const Lx, src :source.Code) source.Code { return src[L.loc.start..L.loc.end]; }
+}; //:: Lx.slice
+pub const from = slice.from;
 
 
 /// @descr {@link Lx.id} Valid kinds for Lexemes

@@ -6,10 +6,10 @@
 //!  Represents a unique entity in the code
 //__________________________________________|
 pub const Ident = @This();
-// @deps zstd
-const zstd = @import("../../zstd.zig");
-const cstr = zstd.cstr;
+// @deps *Slate
+const source = @import("../source.zig").source;
 
-/// @descr Describes the name used to access the target entity
-name  :cstr
+/// @descr Describes the location in the source code of the name used to access the target entity
+name  :source.Loc,
 
+pub fn from (I:*const Ident, src :source.Code) source.Code { return src[I.name.start..I.name.end]; }

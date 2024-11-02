@@ -6,10 +6,8 @@ pub const Proc = @This();
 const std = @import("std");
 // @deps zstd
 const zstd = @import("../../zstd.zig");
-const cstr = zstd.cstr;
 // @deps *Slate
-const Stmt  = @import("./statement.zig").Stmt;
-const Ident = @import("./ident.zig").Ident;
+const Type = @import("./type.zig").Type;
 
 
 //______________________________________
@@ -17,64 +15,74 @@ const Ident = @import("./ident.zig").Ident;
 //____________________________
 pub const Name    = @import("./ident.zig").Ident;
 pub const Arg     = @import("./data.zig").Data;
+pub const Args    = Arg.List;
 pub const Pragma  = @import("./pragma.zig").Pragma;
-pub const ReturnT = @import("./type.zig").Type;
+pub const Pragmas = Pragma.List;
+pub const ReturnT = Type.List.Pos;
+pub const Body    = @import("./statement.zig").Stmt.List;
 
 //______________________________________
 // @section Type Properties
 //____________________________
-pure     :bool,
 name     :Proc.Name,
+pure     :bool= false,
 public   :bool= false,
-args     :?Proc.Arg.List= null,
+args     :?Proc.Args= null,
 retT     :?Proc.ReturnT= null,
-pragmas  :?Proc.Pragma.List,
+pragmas  :?Proc.Pragmas= null,
 body     :?Proc.Body= null,
-
-
-//______________________________________
-// @section Body
-//____________________________
-pub const Body = struct {
-  data  :Stmt.List,
-  pub fn init (A :std.mem.Allocator) @This() { return Body{.data= Stmt.List.create(A)}; }
-  pub fn add (B :*@This(), val :Stmt) !void { try B.data.add(val); }
-};
 
 
 //______________________________________
 // @section Data Management
 //____________________________
 /// @descr Returns an empty {@link Proc} object
-pub fn newEmpty () Proc {
-  return Proc{
-    .pure    = false,
-    .name    = Proc.Name{.name= "UndefinedProc"},
-    .public  = false,
-    .args    = null,
-    .retT    = Proc.ReturnT.Void.new(),
-    .pragmas = null,
-    .body    = null,
-  }; // << Proc{ ... }
+pub fn create_empty () Proc {
+  return Proc{.name= Proc.Name{.name= .{}}};
 }
+//____________________________
+/// @descr Returns a {@link Proc} that contains the given properties
+pub fn create (
+    name      : zstd.str,
+    in        : struct {
+      retT    : ?Proc.ReturnT = null,
+      args    : ?Proc.Args    = null,
+      body    : ?Proc.Body    = null,
+      pragmas : ?Proc.Pragmas = null,
+      public  : bool          = false,
+      pure    : bool          = false,
+  }) Proc {
+  return Proc{
+    .pure    = in.pure,
+    .name    = Proc.Name{.name= name},
+    .public  = in.public,
+    .args    = in.args,
+    .retT    = in.retT,
+    .pragmas = in.pragmas,
+    .body    = in.body,
+  }; // << Proc{ ... }
+} //:: slate.Proc.create
 
-pub fn new (args :struct {
-  pure    :bool,
-  name    :cstr,
-  public  :bool= false,
-  args    :?Proc.Arg.List= null,
-  retT    :Proc.ReturnT,
-  pragmas :?Proc.Pragma.List= null,
-  body    :?Proc.Body= null,
-}) Proc {
-  return Proc{
-    .pure    = args.pure,
-    .name    = Ident{.name= args.name},
-    .public  = args.public,
-    .args    = args.args,
-    .retT    = args.retT,
-    .pragmas = args.pragmas,
-    .body    = args.body,
-  }; // << Proc{ ... }
-}
+// name     :Proc.Name,
+// pure     :bool= false,
+// public   :bool= false,
+// args     :?Proc.Args= null,
+// pragmas  :?Proc.Pragmas= null,
+// body     :?Proc.Body= null,
+
+pub fn destroy (P :*Proc, types :Type.List) void {
+  if (P.args != null) {
+    const args = P.args.?.items();
+    for (0..args.len) |id| if (args[id].type != null and types.at(args[id].type.?) != null) {
+      var t = types.at(args[id].type.?);
+      t.?.destroy();
+      } else {};
+    P.args.?.destroy();
+  }
+  if (P.pragmas != null) P.pragmas.?.destroy();
+  if (P.body != null) {
+    for (0..P.body.?.len()) |id| P.body.?.items()[id].destroy();
+    P.body.?.destroy();
+  }
+} //:: slate.Proc.destroy
 

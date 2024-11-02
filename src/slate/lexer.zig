@@ -15,10 +15,12 @@ pub const Lex = @This();
 const std = @import("std");
 // @deps zstd
 const zstd = @import("../zstd.zig");
-const cstr = zstd.cstr;
 // @deps *Slate
-const Ch = @import("./char.zig");
-const Lx = @import("./lex/lexeme.zig");
+const source  = @import("./source.zig").source;
+const Ch      = @import("./char.zig");
+const Lx      = @import("./lex/lexeme.zig");
+pub const Loc = source.Loc;
+pub const Pos = source.Pos;
 
 
 //______________________________________
@@ -29,52 +31,34 @@ const Lx = @import("./lex/lexeme.zig");
 //____________________________
 /// @field {@link Lex.A} The Allocator used by the Lexer
 A    :std.mem.Allocator,
-/// @field {@link Lex.pos} The current {@link Lex.buf} position read by the Lexer.
-pos  :u64,
-/// @field {@link Lex.buf} The sequence of ascii characters that are being lexed.
-buf  :zstd.ByteBuffer,
+/// @field {@link Lex.pos} The current {@link Lex.src} position read by the Lexer.
+pos  :source.Pos,
+/// @field {@link Lex.src} The sequence of ascii characters that are being lexed.
+src  :source.Code,
 /// @field {@link Lex.res} The list of lexemes resulting from the Lexer process.
 res  :Lx.List,
 
 
 //__________________________
-/// @descr Creates a new empty Lexer object.
-pub fn create (A :std.mem.Allocator) Lex {
-  return Lex {
-    .A   = A,
-    .pos = 0,
-    .buf = zstd.ByteBuffer.init(A),
-    .res = Lx.List{},
-  };
-}
-
-//__________________________
 /// @descr Creates a new Lexer object from the given {@arg src} code data.
-pub fn create_with (A :std.mem.Allocator, src :cstr) !Lex {
-  var result = Lex{
+pub fn create (A :std.mem.Allocator, src :source.Code) !Lex {
+  return Lex{
     .A   = A,
     .pos = 0,
-    .buf = try zstd.ByteBuffer.initCapacity(A, src.len),
+    .src = src,
     .res = Lx.List{},
-  };
-  result.buf.appendSliceAssumeCapacity(src[0..]);
-  return result;
+    };
 }
 
 //__________________________
 /// @descr Frees all resources owned by the Lexer object.
 pub fn destroy (L:*Lex) void {
-  L.buf.deinit();
-  for (L.res.items(.val)) |lx| lx.deinit();
   L.res.deinit(L.A);
 }
 
 //__________________________
 pub fn cloneResult (L:*Lex) !Lx.List {
-  var result = Lx.List{};
-  for (0..L.res.len) |id| try result.append(L.A,
-    try Lx.create_with(L.res.items(.id)[id], L.res.items(.val)[id]));
-  return result;
+  return L.res.clone(L.A);
 }
 //______________________________________
 // @section Lexer: General Tools
@@ -86,10 +70,11 @@ pub const prnt   = zstd.prnt;
 
 //______________________________________
 // @section Lexer: State/Data Management
-pub const data = @import("./lex/data.zig");
-pub const append_toLast = data.append.toLast;
-pub const append_single = data.append.single;
-pub const ch            = data.ch;
+pub const data       = @import("./lex/data.zig");
+pub const add        = data.add.one;
+pub const add_toLast = data.add.toLast;
+pub const add_single = data.add.single;
+pub const ch         = data.ch;
 
 
 //______________________________________
@@ -122,7 +107,7 @@ pub const space      = whitespace.space;
 //__________________________
 /// @descr Lexer Process: Entry Point
 pub fn process(L:*Lex) !void {
-  while (L.pos < L.buf.items.len) : (L.pos += 1) {
+  while (L.pos < L.src.len) : (L.pos += 1) {
     const c = L.ch();
     switch (c) {
     'a'...'z',

@@ -5,8 +5,9 @@
 const std = @import("std");
 // @deps zstd
 const zstd = @import("../../zstd.zig");
-const cstr = zstd.cstr;
 const todo = zstd.todo;
+// @deps *Slate
+const source = @import("../source.zig").source;
 
 
 //______________________________________
@@ -30,35 +31,37 @@ pub const Expr = union(enum) {
     Ch     :Literal.Char,
 
     const Float = struct {
-      val   :cstr,
-      size  :todo= null,
-      pub fn new(args :struct {
-          val : cstr,
-        }) Expr {
-        return Expr{ .Lit= Expr.Literal{ .Flt= Expr.Literal.Float{ .val= args.val }}};
-      }
-    };
+      loc   :source.Loc,
+      size  :todo= null,  // TODO: Pass in float size
+      pub fn create (loc :source.Loc) Expr {
+        return Expr{ .Lit= Expr.Literal{ .Flt= Expr.Literal.Float{ .loc= loc }}};
+      } //:: slate.Expr.Literal.Float.create
+    }; //:: slate.Expr.Literal.Float
 
     pub const Int = struct {
-      val     :cstr,
-      signed  :todo=  null,
-      size    :todo=  null,
+      loc     :source.Loc,
+      signed  :todo=  null,  // TODO: Pass in Int sign
+      size    :todo=  null,  // TODO: Pass in int size
 
-      pub fn new(args :struct {
-          val : cstr,
-        }) Expr {
-        return Expr{ .Lit= Expr.Literal{ .Intgr= Expr.Literal.Int{ .val= args.val }}};
-      }
-    };
+      pub fn create (loc :source.Loc) Expr {
+        return Expr{ .Lit= Expr.Literal{ .Intgr= Expr.Literal.Int{ .loc= loc }}};
+      } //:: slate.Expr.Literal.Int.create
+    }; //:: slate.Expr.Literal.Int
 
     pub const Char = struct {
-      val  :cstr,
-    };
+      loc  :source.Loc,
+      pub fn create (loc :source.Loc) Expr {
+        return Expr{ .Lit= Expr.Literal{ .Ch= Expr.Literal.Char{ .loc= loc }}};
+      } //:: slate.Expr.Literal.Char.create
+    }; //:: slate.Expr.Literal.Char
 
     pub const String = struct {
-      val       :cstr,
-      multiline :todo= null,
-    };
+      loc       :source.Loc,
+      multiline :todo= null,  // TODO: Pass in multiline case
+      pub fn create (loc :source.Loc) Expr {
+        return Expr{ .Lit= Expr.Literal{ .Strng= Expr.Literal.String{ .loc= loc }}};
+      } //:: slate.Expr.Literal.String.create
+    }; //:: slate.Expr.Literal.String
   };
-};
+}; //:: slate.Expr
 

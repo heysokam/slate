@@ -15,19 +15,18 @@ pub const Data = @This();
 const std = @import("std");
 // @deps zstd
 const zstd = @import("../../zstd.zig");
-const cstr = zstd.cstr;
 // @deps *Slate
 pub const Ident = @import("./ident.zig").Ident;
-pub const Type  = @import("./type.zig").Type;
 pub const Expr  = @import("./expression.zig").Expr;
 pub const List  = zstd.DataList(Data);
+pub const Type  = @import("./type.zig").Type;
 
 
 /// @descr Describes the identifier used to target the desired Data
 id     :Ident,
-/// @descr Metadata/Information about the Type of the Value
-///  @note A value of null means that it is not typed
-type   :?Type=  null,
+/// @descr Position inside the Type.List of the Metadata/Information about the Type of the Value
+/// @note A value of null means that it is untyped
+type   :?Type.List.Pos=  null,
 /// @descr Describes the value of the data, or the expression that generates it
 /// @note
 ///  A value of null means that the data does not represent any value syntactically or semantically
