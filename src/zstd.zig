@@ -62,6 +62,8 @@ pub fn DataList (T :type) type {
     pub fn last (L :*const @This()) @This().Pos { return if (!L.empty()) L.entries.?.items.len-1 else @This().pos.Invalid; }
     /// @descr Returns the item contained in {@arg L} at position {@arg P}. Returns null otherwise.
     pub fn at (L :*const @This(), P :@This().Pos) ?T { return if (!L.empty()) L.entries.?.items[P] else null; }
+    /// @descr Sets the item contained in {@arg L} at position {@arg P} to the value of {@arg V}
+    pub fn set (L :*const @This(), P :@This().Pos, V :T) void { if (!L.empty()) L.entries.?.items[P] = V; }
   };
 } //:: zstd.DataList
 
@@ -93,12 +95,12 @@ pub const files = struct {
 /// @todo Rename to UnorderedSet and implement set as OrderedSet by default
 pub const set = struct {
   pub fn Unordered (comptime T :type) type {
-  // pub fn set (comptime T :type) type {
     return struct {
       data  :Data,
       const Data = std.AutoHashMap(T, void);
       pub const Iter = Data.KeyIterator;
       pub fn create   (A :std.mem.Allocator) @This() { return @This(){.data= std.AutoHashMap(T, void).init(A)}; }
+      pub fn clone    (S :*const @This()) !@This() { return @This(){.data= try S.data.clone()}; }
       pub fn destroy  (S :*@This()) void { S.data.deinit(); }
       pub fn incl     (S :*@This(), val :T) !void { _ = try S.data.getOrPut(val); }
       pub fn excl     (S :*@This(), val :T)  void { _ = S.data.remove(val) ; }

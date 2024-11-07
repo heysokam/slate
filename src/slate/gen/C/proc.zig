@@ -12,11 +12,9 @@ const source = slate.source;
 const base   = @import("../base.zig");
 const spc    = base.spc;
 const Ptr    = base.Ptr;
-const Void   = base.Void;
 const nl     = base.nl;
 const indent = base.indent;
-const Return = base.Return;
-const Const  = base.Const;
+const kw     = base.kw;
 
 const attributes = struct {
   const pfx          = "__attribute__((";
@@ -54,7 +52,7 @@ const returnT = struct {
       types  : slate.Type.List,
       result : *zstd.str,
     ) !void {
-    if (N.Proc.retT == null) { try result.appendSlice(Void); return; }
+    if (N.Proc.retT == null) { try result.appendSlice(kw.Void); return; }
     const retT = types.at(N.Proc.retT.?);
     if (retT == null) return error.genC_Proc_ReturnTypeMustExistWhenDeclared;
     const tName = retT.?.getLoc(types);
@@ -95,12 +93,12 @@ const args = struct {
     try result.appendSlice(tName.from(src));
     try result.appendSlice(spc);
     if (argT.?.isPtr(types)) {
-      if (!argT.?.isMut(types)) try result.appendSlice(Const++spc);
+      if (!argT.?.isMut(types)) try result.appendSlice(kw.Const++spc);
       try result.appendSlice(Ptr);
       try result.appendSlice(spc);
     }
     if (!arg.write) {
-      try result.appendSlice(Const);
+      try result.appendSlice(kw.Const);
       try result.appendSlice(spc);
     }
   }
@@ -120,7 +118,7 @@ const args = struct {
       result : *zstd.str,
     ) !void {
     try result.appendSlice(start);
-    if (N.Proc.args == null) { try result.appendSlice(Void); try result.appendSlice(end); return; }
+    if (N.Proc.args == null) { try result.appendSlice(kw.Void); try result.appendSlice(end); return; }
     for (N.Proc.args.?.entries.?.items, 0..) |arg, id| {
       try proc.args.typ( N, arg, src, types, result);
       try proc.args.name(N, arg, src, result);
@@ -162,7 +160,7 @@ const body = struct {
       ) !void {
       if (!oneline(N)) try indent(result, 1);  // TODO: Deeper indentation
       // FIX: Hardcoded  return N
-      try result.appendSlice(Return);
+      try result.appendSlice(kw.Return);
       switch (S.Retrn.body.?) {
         .Lit => {
           try result.appendSlice(spc);
@@ -187,6 +185,7 @@ const body = struct {
 }; //:: Gen.proc.body
 
 
+const std = @import("std");
 pub fn render (
     N      : slate.Node,
     src    : source.Code,

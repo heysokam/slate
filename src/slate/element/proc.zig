@@ -7,7 +7,8 @@ const std = @import("std");
 // @deps zstd
 const zstd = @import("../../zstd.zig");
 // @deps *Slate
-const Type = @import("./type.zig").Type;
+const Type   = @import("./type.zig").Type;
+const source = @import("../source.zig").source;
 
 
 //______________________________________
@@ -43,7 +44,7 @@ pub fn create_empty () Proc {
 //____________________________
 /// @descr Returns a {@link Proc} that contains the given properties
 pub fn create (
-    name      : zstd.str,
+    name      : source.Loc,
     in        : struct {
       retT    : ?Proc.ReturnT = null,
       args    : ?Proc.Args    = null,
@@ -60,15 +61,21 @@ pub fn create (
     .retT    = in.retT,
     .pragmas = in.pragmas,
     .body    = in.body,
-  }; // << Proc{ ... }
+    }; //:: result
 } //:: slate.Proc.create
 
-// name     :Proc.Name,
-// pure     :bool= false,
-// public   :bool= false,
-// args     :?Proc.Args= null,
-// pragmas  :?Proc.Pragmas= null,
-// body     :?Proc.Body= null,
+
+pub fn clone (P :*const Proc) !Proc {
+  return Proc.create(
+    P.name.name, .{
+    .retT    = P.retT,
+    .args    = if (P.args    != null) try P.args.?.clone()    else null,
+    .body    = if (P.body    != null) try P.body.?.clone()    else null,
+    .pragmas = if (P.pragmas != null) try P.pragmas.?.clone() else null,
+    .public  = P.public,
+    .pure    = P.pure, }
+    ); //:: result
+} //:: slate.Proc.clone
 
 pub fn destroy (P :*Proc, types :Type.List) void {
   if (P.args != null) {
