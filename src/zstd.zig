@@ -30,42 +30,56 @@ pub const Str = struct {
   } //:: zstd.Str.from
 }; //:: zstd.Str
 
+
+pub fn Distinct (T :type) type { return enum(T) {
+  None = switch (@TypeOf(T)) {
+    .int, .comptime_int => std.math.maxInt(T),
+    else => unreachable }, // FIX: Implement support for other types
+  _,
+  pub inline fn val (pos :*const @This()) T { return @intFromEnum(pos); }
+  pub inline fn from (num :T) @This() { return @enumFromInt(num); }
+  pub inline fn none (pos :*const @This()) bool { return pos == .None; }
+  pub inline fn hasValue (pos :*const @This()) bool { return !pos.none(); }
+};} //:: zstd.Distinct
+
+
 //______________________________________
-/// @descr Describes a growable list of arbitrary data
-pub fn DataList (T :type) type {
-  return struct {
-    /// @descr Describes a location/position inside the list
-    pub const Pos = pos.type;
-    const pos = struct {
-      const @"type" = usize;
-      /// @descr Describes an invalid location/position inside the list
-      pub const Invalid :pos.type= std.math.maxInt(pos.type);
-    };
-    /// @descr Describes a growable list of arbitrary data
-    pub const Entries = seq(T);
-    entries :?Entries=  null,
-    /// @descr Creates a new empty DataList(T) object.
-    pub fn create (A :std.mem.Allocator) @This() { return @This(){.entries= Entries.init(A)}; }
-    /// @descr Releases all memory used by the DataList(T)
-    pub fn destroy (L:*@This()) void { L.entries.?.deinit(); }
-    /// @descr Returns true if the Node list has no nodes.
-    pub fn empty (L:*const @This()) bool { return L.entries == null or L.entries.?.items.len == 0; }
-    /// @descr Adds the given {@arg val} to the {@arg L} DataList(T)
-    pub fn add (L :*@This(), val :T) !void { try L.entries.?.append(val); }
-    /// @descr Duplicates the data of the {@arg N} so that it is safe to call {@link DataList(T).destroy} without deallocating the duplicate.
-    pub fn clone (L :*const @This()) !@This() { return @This(){.entries= try L.entries.?.clone()}; }
-    /// @descr Returns the list of items contained in {@arg L}. Returns an empty list otherwise.
-    pub fn items (L :*const @This()) []T { return if (!L.empty()) L.entries.?.items else &.{}; }
-    /// @descr Returns the length of the list of items contained in {@arg L}.
-    pub fn len (L :*const @This()) @This().Pos { return if (!L.empty()) L.entries.?.items.len else @This().pos.Invalid; }
-    /// @descr Returns the position/id of the last entry in the list of items contained in {@arg L}.
-    pub fn last (L :*const @This()) @This().Pos { return if (!L.empty()) L.entries.?.items.len-1 else @This().pos.Invalid; }
-    /// @descr Returns the item contained in {@arg L} at position {@arg P}. Returns null otherwise.
-    pub fn at (L :*const @This(), P :@This().Pos) ?T { return if (!L.empty()) L.entries.?.items[P] else null; }
-    /// @descr Sets the item contained in {@arg L} at position {@arg P} to the value of {@arg V}
-    pub fn set (L :*const @This(), P :@This().Pos, V :T) void { if (!L.empty()) L.entries.?.items[P] = V; }
-  };
-} //:: zstd.DataList
+/// @descr Describes a growable list of arbitrary data that must be indexed with a Distinct(uint)
+pub fn DataList2 (T :type, P :type) type { switch (@typeInfo(T)) {
+    .int, .comptime_int => |t| if (t.int.signedness != .unsigned)
+            @compileError("The integer type used for the Index/Position of the list MUST be unsigned."),
+    else => @compileError("The type used for the Index/Position of the list MUST be an integer.")
+  } return struct {
+  const Uint = P;
+  /// @descr Describes a location/position inside the list
+  pub const Pos = zstd.Distinct(Uint);
+  /// @descr Describes a growable list of arbitrary data
+  pub const Entries = std.AutoArrayHashMapUnmanaged(@This().Pos, T);
+  A        :std.mem.Allocator,
+  entries  :Entries= .{},
+
+  // @descr Creates a new empty DataList(T) object.
+  pub fn create (A :std.mem.Allocator) @This() { return @This(){.A=A, .entries= Entries.init(A, &.{}, &.{})}; }
+  // @descr Releases all memory used by the DataList(T)
+  pub fn destroy (L :*@This()) void { L.entries.deinit(L.A); }
+  // @descr Duplicates the data of the {@arg N} so that it is safe to call {@link DataList(T).destroy} without deallocating the duplicate.
+  pub fn clone (L :*const @This()) !@This() { return @This(){.A=L.A, .entries= try L.entries.clone(L.A)}; }
+  // @descr Adds the given {@arg val} to the {@arg L} DataList(T)
+  pub fn add (L :*@This(), val :T) !void { try L.entries.put(L.A, @This().Pos.from(L.entries.entries.len), val); }
+  // @descr Sets the item contained in {@arg L} at position {@arg pos} to the value of {@arg V}
+  pub fn set (L :*const @This(), pos :@This().Pos, V :T) void { L.entries.put(L.A, pos, V); }
+  // @descr Returns the list of items contained in {@arg L}. Returns an empty list otherwise.
+  pub inline fn items (L :*const @This()) []T { return L.entries.values(); }
+  // @descr Returns the item contained in {@arg L} at position {@arg pos}. Returns null otherwise.
+  pub inline fn at (L :*const @This(), pos :@This().Pos) ?T { return L.entries.get(pos); }
+  // @descr Returns true if the Node list has no nodes.
+  pub inline fn empty (L :*const @This()) bool { return L.entries.entries.len == 0; }
+  // @descr Returns the length of the list of items contained in {@arg L}.
+  pub inline fn len (L :*const @This()) Uint { return L.entries.entries.len; }
+  // @descr Returns the position/id of the last entry in the list of items contained in {@arg L}.
+  pub inline fn last (L :*const @This()) @This().Pos { return @This().Pos.from(L.len()-1); }
+};} //:: zstd.DataList
+pub fn DataList (T :type) type { return DataList2(T, usize); }
 
 
 //______________________________________
