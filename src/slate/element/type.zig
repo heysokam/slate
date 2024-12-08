@@ -10,7 +10,7 @@ const zstd = @import("../../zstd.zig");
 // @deps *Slate
 const Node    = @import("./node.zig").Node;
 const source  = @import("../source.zig").source;
-const Pragmas = @import("./pragma.zig").Pragma.List;
+const Pragma  = @import("./pragma.zig").Pragma;
 
 pub const Type = union(enum) {
   any     :Type.Any,
@@ -18,19 +18,15 @@ pub const Type = union(enum) {
   number  :Type.Number,
   string  :Type.String,
   void    :Type.Void,
-
-  pub const List  = Type.list.type;
-  pub const list  = struct {
-    const @"type" = zstd.DataList(Type);
-    pub const Pos = Type.list.type.Pos;
-  };
+  pub const List  = zstd.DataList(Type);
+  pub const Store = Type.List;
 
   /// @descr Arbitrary Type. For sending the type-checking responsibility to the target Lang compiler.
   pub const Any = struct {
     name    :source.Loc,
-    mut     :bool=      false,  // FIX: Should not be here
-    ptr     :bool=      false,  // FIX: Should not be here
-    pragma  :?Pragmas=  null,
+    mut     :bool=  false,  // FIX: Should not be here
+    ptr     :bool=  false,  // FIX: Should not be here
+    pragma  :Pragma.Store.Pos= .None,
     pub fn create (name :source.Loc) Type { return Type{.any= Type.Any{.name= name} }; }
   }; //:: slate.Type.Any
 
@@ -39,7 +35,7 @@ pub const Type = union(enum) {
     count   :?source.Loc=  null,
     mut     :bool=         false,  // FIX: Should not be here
     ptr     :bool=         false,  // FIX: Should not be here
-    pragma  :?Pragmas=     null,
+    pragma  :Pragma.Store.Pos= .None,
 
     pub fn create (T :Node.List.Pos) Type { return Type{.array = Type.Array{.type= T}}; }
 
@@ -88,34 +84,6 @@ pub const Type = union(enum) {
     pub fn create () Type { return Type{.void= Type.Void{}}; }
     // pub fn name (_:*const Type.Void, A :std.mem.Allocator) !zstd.str { return zstd.Str.from("void", A); }
   };
-
-  //______________________________________
-  /// @descr Deallocates all data of {@arg T} when its subtype has any data to deallocate.
-  pub fn destroy (T:*Type) void {
-    switch (T.*) {
-      .array  => T.array.destroy(),
-      .any    => {},
-      .number => {},
-      .string => {},
-      .void   => {},
-      }
-  } //:: slate.Type.Array.destroy
-
-  //______________________________________
-  /// @descr Returns a newly allocated {@link zstd.str} containing the value of {@arg T}.name
-  /// @note
-  ///  Will not use the {@arg A} allocator to create the string when {@arg T} is ...
-  ///  - {@link Type.any} subtype
-  ///  - {@link Type.array} subtype and its contained type (recursive) is of the {@link Type.any} subtype
-  // pub fn getName (T :*const Type, A :std.mem.Allocator) !zstd.str {
-  //   return switch (T.*) {
-  //     .any    => | t | t.name.clone(),
-  //     .number => | t | t.name(A),
-  //     .string => | t | t.name(A),
-  //     .void   => | t | t.name(A),
-  //     .array  => | t | t.type.getName(A),
-  //   };
-  // } //:: slate.Type.getName
 
   pub fn isMut (T :?*const Type, L :Type.List) bool {
     if (T == null) return false;

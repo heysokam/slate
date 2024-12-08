@@ -1,12 +1,13 @@
 //:___________________________________________________________________
 //  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  LGPLv3 or higher  :
 //:___________________________________________________________________
-//! @fileoverview
-//______________________________________|
+//! @fileoverview Defines a Statement of the language
+//____________________________________________________|
+pub const stmt = @This();
 // @deps std
 const std = @import("std");
 // @deps zstd
-const zstd = @import("../..//zstd.zig");
+const zstd = @import("../../zstd.zig");
 // @deps minim.ast
 const Expr = @import("./expression.zig").Expr;
 
@@ -43,12 +44,7 @@ pub const Stmt = union(enum) {
   // pub const Comment = todo;
   // pub const Block   = todo;
 
-  pub fn destroy (S :*Stmt) void {
-    switch (S.*) {
-      .Retrn => {},
-      }
-  } //:: slate.Stmt.destroy
-
-  pub const List = zstd.DataList(Stmt);
+  pub const List  = zstd.DataList(Stmt);
+  pub const Store = zstd.DataList(Stmt.List);
 };
 

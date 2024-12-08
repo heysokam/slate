@@ -37,6 +37,7 @@ pub const Pragma = union(enum) {
     }
   }
 
-  pub const List = zstd.set.Unordered(Pragma);
+  pub const List  = zstd.set.Unordered(Pragma);
+  pub const Store = zstd.DataList(Pragma.List);
 };
 

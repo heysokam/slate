@@ -18,8 +18,9 @@ const zstd = @import("../../zstd.zig");
 // @deps *Slate
 pub const Ident = @import("./ident.zig").Ident;
 pub const Expr  = @import("./expression.zig").Expr;
-pub const List  = zstd.DataList(Data);
 pub const Type  = @import("./type.zig").Type;
+pub const List  = zstd.DataList(Data);
+pub const Store = zstd.DataList(Data.List);
 
 
 /// @descr Describes the identifier used to target the desired Data

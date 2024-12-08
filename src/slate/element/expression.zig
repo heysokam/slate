@@ -1,6 +1,12 @@
 //:___________________________________________________________________
 //  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  LGPLv3 or higher  :
 //:___________________________________________________________________
+/// Expressions:
+/// - Can contain Identifiers, Literals and Operators
+/// - Evaluate to values
+/// - C: Legal at top level. Zig: Legal at block level
+//_____________________________________________________|
+pub const Expr = @This().type;
 // @deps std
 const std = @import("std");
 // @deps zstd
@@ -11,18 +17,11 @@ const source = @import("../source.zig").source;
 
 
 //______________________________________
-/// Expressions:
-/// - Can contain Identifiers, Literals and Operators
-/// - Evaluate to values
-/// - C: Legal at top level. Zig: Legal at block level
-// const Expr = union(enum) {
-//   Id  :u8, // todo
-//   Lit :u8, // todo
-//   Op  :u8, // todo
-// };
-pub const Expr = union(enum) {
+pub const @"type" = union(enum) {
   Empty,
   Lit   :Expr.Literal,
+  // Id
+  // Op
 
   pub const Literal = union(enum) {
     Flt    :Literal.Float,
