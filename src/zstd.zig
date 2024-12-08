@@ -33,8 +33,8 @@ pub const Str = struct {
 
 pub fn Distinct (T :type) type { return enum(T) {
   None = switch (@TypeOf(T)) {
-    .int, .comptime_int => std.math.maxInt(T),
-    else => unreachable }, // FIX: Implement support for other types
+    std.builtin.Type.Int => std.math.maxInt(T),
+    else => std.math.maxInt(usize)}, // FIX: Implement support for other types
   _,
   pub inline fn val (pos :*const @This()) T { return @intFromEnum(pos); }
   pub inline fn from (num :T) @This() { return @enumFromInt(num); }
@@ -45,10 +45,10 @@ pub fn Distinct (T :type) type { return enum(T) {
 
 //______________________________________
 /// @descr Describes a growable list of arbitrary data that must be indexed with a Distinct(uint)
-pub fn DataList2 (T :type, P :type) type { switch (@typeInfo(T)) {
-    .int, .comptime_int => |t| if (t.int.signedness != .unsigned)
+pub fn DataList2 (T :type, P :type) type { switch (@typeInfo(P)) {
+    .int => |t| if (t.signedness != .unsigned)
             @compileError("The integer type used for the Index/Position of the list MUST be unsigned."),
-    else => @compileError("The type used for the Index/Position of the list MUST be an integer.")
+    else => @compileError("The type used for the Index/Position of the list MUST be an integer."),
   } return struct {
   const Uint = P;
   /// @descr Describes a location/position inside the list
@@ -59,7 +59,7 @@ pub fn DataList2 (T :type, P :type) type { switch (@typeInfo(T)) {
   entries  :Entries= .{},
 
   // @descr Creates a new empty DataList(T) object.
-  pub fn create (A :std.mem.Allocator) @This() { return @This(){.A=A, .entries= Entries.init(A, &.{}, &.{})}; }
+  pub fn create (A :std.mem.Allocator) !@This() { return @This(){.A=A, .entries= try Entries.init(A, &.{}, &.{})}; }
   // @descr Releases all memory used by the DataList(T)
   pub fn destroy (L :*@This()) void { L.entries.deinit(L.A); }
   // @descr Duplicates the data of the {@arg N} so that it is safe to call {@link DataList(T).destroy} without deallocating the duplicate.
