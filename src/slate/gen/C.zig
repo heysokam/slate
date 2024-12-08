@@ -17,13 +17,16 @@ const source = slate.source;
 ///  Converts the given *Slate {@arg N} Node into the C programming language.
 ///  The generated code will be appended to the {@arg result}.
 pub fn render (
-    N      : slate.Node,
-    src    : source.Code,
-    types  : slate.Type.List,
-    result : *zstd.str,
+    N       : slate.Node,
+    src     : source.Code,
+    types   : slate.Type.List,
+    pragmas : slate.Pragma.Store,
+    args    : slate.Proc.Arg.Store,
+    stmts   : slate.Stmt.Store,
+    result  : *zstd.str,
   ) !void {
   switch (N) {
-    .Proc => try proc.render(N, src, types, result),
+    .Proc => try proc.render(N, src, types, pragmas, args, stmts, result),
   }
 }
 
