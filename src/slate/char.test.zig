@@ -166,11 +166,11 @@ test "isQuote | should return false for any character that we don't consider a q
 //______________________________________
 // @section isPar
 //____________________________
-test "isPar | should return true for all characters we expect to be parenthesis characters" {
+test "isParenthesis | should return true for all characters we expect to be parenthesis characters" {
   for (char.List.parenthesis) |ch| try t.ok(char.isParenthesis(ch));
 }
 
-test "isPar | should return false for any character that we don't consider a parenthesis character" {
+test "isParenthesis | should return false for any character that we don't consider a parenthesis character" {
   next: for (char.List.printable) |ch| {
     for (char.List.parenthesis) |valid| if (ch == valid) continue: next;
     t.ok(!char.isParenthesis(@intCast(ch)))
