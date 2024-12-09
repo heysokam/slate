@@ -1,10 +1,10 @@
 //:___________________________________________________________________
 //  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  LGPLv3 or higher  :
 //:___________________________________________________________________
-//! @fileoverview Unit Tests for src/slate/char.test.zig
+//! @fileoverview Unit Tests for slate/char.zig
 //_______________________________________________________|
 // @deps *Slate
-const t = @import("../tests.zig");
+const t    = @import("../tests.zig");
 const char = @import("./char.zig");
 
 //______________________________________

@@ -26,7 +26,7 @@ const overview_tests = """
 //____________________________________________________________|
 """
 const overview_file = """
-//! @fileoverview Unit Tests for {trg}
+//! @fileoverview Unit Tests for {trg_relative}
 //____________________________________________________________|
 """
 const Tools = """
