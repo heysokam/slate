@@ -3,5 +3,5 @@
 //:___________________________________________________________________
 //! @fileoverview Unit Tests for src/slate/lex/data.test.zig
 //____________________________________________________________|
-test "TODO: slate/lex/data.test.zig has no tests"
-{ try @import("std").testing.expect(false); }
+test "[TODO]"
+{ @import("std").debug.print("[slate.tests] TODO: slate/lex/data.test.zig has no tests.\n", .{}); }

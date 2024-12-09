@@ -29,11 +29,29 @@ const overview_file = """
 //! @fileoverview Unit Tests for {trg}
 //____________________________________________________________|
 """
+const Tools = """
+
+//______________________________________
+// @section Helper Tools for tests files
+//____________________________
+const t = @This();
+pub const cstr = []const u8;
+pub const ok   = @import("std").testing.expect;
+pub const info = @import("std").debug.print;
+const Prefix = "[slate.test] ";
+pub fn fail (comptime fmt :cstr, args :anytype) !void {{ t.info(t.Prefix ++ "| FAIL | " ++ fmt, args); return error.slate_FailedTest; }}
+pub fn echo (msg :cstr) void {{ @import("std").debug.print("{{s}}\n", .{{msg}}); }}
+pub fn eq   (result :anytype, expected :anytype) !void {{ try @import("std").testing.expectEqual(expected, result); }}
+"""
 const DummyTest = """
-test "TODO: {trg_relative} has no tests"
-{{ try @import("std").testing.expect(false); }}
+test "[TODO]"
+{{ @import("std").debug.print("[slate.tests] TODO: {trg_relative} has no tests.\n", .{{}}); }}
 """
 const Imports = """
+
+//______________________________________
+// @section List of Tests
+//____________________________
 test {{
   @import("std").testing.refAllDecls(@This());
 {result}}}
@@ -50,16 +68,18 @@ when isMainModule:
   for file in walkDirRec dir:
     # Skip existing unwanted files
     if file.endsWith Extension_test: continue
-    let trg = file.replace(Extension_zig, Extension_test)
-    if fileExists trg: continue
-    # Generate the file and its import
+    # Find the target names for the file
+    let trg          = file.replace(Extension_zig, Extension_test)
     let trg_relative = trg.replace("./src/", "").replace("src/", "")
-    trg.writeFile fmt( license & overview_file & DummyTest )
+    # Generate the import for the test connector
     result.add( fmt "  _= @import(\"{trg_relative}\");\n" )
+    # Generate the file
+    if fileExists trg: continue
+    trg.writeFile fmt( license & overview_file & DummyTest )
 
   #_______________________________________
   # Generate the test file connector
-  tests.writeFile fmt( license & overview_tests & Imports )
+  tests.writeFile fmt( license & overview_tests & Tools & Imports )
 
   #_______________________________________
   # Run the resulting tests

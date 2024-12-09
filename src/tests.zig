@@ -3,13 +3,29 @@
 //:___________________________________________________________________
 //! @fileoverview Cable Connector to all tests of the library
 //____________________________________________________________|
+
+//______________________________________
+// @section Helper Tools for tests files
+//____________________________
+const t = @This();
+pub const cstr = []const u8;
+pub const ok   = @import("std").testing.expect;
+pub const info = @import("std").debug.print;
+const Prefix = "[slate.test] ";
+pub fn fail (comptime fmt :cstr, args :anytype) !void { t.info(t.Prefix ++ "| FAIL | " ++ fmt, args); return error.slate_FailedTest; }
+pub fn echo (msg :cstr) void { @import("std").debug.print("{s}\n", .{msg}); }
+pub fn eq   (result :anytype, expected :anytype) !void { try @import("std").testing.expectEqual(expected, result); }
+
+//______________________________________
+// @section List of Tests
+//____________________________
 test {
   @import("std").testing.refAllDecls(@This());
-  _= @import("slate/char.test.zig");
   _= @import("slate/gen.test.zig");
   _= @import("slate/lexer.test.zig");
   _= @import("slate/source.test.zig");
   _= @import("slate/elements.test.zig");
+  _= @import("slate/char.test.zig");
   _= @import("slate/element/ident.test.zig");
   _= @import("slate/element/expression.test.zig");
   _= @import("slate/element/data.test.zig");
