@@ -39,9 +39,10 @@ pub const cstr = []const u8;
 pub const ok   = @import("std").testing.expect;
 pub const info = @import("std").debug.print;
 const Prefix = "[slate.test] ";
-pub fn fail (comptime fmt :cstr, args :anytype) !void {{ t.info(t.Prefix ++ "| FAIL | " ++ fmt, args); return error.slate_FailedTest; }}
-pub fn echo (msg :cstr) void {{ @import("std").debug.print("{{s}}\n", .{{msg}}); }}
-pub fn eq   (result :anytype, expected :anytype) !void {{ try @import("std").testing.expectEqual(expected, result); }}
+pub fn fail   (comptime fmt :cstr, args :anytype) !void {{ t.info(t.Prefix ++ "| FAIL | " ++ fmt, args); return error.slate_FailedTest; }}
+pub fn echo   (msg :cstr) void {{ @import("std").debug.print("{{s}}\n", .{{msg}}); }}
+pub fn eq     (result :anytype, expected :anytype) !void {{ try @import("std").testing.expectEqual(expected, result); }}
+pub fn eq_str (result :anytype, expected :anytype) !void {{ try @import("std").testing.expectEqualStrings(expected, result); }}
 """
 const DummyTest = """
 test "[TODO]"
