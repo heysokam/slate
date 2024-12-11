@@ -1,7 +1,8 @@
 //:___________________________________________________________________
 //  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  LGPLv3 or higher  :
 //:___________________________________________________________________
-//! @fileoverview Unit Tests for slate/lexer.test.zig
-//____________________________________________________________|
-test "[TODO]"
-{ @import("std").debug.print("[slate.tests] TODO: slate/lexer.test.zig has no tests.\n", .{}); }
+//! @fileoverview Unit Tests for slate/lexer.zig
+//________________________________________________|
+test "slate.lexer | data & module connector cable"
+{ try @import("std").testing.expect(true); }
+// Nothing to test. Just data with a connector cable.

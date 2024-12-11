@@ -1,7 +1,8 @@
 //:___________________________________________________________________
 //  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  LGPLv3 or higher  :
 //:___________________________________________________________________
-//! @fileoverview Unit Tests for slate/element/expression.test.zig
+//! @fileoverview Unit Tests for slate/element/expression.zig
 //____________________________________________________________|
-test "[TODO]"
-{ @import("std").debug.print("[slate.tests] TODO: slate/element/expression.test.zig has no tests.\n", .{}); }
+test "slate.elements.expression | data only object"
+{ try @import("std").testing.expect(true); }
+// Nothing to test. Just a data object without logic.

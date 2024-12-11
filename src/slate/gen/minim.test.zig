@@ -1,7 +1,8 @@
 //:___________________________________________________________________
 //  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  LGPLv3 or higher  :
 //:___________________________________________________________________
-//! @fileoverview Unit Tests for slate/gen/minim.test.zig
-//____________________________________________________________|
-test "[TODO]"
-{ @import("std").debug.print("[slate.tests] TODO: slate/gen/minim.test.zig has no tests.\n", .{}); }
+//! @fileoverview Unit Tests for slate/gen/minim.zig
+//___________________________________________________|
+test "slate.gen.minim | module connector cable"
+{ try @import("std").testing.expect(true); }
+// Nothing to test. Just a connector cable.
