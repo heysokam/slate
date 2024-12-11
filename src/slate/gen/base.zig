@@ -16,6 +16,6 @@ pub const kw       = struct {
 
 const zstd = @import("../../zstd.zig");
 pub fn indent (result :*zstd.str, N :usize) !void {
-  for (1..N) |_| try result.appendSlice(tab);
+  for (0..N) |_| try result.insertSlice(0, tab);
 }
 

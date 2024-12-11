@@ -3,18 +3,18 @@
 //:___________________________________________________________________
 //! @fileoverview Unit Tests for slate/gen/base.zig
 //___________________________________________________|
-const t = @import("../../tests.zig");
+const t    = @import("../../tests.zig");
 const base = @import("./base.zig");
+const zstd = @import("../../zstd.zig");
 
-test "should add the expected indentation based on {@arg N}" {
-  const Text = "abcdefg";
+test "gen.base.indent | should add the expected indentation based on {@arg N}" {
   const Tab  = "  ";
+  const Text = "abcdefg";
 
   // Setup.1
   const Expected1 = Tab ++ Text;
-  var src1 = @import("../../zstd.zig").str.init(@import("std").testing.allocator);
+  var src1 = zstd.str.init(t.A);
   defer src1.deinit();
-  try src1.appendSlice(Tab);
   try src1.appendSlice(Text);
   // Check
   try base.indent(&src1, 1);
@@ -23,13 +23,11 @@ test "should add the expected indentation based on {@arg N}" {
 
   // Setup.2
   const Expected2 = Tab ++ Tab ++ Text;
-  var src2 = @import("../../zstd.zig").str.init(@import("std").testing.allocator);
+  var src2 = zstd.str.init(t.A);
   defer src2.deinit();
-  try src2.appendSlice(Tab);
   try src2.appendSlice(Text);
   // Check
-  try base.indent(&src2, 1);
+  try base.indent(&src2, 2);
   const result2 = src2.items;
   try t.eq_str(result2, Expected2);
-
 }
