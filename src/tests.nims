@@ -38,6 +38,7 @@ const t = @This();
 pub const cstr = []const u8;
 pub const ok   = @import("std").testing.expect;
 pub const info = @import("std").debug.print;
+pub const A    = @import("std").testing.allocator;
 const Prefix = "[slate.test] ";
 pub fn fail   (comptime fmt :cstr, args :anytype) !void {{ t.info(t.Prefix ++ "| FAIL | " ++ fmt, args); return error.slate_FailedTest; }}
 pub fn echo   (msg :cstr) void {{ @import("std").debug.print("{{s}}\n", .{{msg}}); }}
