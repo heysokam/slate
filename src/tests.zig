@@ -23,9 +23,9 @@ test {
   @import("std").testing.refAllDecls(@This());
   _= @import("slate/gen.test.zig");
   _= @import("slate/lexer.test.zig");
-  _= @import("slate/source.test.zig");
   _= @import("slate/elements.test.zig");
   _= @import("slate/char.test.zig");
+  _= @import("slate/source.test.zig");
   _= @import("slate/element/ident.test.zig");
   _= @import("slate/element/expression.test.zig");
   _= @import("slate/element/data.test.zig");
