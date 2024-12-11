@@ -36,12 +36,7 @@ pub const Type = union(enum) {
     mut     :bool=         false,  // FIX: Should not be here
     ptr     :bool=         false,  // FIX: Should not be here
     pragma  :Pragma.Store.Pos= .None,
-
     pub fn create (T :Node.List.Pos) Type { return Type{.array = Type.Array{.type= T}}; }
-
-    pub fn destroy(arr :*Type.Array) void {
-      if (arr.pragma != null) arr.pragma.?.destroy();
-    } //:: slate.Type.Array.destroy
   }; //:: slate.Type.Array
 
   pub const Number = struct {
