@@ -64,8 +64,11 @@ pub fn cloneResult (L:*Lex) !Lx.List {
 // @section Lexer: General Tools
 //__________________________
 pub const report = @import("./lex/cli.zig").report;
-pub const fail   = zstd.fail;
 pub const prnt   = zstd.prnt;
+pub fn fail(err :anyerror, comptime msg :zstd.cstr, args :anytype) !void {
+  if (std.debug.runtime_safety) zstd.prnt("[slate.lexer.debug] Err: " ++ msg ++ "\n", args);
+  return err;
+}
 
 
 //______________________________________
