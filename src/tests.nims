@@ -44,6 +44,7 @@ pub fn fail   (comptime fmt :cstr, args :anytype) !void {{ t.info(t.Prefix ++ "|
 pub fn echo   (msg :cstr) void {{ @import("std").debug.print("{{s}}\n", .{{msg}}); }}
 pub fn eq     (result :anytype, expected :anytype) !void {{ try @import("std").testing.expectEqual(expected, result); }}
 pub fn eq_str (result :anytype, expected :anytype) !void {{ try @import("std").testing.expectEqualStrings(expected, result); }}
+pub fn err    (result :anytype, expectedError :anytype) !void {{ try @import("std").testing.expectError(expectedError, result); }}
 """
 const DummyTest = """
 test "[TODO]"
