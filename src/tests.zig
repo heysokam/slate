@@ -38,12 +38,12 @@ test {
   _= @import("slate/element/root.test.zig");
   _= @import("slate/element/ident.test.zig");
   _= @import("slate/element/type.test.zig");
-  _= @import("slate/lex/whitespace.test.zig");
   _= @import("slate/lex/cli.test.zig");
   _= @import("slate/lex/others.test.zig");
   _= @import("slate/lex/data.test.zig");
   _= @import("slate/lex/lexeme.test.zig");
   _= @import("slate/lex/symbols.test.zig");
+  _= @import("slate/lex/whitespace.test.zig");
   _= @import("slate/gen/zig.test.zig");
   _= @import("slate/gen/minim.test.zig");
   _= @import("slate/gen/C.test.zig");
