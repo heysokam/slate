@@ -17,12 +17,12 @@ pub fn ident (L:*Lex) !void {
   var   end   = L.pos;
   while (true) : (L.pos += 1) {
     const c = L.ch();
-    if      (Ch.isIdent(c))         { end += 1; } // try L.add_toLast(L.ch()); }
+    if      (Ch.isIdent(c))         { end += 1; }
     else if (Ch.isContextChange(c)) { break; }
-    else                            { Lex.fail("Unknown Identifier character '{c}' (0x{X})", .{c, c}); }
+    else                            { return Lex.fail(error.slate_lex_UnknownIdentifier, "Unknown Identifier character '{c}' (0x{X})", .{c, c}); }
   }
   try L.add(Lx.Id.ident, start, end);
-  L.pos -= 1;
+  L.pos = end;
 }
 
 //__________________________
@@ -32,11 +32,11 @@ pub fn number (L:*Lex) !void {
   var   end   = L.pos;
   while (true) : (L.pos += 1) {
     const c = L.ch();
-    if      (Ch.isNumeric(c))       { end += 1; } // try L.add_toLast(c); }
+    if      (Ch.isNumeric(c))       { end += 1; }
     else if (Ch.isContextChange(c)) { break; }
-    else                            { Lex.fail("Unknown Numeric character '{c}' (0x{X})", .{c, c}); }
+    else                            { return Lex.fail(error.slate_lex_UnknownNumber, "Unknown Numeric character '{c}' (0x{X})", .{c, c}); }
   }
   try L.add(Lx.Id.number, start, end);
-  L.pos -= 1;
+  L.pos = end;
 }
 
