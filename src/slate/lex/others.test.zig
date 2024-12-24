@@ -1,7 +1,7 @@
 //:___________________________________________________________________
 //  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  LGPLv3 or higher  :
 //:___________________________________________________________________
-//! @fileoverview Unit Tests for slate/lex/others.test.zig
+//! @fileoverview Unit Tests for slate/lex/others.zig
 //____________________________________________________________|
 const t = @import("../../tests.zig");
 const slate = struct {

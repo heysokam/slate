@@ -12,7 +12,7 @@ test "gen.base.indent | should add the expected indentation based on {@arg N}" {
   const Text = "abcdefg";
 
   // Setup.1
-  const Expected1 = Tab ++ Text;
+  const Expected1 = Text ++ Tab;
   var src1 = zstd.str.init(t.A);
   defer src1.deinit();
   try src1.appendSlice(Text);
@@ -22,7 +22,7 @@ test "gen.base.indent | should add the expected indentation based on {@arg N}" {
   try t.eq_str(result1, Expected1);
 
   // Setup.2
-  const Expected2 = Tab ++ Tab ++ Text;
+  const Expected2 = Text ++ Tab ++ Tab;
   var src2 = zstd.str.init(t.A);
   defer src2.deinit();
   try src2.appendSlice(Text);
