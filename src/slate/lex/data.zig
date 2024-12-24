@@ -3,7 +3,7 @@
 //:___________________________________________________________________
 //! @fileoverview Lexer: State/Data Management
 //_____________________________________________|
-// @deps zstd
+// @deps std
 const std = @import("std");
 // @deps zstd
 const zstd = @import("../../zstd.zig");
@@ -30,7 +30,7 @@ pub const add = struct {
   /// @descr
   ///  Adds one {@arg Lx} lexeme with {@arg id} to the result.
   ///  Defines its location to point to the (start,end) location of {@arg Lex.src}.
-  pub fn one (L:*Lex, id :Lx.Id, start :Lex.Pos, end :Lex.Pos) !void {
+  pub inline fn one (L:*Lex, id :Lx.Id, start :Lex.Pos, end :Lex.Pos) !void {
     try L.res.append(L.A, Lx.create(id, start, end));
   } //:: Lex.add.one
 
@@ -38,7 +38,7 @@ pub const add = struct {
   /// @descr
   ///  Adds a single {@arg Lx} lexeme with {@arg id} to the result.
   ///  Defines its location to point to a single character of {@arg Lex.src} located at {@arg L.pos}.
-  pub fn single (L:*Lex, id :Lx.Id) !void {
+  pub inline fn single (L:*Lex, id :Lx.Id) !void {
     try add.one(L, id, L.pos, L.pos);
   } //:: Lex.add.single
 }; //:: Lex.add
