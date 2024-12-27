@@ -22,7 +22,7 @@ pub const add = struct {
   /// @note Ensures that the character is equal to {@arg C} on safe builds.
   pub fn toLast (L:*Lex, C :u8) void {
     const items :[]Lex.Loc= L.res.items(.loc);
-    const last  :Lex.Pos=   L.res.len-1;
+    const last  :Lex.Pos=   @intCast(L.res.len-1);
     items[last].end += 1;
     zstd.ensure(L.src[items[last].end] == C, "Tried to append a character to the last Lexeme of a Lexer, but the characters do not match.");
   } //:: Lex.add.toLast
