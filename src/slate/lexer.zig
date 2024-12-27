@@ -133,7 +133,7 @@ pub fn process(L:*Lex) !void {
     '`'        => try L.quote_B(),
     ' '        => try L.space(),
     '\n'       => try L.newline(),
-    else => |char| Lex.fail("Unknown first character '{c}' (0x{X})", .{char, char})
+    else => |char| try Lex.fail(error.slate_lexer_UnknownFirstCharacter, "Unknown first character '{c}' (0x{X})", .{char, char})
     }
   }
 }
