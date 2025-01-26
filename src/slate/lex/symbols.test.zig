@@ -456,3 +456,61 @@ test "slate.lexer.quote_B | should return an error when the current character is
   try t.err(result, Expected);
 }
 
+
+//______________________________________
+// @section Lexer: Forwards Slash
+//____________________________
+test "slate.lexer.slash_F | should add a single Lx.Id.slash_F to the lexer result if the current character is `/`" {
+  const Expected = slate.Lx.Id.slash_F;
+  // Setup
+  var L = try slate.Lex.create(t.A, "/");
+  defer L.destroy();
+  // Validate
+  try t.eq(L.ch(), '/');
+  // Check
+  try L.slash_F();
+  const result = L.res.items(.id)[L.res.len-1];
+  try t.eq(result, Expected);
+}
+
+test "slate.lexer.slash_F | should return an error when the current character is not `/`" {
+  const Expected = error.slate_lex_UnknownSlashForward;
+  // Setup
+  var L = try slate.Lex.create(t.A, "n");
+  defer L.destroy();
+  // Validate
+  try t.ok(L.ch() != '/');
+  // Check
+  const result = L.slash_F();
+  try t.err(result, Expected);
+}
+
+
+//______________________________________
+// @section Lexer: Backwards Slash
+//____________________________
+test "slate.lexer.slash_B | should add a single Lx.Id.slash_B to the lexer result if the current character is `\\`" {
+  const Expected = slate.Lx.Id.slash_B;
+  // Setup
+  var L = try slate.Lex.create(t.A, "\\");
+  defer L.destroy();
+  // Validate
+  try t.eq(L.ch(), '\\');
+  // Check
+  try L.slash_B();
+  const result = L.res.items(.id)[L.res.len-1];
+  try t.eq(result, Expected);
+}
+
+test "slate.lexer.slash_B | should return an error when the current character is not `\\`" {
+  const Expected = error.slate_lex_UnknownSlashBackward;
+  // Setup
+  var L = try slate.Lex.create(t.A, "n");
+  defer L.destroy();
+  // Validate
+  try t.ok(L.ch() != '\\');
+  // Check
+  const result = L.slash_B();
+  try t.err(result, Expected);
+}
+

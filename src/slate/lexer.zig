@@ -102,6 +102,8 @@ pub const hash       = symbols.hash;
 pub const quote_S    = symbols.quote_S;
 pub const quote_D    = symbols.quote_D;
 pub const quote_B    = symbols.quote_B;
+pub const slash_F    = symbols.slash_F;
+pub const slash_B    = symbols.slash_B;
 //______________________________________
 // @section Lexer Process: Whitespace
 pub const whitespace = @import("./lex/whitespace.zig");
@@ -131,6 +133,8 @@ pub fn process(L:*Lex) !void {
     '\''       => try L.quote_S(),
     '\"'       => try L.quote_D(),
     '`'        => try L.quote_B(),
+    '/'        => try L.slash_F(),
+    '\\'       => try L.slash_B(),
     ' '        => try L.space(),
     '\n'       => try L.newline(),
     else => |char| try Lex.fail(error.slate_lexer_UnknownFirstCharacter, "Unknown first character '{c}' (0x{X})", .{char, char})
