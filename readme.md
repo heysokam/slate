@@ -3,6 +3,12 @@
 for converting the **syntax** of one language into other languages.  
 
 
+## Slate.Lex
+Generic `source-to-lexemes` toolset.  
+Provides an intermediate step between the source and a Tokenizer.  
+Can be used for lexing of any syntax.  
+
+
 ## Slate.MiniM
 Tools to convert the Nim-like syntax used by [MiniM](https://github.com/heysokam/minim) into any language.  
 
@@ -22,6 +28,20 @@ Tools to convert the _untyped_ Nim AST into any language.
 
 ## Technical Notes
 ### StoS Compiler -vs- Compiler Backend
+
+#### Summary
+```md
+# StoS
+The target owns the rules.
+The source must respect them.
+
+# Backend
+The source owns the rules.
+The target communicates instructions to the computer,
+and does not own the source rules.
+```
+
+#### Explanation
 ```md
 # Source-to-Source:
 The target language owns the rules. All of them.
@@ -43,17 +63,5 @@ The compiler backend must convert the source concepts/expressions
 such that the target understands and executes them as the source intended them.
 ## StoS
 The compiler converts the source -syntax- into the target syntax.
-```
-
-#### Summary
-```md
-# StoS
-The target owns the rules.
-The source must respect them.
-
-# Backend
-The source owns the rules.
-The target communicates instructions to the computer,
-and does not own the source rules.
-```
+```  
 
