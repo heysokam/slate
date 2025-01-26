@@ -514,3 +514,32 @@ test "slate.lexer.slash_B | should return an error when the current character is
   try t.err(result, Expected);
 }
 
+
+//______________________________________
+// @section Lexer: Dash
+//____________________________
+test "slate.lexer.dash | should add a single Lx.Id.dash to the lexer result if the current character is `-`" {
+  const Expected = slate.Lx.Id.dash;
+  // Setup
+  var L = try slate.Lex.create(t.A, "-");
+  defer L.destroy();
+  // Validate
+  try t.eq(L.ch(), '-');
+  // Check
+  try L.dash();
+  const result = L.res.items(.id)[L.res.len-1];
+  try t.eq(result, Expected);
+}
+
+test "slate.lexer.dash | should return an error when the current character is not `-`" {
+  const Expected = error.slate_lex_UnknownDash;
+  // Setup
+  var L = try slate.Lex.create(t.A, "n");
+  defer L.destroy();
+  // Validate
+  try t.ok(L.ch() != '-');
+  // Check
+  const result = L.dash();
+  try t.err(result, Expected);
+}
+

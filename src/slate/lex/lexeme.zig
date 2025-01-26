@@ -52,8 +52,8 @@ pub const Id = enum {
   comma,     // ,
   // Operators
   plus,      // +
-  min,       // -
-  slash_F,   // /
+  dash,      // -  (also called min minus)
+  slash_F,   // /  (forward slash)
   less,      // <
   more,      // >
   at,        // @
@@ -65,7 +65,7 @@ pub const Id = enum {
   excl,      // !
   qmark,     // ?
   hat,       // ^
-  slash_B,   // \
+  slash_B,   // \  (backward slash)
   // Whitespace
   space,     // ` `
   newline,   // \n

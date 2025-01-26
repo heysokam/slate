@@ -131,13 +131,20 @@ pub fn slash_F (L:*Lex) !void {
     else => |char| return Lex.fail(error.slate_lex_UnknownSlashForward, "Unknown Forward Slash character '{c}' (0x{X})", .{char, char})
   });
 }
-
 //__________________________
 /// @descr Processes a single '\' character into a Lexeme, and adds it to the {@arg L.res} result.
 pub fn slash_B (L:*Lex) !void {
   try L.add_single(switch(L.ch()) {
     '\\' => Lx.Id.slash_B,
     else => |char| return Lex.fail(error.slate_lex_UnknownSlashBackward, "Unknown Backward Slash character '{c}' (0x{X})", .{char, char})
+  });
+}
+//__________________________
+/// @descr Processes a single '-' character into a Lexeme, and adds it to the {@arg L.res} result.
+pub fn dash (L:*Lex) !void {
+  try L.add_single(switch(L.ch()) {
+    '-' => Lx.Id.dash,
+    else => |char| return Lex.fail(error.slate_lex_UnknownDash, "Unknown Dash character '{c}' (0x{X})", .{char, char})
   });
 }
 

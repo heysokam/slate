@@ -99,6 +99,7 @@ pub const semicolon  = symbols.semicolon;
 pub const dot        = symbols.dot;
 pub const comma      = symbols.comma;
 pub const hash       = symbols.hash;
+pub const dash       = symbols.dash;
 pub const quote_S    = symbols.quote_S;
 pub const quote_D    = symbols.quote_D;
 pub const quote_B    = symbols.quote_B;
@@ -130,11 +131,12 @@ pub fn process(L:*Lex) !void {
     '='        => try L.eq(),
     '@'        => try L.at(),
     '#'        => try L.hash(),
+    '-'        => try L.dash(),
+    '/'        => try L.slash_F(),
+    '\\'       => try L.slash_B(),
     '\''       => try L.quote_S(),
     '\"'       => try L.quote_D(),
     '`'        => try L.quote_B(),
-    '/'        => try L.slash_F(),
-    '\\'       => try L.slash_B(),
     ' '        => try L.space(),
     '\n'       => try L.newline(),
     else => |char| try Lex.fail(error.slate_lexer_UnknownFirstCharacter, "Unknown first character '{c}' (0x{X})", .{char, char})
