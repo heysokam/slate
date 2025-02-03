@@ -16,6 +16,19 @@ test "source.Code | should be the expected type" {
   try t.ok(T.Pointer.child == u8);
   try t.ok(T.Pointer.is_const == true);
   try t.ok(T.Pointer.is_allowzero == false);
+  try t.ok(T.Pointer.sentinel != null);
+  try t.ok(T.Pointer.alignment == 1);
+}
+
+//______________________________________
+// @section source.Code
+//____________________________
+test "source.Str | should be the expected type" {
+  const T = @typeInfo(source.Str);
+  try t.ok(T.Pointer.size == @import("std").builtin.Type.Pointer.Size.Slice);
+  try t.ok(T.Pointer.child == u8);
+  try t.ok(T.Pointer.is_const == true);
+  try t.ok(T.Pointer.is_allowzero == false);
   try t.ok(T.Pointer.sentinel == null);
   try t.ok(T.Pointer.alignment == 1);
 }

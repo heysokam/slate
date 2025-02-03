@@ -7,7 +7,8 @@ const std = @import("std");
 // @deps zstd
 const zstd = @import("../zstd.zig");
 
-pub const Code = []const u8;
+pub const Code = [:0]const u8;
+pub const Str  = []const u8;
 pub const Pos  = u32;
 pub const Loc  = struct {
   start  :source.Pos=  source.Loc.Invalid,
@@ -44,6 +45,6 @@ pub const Loc  = struct {
   /// @descr Returns the string value found at the {@arg L} location of {@arg src}.
   /// @note Returns an empty string when {@arg L} does not represent a valid location.
   /// @note Does not perform bounds check on {@arg src}. It will fail when the location is out of bounds.
-  pub fn from (L :*const Loc, src :source.Code) source.Code { return if (L.valid()) src[L.start..L.end] else ""; }
+  pub fn from (L :*const Loc, src :source.Code) source.Str { return if (L.valid()) src[L.start..L.end] else ""; }
 }; //:: slate.source.Loc
 
