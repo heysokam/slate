@@ -33,6 +33,10 @@ pub const Loc  = struct {
   pub fn adjacent (B:*const Loc, A:Loc) bool { return B.start == A.end+1; }
 
   //______________________________________
+  /// @descr Returns the end value of {@arg L} for use as the max value in range iterators
+  pub fn max (L:*const Loc) source.Pos { return L.end+1; }
+
+  //______________________________________
   /// @descr
   ///  Adds the {@arg B} location to {@arg A}.
   ///  They are required to be adjacent.
@@ -45,6 +49,6 @@ pub const Loc  = struct {
   /// @descr Returns the string value found at the {@arg L} location of {@arg src}.
   /// @note Returns an empty string when {@arg L} does not represent a valid location.
   /// @note Does not perform bounds check on {@arg src}. It will fail when the location is out of bounds.
-  pub fn from (L :*const Loc, src :source.Code) source.Str { return if (L.valid()) src[L.start..L.end] else ""; }
+  pub fn from (L :*const Loc, src :source.Code) source.Str { return if (L.valid()) src[L.start..L.max()] else ""; }
 }; //:: slate.source.Loc
 

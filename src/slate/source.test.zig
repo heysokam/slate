@@ -282,11 +282,12 @@ test "source.Loc.from | should return an empty string if {@arg L} is not valid" 
   try t.eq(result, Expected);
 }
 
-test "source.Loc.from | should return the [L.start..L.end] portion of {@arg src} if {@arg L} is valid" {
+test "source.Loc.from | should return the [L.start..L.max()] portion of {@arg src} if {@arg L} is valid" {
   const src      = "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890";
   const Start    = 21;
-  const End      = 42;
-  const Expected = src[Start..End];
+  const End      = 41;
+  const Max      = End+1;
+  const Expected = src[Start..Max];
   // Setup
   const L = source.Loc{.start= Start, .end= End};
   // Validate
