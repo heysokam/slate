@@ -3,6 +3,8 @@
 //:___________________________________________________________________
 //! @fileoverview Unit Tests for slate/char.zig
 //_______________________________________________________|
+// @deps std
+const std = @import("std");
 // @deps *Slate
 const t    = @import("../tests.zig");
 const char = @import("./char.zig");
@@ -22,16 +24,32 @@ test "char.List.range | should return an array containing the expected values in
 // @section char.List.contains
 //____________________________
 test "char.List.contains | should return true when C is contained in the given list" {
-  try t.ok(char.List.contains(&[_]u8{ '*' }      , '*'));
-  try t.ok(char.List.contains(&[_]u8{ ' ', '!' } , '!'));
-  try t.ok(char.List.contains(&[_]u8{ 0,1,2,3 }  ,  0 ));
+  try t.ok(char.List.contains(&[_]u8{ '*'      }, '*'));
+  try t.ok(char.List.contains(&[_]u8{ ' ', '!' }, '!'));
+  try t.ok(char.List.contains(&[_]u8{ 0,1,2,3  },  0 ));
 }
 
 test "char.List.contains | should return false when C is not contained in the given list" {
-  try t.ok(!char.List.contains(&[_]u8{ '*' }      , '!'));
-  try t.ok(!char.List.contains(&[_]u8{ ' ', '!' } , '_'));
-  try t.ok(!char.List.contains(&[_]u8{ 0,1,2,3 }  ,  4 ));
-  try t.ok(!char.List.contains(&[_]u8{ 0,5,8,4 }  , ' '));
+  try t.ok(!char.List.contains(&[_]u8{ '*'      }, '!'));
+  try t.ok(!char.List.contains(&[_]u8{ ' ', '!' }, '_'));
+  try t.ok(!char.List.contains(&[_]u8{ 0,1,2,3  },  4 ));
+  try t.ok(!char.List.contains(&[_]u8{ 0,5,8,4  }, ' '));
+}
+
+
+//______________________________________
+// @section EOF
+//____________________________
+test "char.List.EOF | should be the expected value" {
+  try t.eq(char.List.EOF, 0);
+}
+
+test "isEOF | should return true for all characters we expect to be EOF characters" {
+  try t.ok(char.isEOF(char.List.EOF));
+}
+
+test "isEOF | should return false for any character that we don't consider an EOF character" {
+  for (char.List.range(char.List.EOF+1, std.math.maxInt(@TypeOf(char.List.EOF))-1)) |ch| try t.ok(!char.isEOF(ch));
 }
 
 

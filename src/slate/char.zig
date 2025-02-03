@@ -11,6 +11,7 @@ const std = @import("std");
 // @section Lists of Known/Expected character categories
 //____________________________
 pub const List = struct {
+  pub const EOF           = @as(u8, 0);
   pub const printable     = char.range(32, 255);
   pub const digit         = char.range('0','9');
   pub const alphabetic    = char.range('A','Z') ++ char.range('a','z');
@@ -59,30 +60,32 @@ pub const isAlphanumeric = std.ascii.isAlphanumeric;
 //______________________________________
 // @section Extensions to std.ascii
 //____________________________
-/// @descr Returns whether or not the {@arg C} is a valid numeric character
+/// @descr Returns whether or not {@arg C} is a character that should be understood as an EOF marker
+pub fn isEOF (C :u8) bool { return C == char.List.EOF; }
+/// @descr Returns whether or not {@arg C} is a valid numeric character
 /// @note Not the same as {@link std.isDigit}
 pub fn isNumeric (C :u8) bool { return char.List.contains(char.List.numeric[0..], C); }
-/// @descr Returns whether or not the {@arg C} is a valid identifier character
+/// @descr Returns whether or not {@arg C} is a valid identifier character
 pub fn isIdent (C :u8) bool { return char.List.contains(char.List.identifier[0..], C); }
-/// @descr Returns whether or not the {@arg C} is an operator symbol
+/// @descr Returns whether or not {@arg C} is an operator symbol
 pub fn isOperator (C :u8) bool { return char.List.contains(char.List.operator[0..], C); }
-/// @descr Returns whether or not the {@arg C} is a quote symbol
+/// @descr Returns whether or not {@arg C} is a quote symbol
 pub fn isQuote (C :u8) bool { return char.List.contains(char.List.quote[0..], C); }
-/// @descr Returns whether or not the {@arg C} is a parenthesis, bracket or brace symbol
+/// @descr Returns whether or not {@arg C} is a parenthesis, bracket or brace symbol
 pub fn isParenthesis (C :u8) bool { return char.List.contains(char.List.parenthesis[0..], C); }
-/// @descr Returns whether or not the {@arg C} is a parenthesis or a bracket symbol
+/// @descr Returns whether or not {@arg C} is a parenthesis or a bracket symbol
 pub fn isPunctuation (C :u8) bool { return char.List.contains(char.List.punctuation[0..], C); }
-/// @descr Returns whether or not the {@arg C} is a character that should trigger a context switch
-pub fn isContextChange (C :u8) bool { return char.List.contains(char.List.contextChange[0..], C); }
+/// @descr Returns whether or not {@arg C} is a character that should trigger a context switch
+pub fn isContextChange (C :u8) bool { return char.isEOF(C) or char.List.contains(char.List.contextChange[0..], C); }
 //____________________________
-/// @descr Returns whether or not the {@arg C} is a semicolon symbol
+/// @descr Returns whether or not {@arg C} is a semicolon symbol
 pub fn isSemicolon (C :u8) bool { return C == ';'; }
-/// @descr Returns whether or not the {@arg C} is a colon symbol
+/// @descr Returns whether or not {@arg C} is a colon symbol
 pub fn isColon (C :u8) bool { return C == ':'; }
-/// @descr Returns whether or not the {@arg C} is a dot symbol
+/// @descr Returns whether or not {@arg C} is a dot symbol
 pub fn isDot (C :u8) bool { return C == '.'; }
-/// @descr Returns whether or not the {@arg C} is a comma symbol
+/// @descr Returns whether or not {@arg C} is a comma symbol
 pub fn isComma (C :u8) bool { return C == ','; }
-/// @descr Returns whether or not the {@arg C} is a hash symbol
+/// @descr Returns whether or not {@arg C} is a hash symbol
 pub fn isHash (C :u8) bool { return C == '#'; }
 
