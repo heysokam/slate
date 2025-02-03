@@ -27,7 +27,7 @@ test "slate.lexer.ident | should return an error when the current character is n
 }
 
 test "slate.lexer.ident | should increment {@arg L}.pos until the first ContextChange character is found" {
-  const Expected = 4;
+  const Expected = 3;
   // Setup
   var L = try slate.Lex.create(t.A, "abcd e213\n&(*)12340atarst");
   defer L.destroy();
@@ -41,7 +41,7 @@ test "slate.lexer.ident | should increment {@arg L}.pos until the first ContextC
 }
 
 test "slate.lexer.ident | should increment {@arg L}.pos by one for every Identifier character found" {
-  const Expected = 8;
+  const Expected = 7;
   // Setup
   var L = try slate.Lex.create(t.A, "abcde213\n&(*)12340atarst");
   defer L.destroy();
@@ -69,7 +69,7 @@ test "slate.lexer.ident | should add an ident Lexeme with the expected start/end
 }
 
 test "slate.lexer.ident | should leave {@arg L}.pos at 0 of the next character/lexeme that should be lexed, without skipping any" {
-  const Expected = 8;
+  const Expected = 7;
   // Setup
   var L = try slate.Lex.create(t.A, "abcde213\n&(*)12340atarst");
   defer L.destroy();
@@ -104,7 +104,7 @@ test "slate.lexer.number | should return an error when the current character is 
 }
 
 test "slate.lexer.number | should increment {@arg L}.pos until the first ContextChange character is found" {
-  const Expected = 6;
+  const Expected = 5;
   // Setup
   var L = try slate.Lex.create(t.A, "0123_4 e567\n&(*)12340atarst");
   defer L.destroy();
@@ -118,7 +118,7 @@ test "slate.lexer.number | should increment {@arg L}.pos until the first Context
 }
 
 test "slate.lexer.number | should increment {@arg L}.pos by one for every Number character found" {
-  const Expected = 10;
+  const Expected = 9;
   // Setup
   var L = try slate.Lex.create(t.A, "0123_4e567\n&(*)12340atarst");
   defer L.destroy();
@@ -146,7 +146,7 @@ test "slate.lexer.number | should add an number Lexeme with the expected start/e
 }
 
 test "slate.lexer.number | should leave {@arg L}.pos at 0 of the next character/lexeme that should be lexed, without skipping any" {
-  const Expected = 27;
+  const Expected = 26;
   // Setup
   var L = try slate.Lex.create(t.A, "0x0o0b0123_4567e123'u'i'f'd\n&(*)12340atarst");
   defer L.destroy();

@@ -17,8 +17,8 @@ pub fn ident (L:*Lex) !void {
   var   end   = L.pos;
   while (true) : (L.pos += 1) {
     const c = L.ch();
-    if      (Ch.isIdent(c))         { end += 1; }
-    else if (Ch.isContextChange(c)) { break; }
+    if      (Ch.isIdent(c))         { end +|= 1; }
+    else if (Ch.isContextChange(c)) { end -|= 1; break; }
     else                            { return Lex.fail(error.slate_lex_UnknownIdentifier, "Unknown Identifier character '{c}' (0x{X})", .{c, c}); }
   }
   try L.add(Lx.Id.ident, start, end);
@@ -32,8 +32,8 @@ pub fn number (L:*Lex) !void {
   var   end   = L.pos;
   while (true) : (L.pos += 1) {
     const c = L.ch();
-    if      (Ch.isNumeric(c))       { end += 1; }
-    else if (Ch.isContextChange(c)) { break; }
+    if      (Ch.isNumeric(c))       { end +|= 1; }
+    else if (Ch.isContextChange(c)) { end -|= 1; break; }
     else                            { return Lex.fail(error.slate_lex_UnknownNumber, "Unknown Numeric character '{c}' (0x{X})", .{c, c}); }
   }
   try L.add(Lx.Id.number, start, end);
