@@ -25,7 +25,7 @@ pub fn create  (I :Lx.Id, start :source.Pos, end :source.Pos) Lx { return Lx.cre
 
 pub const slice = struct {
   /// @descr Returns the string value of the Lexeme located at the {@arg L.loc} of {@arg src}.
-  pub fn from (L :*const Lx, src :source.Code) source.Code { return src[L.loc.start..L.loc.end]; }
+  pub fn from (L :*const Lx, src :source.Code) source.Str { return src[L.loc.start..L.loc.end]; }
 }; //:: Lx.slice
 pub const from = slice.from;
 

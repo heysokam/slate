@@ -12,4 +12,4 @@ const source = @import("../source.zig").source;
 /// @descr Describes the location in the source code of the name used to access the target entity
 name  :source.Loc,
 
-pub fn from (I:*const Ident, src :source.Code) source.Code { return I.name.from(src); }
+pub fn from (I:*const Ident, src :source.Code) source.Str { return I.name.from(src); }
