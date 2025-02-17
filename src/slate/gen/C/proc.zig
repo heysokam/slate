@@ -58,7 +58,7 @@ const returnT = struct {
     const retT = types.at(N.Proc.retT);
     if (retT == null) return error.genC_Proc_ReturnTypeMustExistWhenDeclared;
     const tName = retT.?.getLoc(types);
-    if (tName.valid()) try result.appendSlice(src[tName.start..tName.end]);
+    if (tName.valid()) try result.appendSlice(tName.from(src));
     if (retT.?.isPtr(types)) try result.appendSlice(Ptr);
     try result.appendSlice(spc);
   } //:: Gen.proc.returnT.render
