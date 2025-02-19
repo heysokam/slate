@@ -15,3 +15,9 @@ pub fn report(L:*Lex) void {
   Lex.prnt("-------------------\n", .{});
 }
 
+// TODO: Lexer Autogen
+// var L = try slate.Lex.create(t.A, code);
+// defer L.destroy();
+// try L.process();
+// for (L.res.items(.id), L.res.items(.loc), 0..) |lx, loc, id| std.debug.print("slate.Lx{{.id= .{s}, .loc= slate.source.Loc{{.start= {d}, .end= {d: >3} }}}}, // {d}: `{s}`\n", .{@tagName(lx), loc.start, loc.end, id, loc.from(code)});
+

@@ -46,14 +46,6 @@ pub const Type = union(enum) {
     kind  :Type.Number.Kind,
     pub const Kind = enum { signed, unsigned, float };
     pub fn create (size :usize) Type { return Type{.number= Type.Number{.size= size} }; }
-    // pub fn name (N :*const Type.Number, A :std.mem.Allocator) !zstd.str {
-    //   var result = zstd.str.init(A);
-    //   try result.appendSlice(@tagName(N.kind));
-    //   const size = try std.fmt.allocPrint(A, ".{d}", .{N.size});
-    //   defer A.free(size);
-    //   try result.appendSlice(size);
-    //   return result;
-    // }
   };
 
   pub const String = struct {
@@ -61,23 +53,10 @@ pub const Type = union(enum) {
     ptr   :bool=  false,  // FIX: Should not be here
     pub const Kind = enum { normal, multiline, raw, char };
     pub fn create (kind :Type.String.Kind) Type { return Type{.string= Type.String{.kind= kind} }; }
-    // pub fn name (S :*const Type.String, A :std.mem.Allocator) !zstd.str {
-    //   return switch (S.kind) {
-    //     .char => try zstd.Str.from(@tagName(S.kind), A),
-    //     else  => blk: {
-    //       const N = "string.";
-    //       var result = try zstd.str.initCapacity(A, N.len);
-    //       result.appendSliceAssumeCapacity(N);
-    //       try result.appendSlice(@tagName(S.kind));
-    //       break :blk result;
-    //       },
-    //   };
-    // }
   };
 
   pub const Void = struct { _:void=undefined,
     pub fn create () Type { return Type{.void= Type.Void{}}; }
-    // pub fn name (_:*const Type.Void, A :std.mem.Allocator) !zstd.str { return zstd.Str.from("void", A); }
   };
 
   pub fn isMut (T :?*const Type, L :Type.List) bool {
