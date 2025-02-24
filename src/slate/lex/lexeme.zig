@@ -71,6 +71,7 @@ pub const Id = enum {
   newline,   // \n
   tab,       // \t
   ret,       // \r
+  EOF,       // 0x0  (the null character 0 is treated as an EOF marker)
 };
 //____________________________
 /// @descr Describes a list of {@link Lx} Lexeme objects

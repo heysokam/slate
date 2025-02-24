@@ -85,6 +85,7 @@ pub const ch         = data.ch;
 pub const others     = @import("./lex/others.zig");
 pub const ident      = others.ident;
 pub const number     = others.number;
+pub const eof        = others.eof;
 //______________________________________
 // @section Lexer Process: Symbols
 pub const symbols    = @import("./lex/symbols.zig");
@@ -139,7 +140,9 @@ pub fn process(L:*Lex) !void {
     '`'        => try L.quote_B(),
     ' '        => try L.space(),
     '\n'       => try L.newline(),
-    else => |char| try Lex.fail(error.slate_lexer_UnknownFirstCharacter, "Unknown first character '{c}' (0x{X})", .{char, char})
+    0          => try L.eof(),
+    0xAA       => try Lex.fail(error.slate_lexer_UndefinedMemoryAccess, "[CRITICAL ERROR] Something went wrong during slate's Lexer process. Tried to lex undefined memory at position '{d}' of the input source code.", .{L.pos}),
+    else =>|char| try Lex.fail(error.slate_lexer_UnknownFirstCharacter, "Unknown first character '{c}' (0x{X})", .{char, char})
     }
   }
 }

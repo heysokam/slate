@@ -40,3 +40,13 @@ pub fn number (L:*Lex) !void {
   L.pos = end;
 }
 
+
+//__________________________
+/// @descr Processes a null character `0x0` into an EOF Lexeme, and adds it to the {@arg L.res} result.
+pub fn eof (L:*Lex) !void {
+  try L.add_single(switch(L.ch()) {
+    0    => Lx.Id.EOF,
+    else => |char| return Lex.fail(error.slate_lex_UnknownEOF, "Unknown End of File character '{c}' (0x{X})", .{char, char})
+  });
+}
+
