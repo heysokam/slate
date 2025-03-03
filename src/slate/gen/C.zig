@@ -12,6 +12,8 @@ const slate  = @import("../../slate.zig");
 const proc   = @import("./C/proc.zig");
 const source = slate.source;
 
+fn todo (kind :zstd.cstr) !void { zstd.prnt("TODO:C Render TopLevel {s}\n", .{kind}); }
+
 //______________________________________
 /// @descr
 ///  Converts the given *Slate {@arg N} Node into the C programming language.
@@ -27,6 +29,7 @@ pub fn render (
   ) !void {
   switch (N) {
     .Proc => try proc.render(N, src, types, pragmas, args, stmts, result),
+    .Var  => try C.todo("Variable"),
   }
 }
 

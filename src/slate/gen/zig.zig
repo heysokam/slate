@@ -9,20 +9,27 @@ pub const zig = @This();
 const zstd = @import("../../zstd.zig");
 // @deps *Slate
 const slate  = @import("../../slate.zig");
+const proc   = @import("./zig/proc.zig");
 const source = slate.source;
-const Node   = slate.Node;
+
+fn todo (kind :zstd.cstr) !void { zstd.prnt("TODO:zig Render TopLevel {s}\n", .{kind}); }
 
 //______________________________________
 /// @descr
 ///  Converts the given *Slate {@arg N} Node into the Zig programming language.
 ///  The generated code will be appended to the {@arg result}.
 pub fn render (
-    N      : Node,
-    src    : source.Code,
-    types  : slate.Type.List,
-    result : *zstd.str,
-  ) !void {_=N; _=src; _=types;
-  zstd.fail("TODO: UNIMPLEMENTED\n", .{});
-  try result.appendSlice("TODO: UNIMPLEMENTED | Zig Codegen");
+    N       : slate.Node,
+    src     : source.Code,
+    types   : slate.Type.List,
+    pragmas : slate.Pragma.Store,
+    args    : slate.Proc.Arg.Store,
+    stmts   : slate.Stmt.Store,
+    result  : *zstd.str,
+  ) !void {
+  switch (N) {
+    .Proc => try proc.render(N, src, types, pragmas, args, stmts, result),
+    .Var  => try zig.todo("Variable"),
+  }
 }
 

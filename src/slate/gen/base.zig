@@ -12,6 +12,7 @@ pub const kw       = struct {
   pub const Void   = "void";
   pub const Return = "return";
   pub const Const  = "const";
+  pub const Func   = "fn";
 };
 
 const zstd = @import("../../zstd.zig");

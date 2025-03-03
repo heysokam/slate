@@ -6,12 +6,15 @@ const std = @import("std");
 // @deps zstd
 const zstd = @import("../../zstd.zig");
 // @deps *Slate
-const Proc = @import("./proc.zig");
-const Type = @import("./type.zig").Type;
+const Proc     = @import("./proc.zig");
+const Variable = @import("./statement.zig").Stmt;
+const Type     = @import("./type.zig").Type;
 
 /// @descr Describes a Top-Level Node of the language.
 pub const Node = union(enum) {
   Proc  :Proc,
+  Var   :Variable,
+
   pub const List  = zstd.DataList(Node);
   pub const Store = zstd.DataList(Node.List);
 }; //:: slate.Node

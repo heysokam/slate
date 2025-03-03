@@ -10,6 +10,7 @@ const std = @import("std");
 const zstd = @import("../../zstd.zig");
 // @deps minim.ast
 const Expr = @import("./expression.zig").Expr;
+const Data = @import("./data.zig").Data;
 
 //______________________________________
 /// @descr
@@ -19,7 +20,7 @@ const Expr = @import("./expression.zig").Expr;
 ///  - ?? Legal at the top level
 pub const Stmt = union(enum) {
   Retrn   :Stmt.Return,
-  // Asgn    :Stmt.Assign,
+  Var     :Stmt.Variable,
   // If      :Stmt.If,
   // Whil    :Stmt.While,
   // Fr      :Stmt.For,
@@ -31,11 +32,11 @@ pub const Stmt = union(enum) {
 
   pub const Return = struct {
     body  :?Expr= null,
-
     pub fn create (E :Expr) Stmt { return Stmt{ .Retrn= Stmt.Return{ .body= E } }; }
   };
 
-  // pub const Assign  = todo;
+  pub const Variable = Data;
+
   // pub const If      = todo;
   // pub const While   = todo;
   // pub const For     = todo;

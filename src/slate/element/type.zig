@@ -18,8 +18,7 @@ pub const Type = union(enum) {
   number  :Type.Number,
   string  :Type.String,
   void    :Type.Void,
-  pub const List  = zstd.DataList(Type);
-  pub const Store = Type.List;
+  pub const List = zstd.DataList(Type);
 
   /// @descr Arbitrary Type. For sending the type-checking responsibility to the target Lang compiler.
   pub const Any = struct {
