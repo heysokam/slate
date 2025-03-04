@@ -543,3 +543,32 @@ test "slate.lexer.dash | should return an error when the current character is no
   try t.err(result, Expected);
 }
 
+
+//______________________________________
+// @section Lexer: Exclamation
+//____________________________
+test "slate.lexer.excl | should add a single Lx.Id.dash to the lexer result if the current character is `!`" {
+  const Expected = slate.Lx.Id.excl;
+  // Setup
+  var L = try slate.Lex.create(t.A, "!");
+  defer L.destroy();
+  // Validate
+  try t.eq(L.ch(), '!');
+  // Check
+  try L.excl();
+  const result = L.res.items(.id)[L.res.len-1];
+  try t.eq(result, Expected);
+}
+
+test "slate.lexer.excl | should return an error when the current character is not `!`" {
+  const Expected = error.slate_lex_UnknownExclamation;
+  // Setup
+  var L = try slate.Lex.create(t.A, "n");
+  defer L.destroy();
+  // Validate
+  try t.ok(L.ch() != '!');
+  // Check
+  const result = L.excl();
+  try t.err(result, Expected);
+}
+

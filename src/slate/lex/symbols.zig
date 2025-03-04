@@ -147,4 +147,12 @@ pub fn dash (L:*Lex) !void {
     else => |char| return Lex.fail(error.slate_lex_UnknownDash, "Unknown Dash character '{c}' (0x{X})", .{char, char})
   });
 }
+//__________________________
+/// @descr Processes a single '!' character into a Lexeme, and adds it to the {@arg L.res} result.
+pub fn excl (L:*Lex) !void {
+  try L.add_single(switch(L.ch()) {
+    '!' => Lx.Id.excl,
+    else => |char| return Lex.fail(error.slate_lex_UnknownExclamation, "Unknown Exclamation character '{c}' (0x{X})", .{char, char})
+  });
+}
 
