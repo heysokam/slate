@@ -58,7 +58,12 @@ const args = struct {
       src     : source.Code,
       types   : slate.Type.List,
       result : *zstd.str
-    ) !void {_=N;_=arg;_=src;_=types;_=result;
+    ) !void {_=N;
+    if (arg.type == null) return error.slate_gen_zig_Proc_ArgumentsMustHaveTypes;
+    const argT = types.at(arg.type.?);
+    if (argT == null) return error.slate_gen_zig_Proc_ArgumentsMustHaveTypes;
+    const tName = argT.?.getLoc(types);
+    try result.appendSlice(tName.from(src));
     // FIX: Pointer/Array/Slice types
   }
 
