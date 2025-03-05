@@ -13,6 +13,8 @@ pub const Pragma = union(enum) {
   readonly,
   // Procs
   pure, Inline, Noreturn,
+  // Namespace/Module resolution
+  import,
 
   const Id  = std.meta.Tag(Pragma);
   const Map = zstd.Map(Pragma.Id);
@@ -22,20 +24,20 @@ pub const Pragma = union(enum) {
     // Procs
     .{ "pure",       Pragma.Id.pure     },
     .{ "inline",     Pragma.Id.Inline   },
+    .{ "import",     Pragma.Id.import   },
     .{ "noreturn",   Pragma.Id.Noreturn },
   });
 
-  pub fn from (name :cstr) Pragma {
-    switch (Pragma.Kw.get(name) orelse Pragma.Empty) {
-      .Empty    => return Pragma.Empty,
-      // Types
-      .readonly => return Pragma.readonly,
-      // Procs
-      .pure     => return Pragma.pure,
-      .Inline   => return Pragma.Inline,
-      .Noreturn => return Pragma.Noreturn,
-    }
-  }
+  pub fn from (name :cstr) Pragma { return switch (Pragma.Kw.get(name) orelse Pragma.Empty) {
+    .Empty    => Pragma.Empty,
+    // Types
+    .readonly => Pragma.readonly,
+    // Procs
+    .pure     => Pragma.pure,
+    .Inline   => Pragma.Inline,
+    .import   => Pragma.import,
+    .Noreturn => Pragma.Noreturn,
+  };}
 
   pub const List  = zstd.set.Unordered(Pragma);
   pub const Store = zstd.DataList(Pragma.List);
