@@ -58,6 +58,16 @@ pub const Type = union(enum) {
     pub fn create () Type { return Type{.void= Type.Void{}}; }
   };
 
+  pub fn isArr (T :?*const Type) bool {
+    if (T == null) return false;
+    return switch (T.?.*) {
+      .any,
+      .number,
+      .string,
+      .void   => false,
+      .array  => true,  };
+  } //:: slate.Type.isPtr
+
   pub fn isMut (T :?*const Type, L :Type.List) bool {
     if (T == null) return false;
     return switch (T.?.*) {
