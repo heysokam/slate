@@ -1,24 +1,28 @@
 //:___________________________________________________________________
 //  *Slate  |  Copyright (C) Ivan Mar (sOkam!)  |  LGPLv3 or higher  :
 //:___________________________________________________________________
-//! @fileoverview C codegen: Proc
-//_________________________________|
+//! @fileoverview Zig codegen: Proc
+//___________________________________|
 pub const proc = @This();
-// @deps zstd
+// @deps std
+const std = @import("std");
+// @deps zdk
 const zstd = @import("../../../zstd.zig");
 // @deps *Slate
-const slate  = @import("../../../slate.zig");
-const source = slate.source;
-const base   = @import("../base.zig");
-const spc    = base.spc;
-const Ptr    = base.Ptr;
-const nl     = base.nl;
-const indent = base.indent;
-const kw     = base.kw;
+const slate   = @import("../../../slate.zig");
+const source  = slate.source;
+const base    = @import("../base.zig");
+const spc     = base.spc;
+const Ptr     = base.Ptr;
+const nl      = base.nl;
+const indent  = base.indent;
+const kw      = base.kw;
+const @"type" = @import("./type.zig");
 
 const attributes = struct {
   const public = "pub" ++ spc;
   const Inline = "inline" ++ spc;
+  const Extern = "extern" ++ spc;
 
   fn render(
       N      : slate.Node,
@@ -29,6 +33,7 @@ const attributes = struct {
     if (N.Proc.public) try result.appendSlice(attributes.public);
     if (N.Proc.pragmas != .None) {
       const pragmas = data.at(N.Proc.pragmas).?;
+      if (pragmas.has(.import)) try result.appendSlice(attributes.Extern);
       if (pragmas.has(.Inline)) try result.appendSlice(attributes.Inline);
     }
     try result.appendSlice(kw.Func ++ spc);
@@ -50,29 +55,25 @@ const args = struct {
   const end      = ")";
   const sep      = ", ";
   const sep_type = " :";
+  const Ptr      = base.Ptr;
   fn last (list :[]slate.Proc.Arg, id :usize) bool { return list.len == 1 or id == list.len-1; }
 
   fn @"type" (
-      N       : slate.Node,
       arg     : slate.Data,
       src     : source.Code,
       types   : slate.Type.List,
       result : *zstd.str
-    ) !void {_=N;
+    ) !void {
     if (arg.type == null) return error.slate_gen_zig_Proc_ArgumentsMustHaveTypes;
-    const argT = types.at(arg.type.?);
-    if (argT == null) return error.slate_gen_zig_Proc_ArgumentsMustHaveTypes;
-    const tName = argT.?.getLoc(types);
-    try result.appendSlice(tName.from(src));
-    // FIX: Pointer/Array/Slice types
+    if (types.at(arg.type.?) == null) return error.slate_gen_zig_Proc_ArgumentsMustHaveTypes;
+    try proc.type.render(types.at(arg.type.?).?, src, types, arg.write, result);
   }
 
   fn name (
-      N      : slate.Node,
       arg    : slate.Data,
       src    : source.Code,
       result : *zstd.str
-    ) !void {_=N;
+    ) !void {
     try result.appendSlice(arg.id.from(src));
   } //:: Gen.proc.args.name
 
@@ -88,9 +89,9 @@ const args = struct {
     if (N.Proc.args == .None) { try result.appendSlice(args.end); return; }
     const list = argsData.at(N.Proc.args).?.items();
     for (list, 0..) |arg, id| {
-      try proc.args.name(N, arg, src, result);
+      try proc.args.name(arg, src, result);
       try result.appendSlice(args.sep_type);
-      try proc.args.type(N, arg, src, types, result);
+      try proc.args.type(arg, src, types, result);
       if (!args.last(list,id)) try result.appendSlice(args.sep);
     }
     try result.appendSlice(args.end);
@@ -98,6 +99,8 @@ const args = struct {
 }; //:: Gen.zig.proc.args
 
 const returnT = struct {
+  const ErrorSep = "!";
+
   fn render(
       N        : slate.Node,
       src      : source.Code,
@@ -106,12 +109,15 @@ const returnT = struct {
     ) !void {
     try result.appendSlice(spc);
     if (N.Proc.retT == .None) { try result.appendSlice(kw.Void); return; } // FIX: noreturn pragma
-    const retT = types.at(N.Proc.retT);
-    if (retT == null) return error.slate_gen_zig_Proc_ReturnTypeMustExistWhenDeclared;
-    const tName = retT.?.getLoc(types);
-    if (tName.valid()) try result.appendSlice(tName.from(src));
-    // FIX: Pointer/Array/Slice types
+    if (types.at(N.Proc.retT) == null) return error.slate_gen_zig_Proc_ReturnTypeMustExistWhenDeclared;
+    const retT :slate.Type= types.at(N.Proc.retT).?;
     // FIX: Error return types
+    if (N.Proc.err != null) {
+      try result.appendSlice(N.Proc.err.?.from(src));
+      try result.appendSlice(proc.returnT.ErrorSep);
+    }
+    const write = false;  // FIX: Remove hardcoded. Should allow `proc f() :mut T`
+    try proc.type.render(retT, src, types, write, result);
   }
 }; //:: Gen.zig.proc.returnT
 
@@ -184,6 +190,7 @@ const body = struct {
       bodyData : slate.Proc.BodyStore,
       result   : *zstd.str,
     ) !void {
+    if (N.Proc.body == .None) { try result.appendSlice(proto.end); return; }
     try proc.body.start(N, bodyData, result);
     for (bodyData.at(N.Proc.body).?.items()) |S| try proc.body.stmt.render(N, S, bodyData, src, result);
     try proc.body.end(N, result);
