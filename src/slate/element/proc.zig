@@ -18,6 +18,7 @@ name     :Proc.Name,
 pure     :bool                 = false,
 public   :bool                 = false,
 args     :Proc.ArgStore.Pos    = .None,
+err      :Proc.Error           = null,
 retT     :Proc.ReturnT         = .None,
 pragmas  :Proc.PragmaStore.Pos = .None,
 body     :Proc.BodyStore.Pos   = .None,
@@ -34,10 +35,11 @@ pub fn create_empty () Proc {
 //______________________________________
 // @section Proc Type Aliases
 //____________________________
-pub const Name = @import("./ident.zig").Ident;
-pub const Arg  = @import("./data.zig").Data;
-const Pragma   = @import("./pragma.zig").Pragma;
-const Stmt     = @import("./statement.zig").Stmt;
+pub const Name  = @import("./ident.zig").Ident;
+pub const Error = ?@import("./ident.zig").Ident;
+pub const Arg   = @import("./data.zig").Data;
+const Pragma    = @import("./pragma.zig").Pragma;
+const Stmt      = @import("./statement.zig").Stmt;
 //____________________________
 /// @descr Describes the List of arguments of this Proc
 /// @important The responsability of creating this list, and the Store type that holds them, lays on the creator of the Proc object.
