@@ -63,7 +63,7 @@ pub const Id = enum {
   pcnt,      // %
   pipe,      // |
   excl,      // !
-  qmark,     // ?
+  question,  // ?
   hat,       // ^
   slash_B,   // \  (backward slash)
   // Whitespace

@@ -572,3 +572,32 @@ test "slate.lexer.excl | should return an error when the current character is no
   try t.err(result, Expected);
 }
 
+
+//______________________________________
+// @section Lexer: Question
+//____________________________
+test "slate.lexer.question | should add a single Lx.Id.dash to the lexer result if the current character is `?`" {
+  const Expected = slate.Lx.Id.question;
+  // Setup
+  var L = try slate.Lex.create(t.A, "?");
+  defer L.destroy();
+  // Validate
+  try t.eq(L.ch(), '?');
+  // Check
+  try L.question();
+  const result = L.res.items(.id)[L.res.len-1];
+  try t.eq(result, Expected);
+}
+
+test "slate.lexer.question | should return an error when the current character is not `?`" {
+  const Expected = error.slate_lex_UnknownQuestion;
+  // Setup
+  var L = try slate.Lex.create(t.A, "n");
+  defer L.destroy();
+  // Validate
+  try t.ok(L.ch() != '?');
+  // Check
+  const result = L.question();
+  try t.err(result, Expected);
+}
+

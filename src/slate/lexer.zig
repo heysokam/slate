@@ -102,6 +102,7 @@ pub const comma      = symbols.comma;
 pub const hash       = symbols.hash;
 pub const dash       = symbols.dash;
 pub const excl       = symbols.excl;
+pub const question   = symbols.question;
 pub const quote_S    = symbols.quote_S;
 pub const quote_D    = symbols.quote_D;
 pub const quote_B    = symbols.quote_B;
@@ -135,6 +136,7 @@ pub fn process(L:*Lex) !void {
     '#'        => try L.hash(),
     '-'        => try L.dash(),
     '!'        => try L.excl(),
+    '?'        => try L.question(),
     '/'        => try L.slash_F(),
     '\\'       => try L.slash_B(),
     '\''       => try L.quote_S(),
