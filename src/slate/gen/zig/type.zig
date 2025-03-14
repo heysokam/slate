@@ -15,9 +15,13 @@ const source = slate.source;
 const base   = @import("../base.zig");
 const spc    = base.spc;
 const Ptr    = base.Ptr;
+const Opt    = base.Opt;
 const kw     = base.kw;
 
-fn isSlice (T :slate.Type.Array, src :source.Code) bool { return std.mem.eql(u8, T.count.?.from(src), "_"); }
+fn isSlice (T :slate.Type.Array, src :source.Code) bool { return
+  T.count == null or
+  std.mem.eql(u8, T.count.?.from(src), "_");
+}
 
 pub fn render (
     T      : slate.Type,
@@ -26,15 +30,17 @@ pub fn render (
     write  : bool,
     result : *zstd.str,
   ) !void {
+  if (T.isOpt()) try result.appendSlice(Opt);
   // Array or Slice case. Takes {.readonly.} into account
   if (T.isArr()) {
     // FIX: C Arrays
+    // FIX: * Arrays
     try result.append('[');
-    const count = T.array.count.?.from(src);
     const slice = Type.isSlice(T.array, src);
-    if (!slice) try result.appendSlice(count);
+    if (!slice) try result.appendSlice(T.array.count.?.from(src));
     try result.append(']');
     if (!write and slice) try result.appendSlice(kw.Const++spc);
+    if (types.at(T.array.type).?.isOpt()) try result.appendSlice(Opt);
     if (T.isPtr(types)) try result.appendSlice(Ptr);
     if (!T.isMut(types)) try result.appendSlice(kw.Const++spc);
   // Pointer case. Ignores {.readonly.}
