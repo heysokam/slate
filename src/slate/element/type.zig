@@ -25,6 +25,7 @@ pub const Type = union(enum) {
     name    :source.Loc,
     mut     :bool=  false,  // FIX: Should not be here
     ptr     :bool=  false,  // FIX: Should not be here
+    opt     :bool=  false,  // FIX: Should not be here
     pragma  :Pragma.Store.Pos= .None,
     pub fn create (name :source.Loc) Type { return Type{.any= Type.Any{.name= name} }; }
   }; //:: slate.Type.Any
@@ -34,6 +35,7 @@ pub const Type = union(enum) {
     count   :?source.Loc=  null,
     mut     :bool=         false,  // FIX: Should not be here
     ptr     :bool=         false,  // FIX: Should not be here
+    opt     :bool=         false,  // FIX: Should not be here
     pragma  :Pragma.Store.Pos= .None,
     pub fn create (T :Node.List.Pos) Type { return Type{.array = Type.Array{.type= T}}; }
   }; //:: slate.Type.Array
@@ -42,6 +44,7 @@ pub const Type = union(enum) {
     size  :usize,
     mut   :bool=  false,  // FIX: Should not be here
     ptr   :bool=  false,  // FIX: Should not be here
+    opt   :bool=  false,  // FIX: Should not be here
     kind  :Type.Number.Kind,
     pub const Kind = enum { signed, unsigned, float };
     pub fn create (size :usize) Type { return Type{.number= Type.Number{.size= size} }; }
@@ -50,6 +53,7 @@ pub const Type = union(enum) {
   pub const String = struct {
     kind  :Type.String.Kind,
     ptr   :bool=  false,  // FIX: Should not be here
+    opt   :bool=  false,  // FIX: Should not be here
     pub const Kind = enum { normal, multiline, raw, char };
     pub fn create (kind :Type.String.Kind) Type { return Type{.string= Type.String{.kind= kind} }; }
   };
@@ -87,6 +91,16 @@ pub const Type = union(enum) {
       .array  => | t | Type.isPtr(&L.at(t.type).?, L),
       .void   => false, };
   } //:: slate.Type.isPtr
+
+  pub fn isOpt (T :?*const Type) bool {
+    if (T == null) return false;
+    return switch (T.?.*) {
+      .any    => | t | t.opt,
+      .string => | t | t.opt,
+      .number => | t | t.opt,
+      .array  => | t | t.opt,
+      .void   => false, };
+  } //:: slate.Type.isMut
 
   pub fn getLoc (T :?*const Type, L :Type.List) source.Loc {
     if (T == null) return source.Loc{};

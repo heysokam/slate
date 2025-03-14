@@ -19,7 +19,7 @@ pure     :bool                 = false,
 public   :bool                 = false,
 args     :Proc.ArgStore.Pos    = .None,
 err      :Proc.Error           = null,
-retT     :Proc.ReturnT         = .None,
+ret      :Proc.Return          = .{},
 pragmas  :Proc.PragmaStore.Pos = .None,
 body     :Proc.BodyStore.Pos   = .None,
 
@@ -55,9 +55,15 @@ pub const Pragmas = Proc.Pragma.List;
 /// @important The responsability of creating this store, and its contained lists, lays on the creator of the Proc object.
 pub const PragmaStore = Proc.Pragma.Store;
 //____________________________
-/// @descr Describes the position of the data for the return type of this Proc in the global List of types.
-/// @important The responsability of creating the Types list lays on the creator of the Proc object.
-pub const ReturnT = Type.List.Pos;
+pub const Return = struct {
+  /// @descr Describes the position of the data for the return type of this Proc in the global List of types.
+  /// @important The responsability of creating the Types list lays on the creator of the Proc object.
+  @"type" :Type.List.Pos= .None,
+  /// @descr Whether the data can be read from or not
+  read    :bool=  true,
+  /// @descr Whether the data can be written to or not
+  write   :bool=  false,
+};
 //____________________________
 /// @descr Describes the List of Statements that define the body of this Proc
 /// @important The responsability of creating this list, and the Store type that holds them, lays on the creator of the Proc object.

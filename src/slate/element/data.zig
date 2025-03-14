@@ -37,7 +37,9 @@ value  :?Expr=  null,
 
 
 /// @descr Whether the data can be read from or not
-read   :bool=  true,
+read     :bool=  true,
 /// @descr Whether the data can be written to or not
-write  :bool=  false,
+write    :bool=  false,
+/// @descr Whether the data is considered runtime or comptime
+runtime  :bool=  true,
 

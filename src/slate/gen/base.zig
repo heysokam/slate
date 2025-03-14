@@ -4,6 +4,8 @@
 //! @fileoverview Codegen: Base Tools
 //____________________________________|
 pub const Ptr      = "*";
+pub const Opt      = "?";
+pub const Err      = "!";
 pub const spc      = " ";
 pub const tab      = spc++spc;
 pub const nl       = "\n";
