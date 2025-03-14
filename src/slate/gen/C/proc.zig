@@ -28,6 +28,7 @@ const attributes = struct {
   const noreturn_C11 = "_Noreturn" ++ spc;
   const static       = "static" ++ spc;
   const Inline       = "inline" ++ spc;
+  const Extern       = "extern" ++ spc;
 
   fn render (
       N      : slate.Node,
@@ -43,6 +44,7 @@ const attributes = struct {
       // [[attr]]   Attributes
       if (pragmas.has(.Noreturn)) try result.appendSlice(attributes.Noreturn);
       // Keywords
+      // if (pragmas.has(.import)) try result.appendSlice(attributes.Extern);
       if (pragmas.has(.Inline)) try result.appendSlice(attributes.Inline);
     }
     if (!N.Proc.public) try result.appendSlice(attributes.static);
@@ -56,12 +58,15 @@ const returnT = struct {
       types  : slate.Type.List,
       result : *zstd.str,
     ) !void {
-    if (N.Proc.retT == .None) { try result.appendSlice(kw.Void); return; }
-    const retT = types.at(N.Proc.retT);
-    if (retT == null) return error.slate_gen_C_Proc_ReturnTypeMustExistWhenDeclared;
-    const tName = retT.?.getLoc(types);
+    if (N.Proc.ret.type == .None) { try result.appendSlice(kw.Void); return; }
+    if (types.at(N.Proc.ret.type) == null) return error.slate_gen_C_Proc_ReturnTypeMustExistWhenDeclared;
+    const retT :slate.Type= types.at(N.Proc.ret.type).?;
+    const tName = retT.getLoc(types);
     if (tName.valid()) try result.appendSlice(tName.from(src));
-    if (retT.?.isPtr(types)) try result.appendSlice(Ptr);
+    if (retT.isPtr(types)) {
+      if (!retT.isMut(types)) try result.appendSlice(spc++kw.Const);
+      try result.appendSlice(Ptr);
+    }
     try result.appendSlice(spc);
   } //:: Gen.proc.returnT.render
 }; //:: Gen.proc.returnT
@@ -74,6 +79,7 @@ const name = struct {
       result : *zstd.str,
     ) !void {
     try result.appendSlice(N.Proc.name.from(src));
+    try result.appendSlice(spc);
   } //:: Gen.proc.name.render
 }; //:: Gen.proc.name
 
@@ -84,19 +90,18 @@ const args = struct {
   fn last (list :[]slate.Proc.Arg, id :usize) bool { return list.len == 1 or id == list.len-1; }
 
   fn @"type" (
-      N       : slate.Node,
-      arg     : slate.Data,
-      src     : source.Code,
-      types   : slate.Type.List,
+      arg    : slate.Data,
+      src    : source.Code,
+      types  : slate.Type.List,
       result : *zstd.str
-    ) !void {_=N;
+    ) !void {
     if (arg.type == null) return error.slate_gen_C_Proc_ArgumentsMustHaveTypes;
-    const argT = types.at(arg.type.?);
-    if (argT == null) return error.slate_gen_C_Proc_ArgumentsMustHaveTypes;
-    const tName = argT.?.getLoc(types);
+    if (types.at(arg.type.?) == null) return error.slate_gen_C_Proc_ArgumentsMustHaveTypes;
+    const argT :slate.Type= types.at(arg.type.?).?;
+    const tName = argT.getLoc(types);
     try result.appendSlice(tName.from(src));
-    if (argT.?.isPtr(types)) {
-      if (!argT.?.isMut(types)) try result.appendSlice(spc++kw.Const);
+    if (argT.isPtr(types)) {
+      if (!argT.isMut(types)) try result.appendSlice(spc++kw.Const);
       try result.appendSlice(Ptr);
     }
     try result.appendSlice(spc);
@@ -107,27 +112,25 @@ const args = struct {
   } //:: Gen.proc.args.type
 
   fn name (
-      N      : slate.Node,
       arg    : slate.Data,
       src    : source.Code,
       result : *zstd.str
-    ) !void {_=N;
+    ) !void {
     try result.appendSlice(arg.id.from(src));
   } //:: Gen.proc.args.name
 
   fn array (
-      N       : slate.Node,
-      arg     : slate.Data,
-      src     : source.Code,
-      types   : slate.Type.List,
+      arg    : slate.Data,
+      src    : source.Code,
+      types  : slate.Type.List,
       result : *zstd.str
-    ) !void {_=N;
+    ) !void {
     if (arg.type == null) return error.slate_gen_C_Proc_ArgumentsMustHaveTypes;
     const argT = types.at(arg.type.?);
     if (argT == null) return error.slate_gen_C_Proc_ArgumentsMustHaveTypes;
     switch (argT.?) { .array  => | t | {
       try result.append('[');
-      const count = t.count.?.from(src);
+      const count = if (t.count != null) t.count.?.from(src) else "";
       if (!std.mem.eql(u8, count, "_")) try result.appendSlice(count);
       try result.append(']');
     }, else => {}}
@@ -144,9 +147,9 @@ const args = struct {
     if (N.Proc.args == .None) { try result.appendSlice(kw.Void); try result.appendSlice(args.end); return; }
     const list = argsData.at(N.Proc.args).?.items();
     for (list, 0..) |arg, id| {
-      try proc.args.type(N, arg, src, types, result);
-      try proc.args.name(N, arg, src, result);
-      try proc.args.array(N, arg, src, types, result);
+      try proc.args.type(arg, src, types, result);
+      try proc.args.name(arg, src, result);
+      try proc.args.array(arg, src, types, result);
       if (!args.last(list,id)) try result.appendSlice(args.sep);
     }
     try result.appendSlice(args.end);
