@@ -99,7 +99,7 @@ const args = struct {
 }; //:: Gen.zig.proc.args
 
 const returnT = struct {
-  const ErrorSep = "!";
+  const ErrorSep = base.Err;
 
   fn render(
       N        : slate.Node,
@@ -108,16 +108,16 @@ const returnT = struct {
       result   : *zstd.str,
     ) !void {
     try result.appendSlice(spc);
-    if (N.Proc.retT == .None) { try result.appendSlice(kw.Void); return; } // FIX: noreturn pragma
-    if (types.at(N.Proc.retT) == null) return error.slate_gen_zig_Proc_ReturnTypeMustExistWhenDeclared;
-    const retT :slate.Type= types.at(N.Proc.retT).?;
-    // FIX: Error return types
+    if (N.Proc.ret.type == .None) { try result.appendSlice(kw.Void); return; } // FIX: noreturn pragma
+    if (types.at(N.Proc.ret.type) == null) return error.slate_gen_zig_Proc_ReturnTypeMustExistWhenDeclared;
+    // Error return
     if (N.Proc.err != null) {
       try result.appendSlice(N.Proc.err.?.from(src));
       try result.appendSlice(proc.returnT.ErrorSep);
     }
-    const write = false;  // FIX: Remove hardcoded. Should allow `proc f() :mut T`
-    try proc.type.render(retT, src, types, write, result);
+    // Return Type
+    const retT :slate.Type= types.at(N.Proc.ret.type).?;
+    try proc.type.render(retT, src, types, N.Proc.ret.write, result);
   }
 }; //:: Gen.zig.proc.returnT
 
