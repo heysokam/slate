@@ -10,7 +10,6 @@ const std = @import("std");
 const zstd = @import("../../zstd.zig");
 // @deps minim.ast
 const Expr = @import("./expression.zig").Expr;
-const Data = @import("./data.zig").Data;
 
 //______________________________________
 /// @descr
@@ -35,7 +34,15 @@ pub const Stmt = union(enum) {
     pub fn create (E :Expr) Stmt { return Stmt{ .Retrn= Stmt.Return{ .body= E } }; }
   };
 
-  pub const Variable = Data;
+  pub const Variable = struct {
+    data      : Variable.Data,
+    // @descr Whether or not the variable is public binding declaration
+    public    :bool=  false,
+    // @descr Whether or not the variable is a toplevel binding declaration
+    toplevel  :bool=  false,
+    pub const Data = @import("./data.zig").Data;
+    pub fn create (D :Data, public :bool) Stmt { return Stmt{ .Var= Stmt.Variable{ .data= D, .public= public } }; }
+  };
 
   // pub const If      = todo;
   // pub const While   = todo;

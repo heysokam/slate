@@ -123,7 +123,7 @@ const returnT = struct {
 
 const body = struct {
   const proto = struct {
-    const end = base.end;
+    const end = base.semicolon;
   };
   const def = struct {
     const start = "{";
@@ -162,7 +162,7 @@ const body = struct {
   }
 
   const stmt = struct {
-    const end = base.end;
+    const end = base.semicolon;
     fn render (
         N        : slate.Node,
         S        : slate.Stmt,

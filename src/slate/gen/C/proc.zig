@@ -9,7 +9,10 @@ const std = @import("std");
 // @deps zstd
 const zstd = @import("../../../zstd.zig");
 // @deps *Slate
-const slate  = @import("../../../slate.zig");
+const slate  = struct {
+  usingnamespace @import("../../../slate.zig");
+  const @"type" = @import("./type.zig");
+};
 const source = slate.source;
 const base   = @import("../base.zig");
 const spc    = base.spc;
@@ -48,8 +51,8 @@ const attributes = struct {
       if (pragmas.has(.Inline)) try result.appendSlice(attributes.Inline);
     }
     if (!N.Proc.public) try result.appendSlice(attributes.static);
-  } //:: Gen.proc.attributes.render
-}; //:: Gen.proc.attributes
+  } //:: Gen.C.proc.attributes.render
+}; //:: Gen.C.proc.attributes
 
 const returnT = struct {
   fn render (
@@ -68,11 +71,10 @@ const returnT = struct {
       try result.appendSlice(Ptr);
     }
     try result.appendSlice(spc);
-  } //:: Gen.proc.returnT.render
-}; //:: Gen.proc.returnT
+  } //:: Gen.C.proc.returnT.render
+}; //:: Gen.C.proc.returnT
 
 const name = struct {
-  // name  :Func.Name,
   fn render (
       N      : slate.Node,
       src    : source.Code,
@@ -80,8 +82,8 @@ const name = struct {
     ) !void {
     try result.appendSlice(N.Proc.name.from(src));
     try result.appendSlice(spc);
-  } //:: Gen.proc.name.render
-}; //:: Gen.proc.name
+  } //:: Gen.C.proc.name.render
+}; //:: Gen.C.proc.name
 
 const args = struct {
   const start = "(";
@@ -97,19 +99,8 @@ const args = struct {
     ) !void {
     if (arg.type == null) return error.slate_gen_C_Proc_ArgumentsMustHaveTypes;
     if (types.at(arg.type.?) == null) return error.slate_gen_C_Proc_ArgumentsMustHaveTypes;
-    const argT :slate.Type= types.at(arg.type.?).?;
-    const tName = argT.getLoc(types);
-    try result.appendSlice(tName.from(src));
-    if (argT.isPtr(types)) {
-      if (!argT.isMut(types)) try result.appendSlice(spc++kw.Const);
-      try result.appendSlice(Ptr);
-    }
-    try result.appendSlice(spc);
-    if (!arg.write) {
-      try result.appendSlice(kw.Const);
-      try result.appendSlice(spc);
-    }
-  } //:: Gen.proc.args.type
+    try slate.type.name(types.at(arg.type.?).?, src, types, arg.write, arg.runtime, result);
+  } //:: Gen.C.proc.args.type
 
   fn name (
       arg    : slate.Data,
@@ -117,7 +108,7 @@ const args = struct {
       result : *zstd.str
     ) !void {
     try result.appendSlice(arg.id.from(src));
-  } //:: Gen.proc.args.name
+  } //:: Gen.C.proc.args.name
 
   fn array (
       arg    : slate.Data,
@@ -126,15 +117,9 @@ const args = struct {
       result : *zstd.str
     ) !void {
     if (arg.type == null) return error.slate_gen_C_Proc_ArgumentsMustHaveTypes;
-    const argT = types.at(arg.type.?);
-    if (argT == null) return error.slate_gen_C_Proc_ArgumentsMustHaveTypes;
-    switch (argT.?) { .array  => | t | {
-      try result.append('[');
-      const count = if (t.count != null) t.count.?.from(src) else "";
-      if (!std.mem.eql(u8, count, "_")) try result.appendSlice(count);
-      try result.append(']');
-    }, else => {}}
-  } //:: Gen.proc.args.array
+    if (types.at(arg.type.?) == null) return error.slate_gen_C_Proc_ArgumentsMustHaveTypes;
+    try slate.type.array(types.at(arg.type.?).?, src, result);
+  } //:: Gen.C.proc.args.array
 
   fn render (
       N        : slate.Node,
@@ -153,12 +138,12 @@ const args = struct {
       if (!args.last(list,id)) try result.appendSlice(args.sep);
     }
     try result.appendSlice(args.end);
-  } //:: Gen.proc.args.render
-}; //:: Gen.proc.args
+  } //:: Gen.C.proc.args.render
+}; //:: Gen.C.proc.args
 
 const body = struct {
   const proto = struct {
-    const end = base.end;
+    const end = base.semicolon;
   };
   const def = struct {
     const start = "{";
@@ -197,7 +182,7 @@ const body = struct {
   }
 
   const stmt = struct {
-    const end = base.end;
+    const end = base.semicolon;
     fn render (
         N        : slate.Node,
         S        : slate.Stmt,
@@ -216,8 +201,8 @@ const body = struct {
         }
       try result.appendSlice(body.stmt.end);
       try newline(N, bodyData, result);
-    } //:: Gen.proc.body.stmt.render
-  }; //:: Gen.proc.body.stmt
+    } //:: Gen.C.proc.body.stmt.render
+  }; //:: Gen.C.proc.body.stmt
 
   fn render (
       N        : slate.Node,
@@ -229,8 +214,8 @@ const body = struct {
     try proc.body.start(N, bodyData, result);
     for (bodyData.at(N.Proc.body).?.items()) |S| try proc.body.stmt.render(N, S, bodyData, src, result);
     try proc.body.end(N, result);
-  } //:: Gen.proc.body.render
-}; //:: Gen.proc.body
+  } //:: Gen.C.proc.body.render
+}; //:: Gen.C.proc.body
 
 
 pub fn render (
