@@ -31,8 +31,7 @@ const attributes = struct {
       result   : *zstd.str,
     ) !void {_=src;_=pragmas;
     if (toplevel and !V.public) try result.appendSlice(kw.Static++spc); // FIX: Extern declarations
-    if (!V.data.write) try result.appendSlice(kw.Constexpr++spc)
-    else               try result.appendSlice(kw.Var++spc);
+    if (!V.data.write and !V.data.runtime) try result.appendSlice(kw.Constexpr++spc);
   } //:: Gen.C.variable.attributes.render
 }; //:: Gen.C.variable.attributes
 

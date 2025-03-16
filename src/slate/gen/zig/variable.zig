@@ -27,12 +27,11 @@ const attributes = struct {
       V        : slate.Variable,
       src      : source.Code,
       pragmas  : slate.Pragma.Store,
-      toplevel : bool,
       result   : *zstd.str,
     ) !void {_=src;_=pragmas;
-    if (toplevel and V.public) try result.appendSlice(kw.Pub++spc);
-    if (!V.data.write) try result.appendSlice(kw.Const++spc)
-    else               try result.appendSlice(kw.Var++spc);
+    if (V.public and V.depth.scope == 0) try result.appendSlice(kw.Pub++spc);
+    if (!V.data.write)                   try result.appendSlice(kw.Const++spc)
+    else                                 try result.appendSlice(kw.Var++spc);
   } //:: Gen.zig.variable.attributes.render
 }; //:: Gen.zig.variable.attributes
 
@@ -88,10 +87,9 @@ pub fn render (
     src      : source.Code,
     types    : slate.Type.List,
     pragmas  : slate.Pragma.Store,
-    toplevel : bool,
     result   : *zstd.str,
   ) !void {
-  try variable.attributes.render(N.Var.Var, src, pragmas, toplevel, result);
+  try variable.attributes.render(N.Var.Var, src, pragmas, result);
   try variable.name.render(N.Var.Var, src, result);
   try variable.type.render(N.Var.Var, src, types, result);
   try variable.assignment.render(N.Var.Var, src, pragmas, result);

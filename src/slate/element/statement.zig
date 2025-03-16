@@ -8,8 +8,11 @@ pub const stmt = @This();
 const std = @import("std");
 // @deps zstd
 const zstd = @import("../../zstd.zig");
-// @deps minim.ast
-const Expr = @import("./expression.zig").Expr;
+// @deps slate
+const slate = struct {
+  const Depth = @import("./depth.zig");
+  const Expr  = @import("./expression.zig").Expr;
+};
 
 //______________________________________
 /// @descr
@@ -30,16 +33,18 @@ pub const Stmt = union(enum) {
   // Blck    :Stmt.Block,
 
   pub const Return = struct {
-    body  :?Expr= null,
-    pub fn create (E :Expr) Stmt { return Stmt{ .Retrn= Stmt.Return{ .body= E } }; }
+    body   :?slate.Expr=  null,
+    /// @descr The level of scope/indentation depth that this element is tagged with.
+    depth  :slate.Depth=  .default(),
+    pub fn create (E :slate.Expr) Stmt { return Stmt{ .Retrn= Stmt.Return{ .body= E } }; }
   };
 
   pub const Variable = struct {
-    data      : Variable.Data,
-    // @descr Whether or not the variable is public binding declaration
-    public    :bool=  false,
-    // @descr Whether or not the variable is a toplevel binding declaration
-    toplevel  :bool=  false,
+    data    :Variable.Data,
+    /// @descr Whether or not the variable is public binding declaration.
+    public  :bool=  false,
+    /// @descr The level of scope/indentation depth that this element is tagged with.
+    depth   :slate.Depth=  .default(),
     pub const Data = @import("./data.zig").Data;
     pub fn create (D :Data, public :bool) Stmt { return Stmt{ .Var= Stmt.Variable{ .data= D, .public= public } }; }
   };

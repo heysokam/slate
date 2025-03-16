@@ -27,10 +27,9 @@ pub fn render (
     stmts   : slate.Stmt.Store,
     result  : *zstd.str,
   ) !void {
-  const toplevel = true;
   switch (N) {
     .Proc => try proc.render(N, src, types, pragmas, args, stmts, result),
-    .Var  => try variable.render(N, src, types, pragmas, toplevel, result),
+    .Var  => try variable.render(N, src, types, pragmas, result),
     // else  => try zig.todo("Unmapped Node for Zig Codegen"),
   }
 } //:: Gen.zig.render

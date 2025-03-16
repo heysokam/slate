@@ -8,7 +8,9 @@ const std = @import("std");
 const zstd = @import("../../zstd.zig");
 // @deps *Slate
 const Type   = @import("./type.zig").Type;
-const source = @import("../source.zig").source;
+const slate = struct {
+  const Depth = @import("./depth.zig");
+};
 
 
 //______________________________________
@@ -22,6 +24,8 @@ err      :Proc.Error           = null,
 ret      :Proc.Return          = .{},
 pragmas  :Proc.PragmaStore.Pos = .None,
 body     :Proc.BodyStore.Pos   = .None,
+depth    :slate.Depth          = .default(),
+
 
 //______________________________________
 // @section Data Management
