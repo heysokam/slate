@@ -23,3 +23,5 @@ pub const Stmt     = @import("./slate/elements.zig").Stmt;
 pub const Node     = @import("./slate/elements.zig").Node;
 pub const Proc     = @import("./slate/elements.zig").Proc;
 pub const Variable = @import("./slate/elements.zig").Variable;
+//__________________________________________________________
+pub const Grammar  = @import("./slate/grammar.zig").Grammar;
