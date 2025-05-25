@@ -63,6 +63,8 @@ type Lx * = object
   loc  *:source.Loc
 type List * = seq[Lx]
 type lexeme_List = lexer.List
+#___________________
+func From *(lx :Lx; src :source.Code) :string= lx.loc.From(src)
 
 
 #_______________________________________
