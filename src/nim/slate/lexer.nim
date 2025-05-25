@@ -88,17 +88,17 @@ type Lex * = object
   pos  *:source.Pos  = 0
   src  *:source.Code = ""
   res  *:lexeme_List = @[]
-func create   *(_:typedesc[Lex], src :source.Code) :Lex= Lex(src: src)
+func create   *(_:typedesc[Lex]; src :source.Code) :Lex= Lex(src: src)
 func destroy  *(L :var Lex) :void= L = Lex()
-func pos_next *(L :Lex, pos :source.Pos) :source.Pos {.inline.}=
+func pos_next *(L :Lex; pos :source.Pos) :source.Pos {.inline.}=
   result = L.pos+pos
   if result >= L.src.len.Sz: result = L.src.len-1
 func last     *(L :Lex) :bool= L.pos == L.src.len.Sz-1
-func next     *(L :Lex, pos :source.Pos) :char {.inline.}= L.src[L.pos_next(pos)]
-func move     *(L :var Lex, pos :source.Pos) :void {.inline.}= L.pos = L.pos_next(pos)
+func next     *(L :Lex; pos :source.Pos) :char {.inline.}= L.src[L.pos_next(pos)]
+func move     *(L :var Lex; pos :source.Pos) :void {.inline.}= L.pos = L.pos_next(pos)
 func ch       *(L :Lex) :char {.inline.}= L.next(0)
-func add      *(L :var Lex, id :lexeme_Id, loc :source.Loc) :void {.inline.}= L.res.add Lx(id: id, loc: loc)
-func add      *(L :var Lex, id :lexeme_Id) :void {.inline.}= L.add id, source.Loc(start:L.pos, End:L.pos)
+func add      *(L :var Lex; id :lexeme_Id, loc :source.Loc) :void {.inline.}= L.res.add Lx(id: id, loc: loc)
+func add      *(L :var Lex; id :lexeme_Id) :void {.inline.}= L.add id, source.Loc(start:L.pos, End:L.pos)
 
 
 #_______________________________________
