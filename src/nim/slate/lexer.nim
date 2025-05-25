@@ -110,6 +110,7 @@ func alphabetic *(L :var Lex) :void=
     L.move(1)
     if L.last: break # FIX: This shouldn't be here
   L.add lexeme_Id.ident, source.Loc(start:start, End:End)
+  L.move(-1)
 #___________________
 func digit *(L :var Lex) :void=
   let start = L.pos
