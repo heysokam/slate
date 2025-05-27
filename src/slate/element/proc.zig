@@ -46,22 +46,22 @@ const Pragma    = @import("./pragma.zig").Pragma;
 const Stmt      = @import("./statement.zig").Stmt;
 //____________________________
 /// @descr Describes the List of arguments of this Proc
-/// @important The responsability of creating this list, and the Store type that holds them, lays on the creator of the Proc object.
+/// @important The responsibility of creating this list, and the Store type that holds them, lays on the creator of the Proc object.
 pub const Args = Proc.Arg.List;
 /// @descr Describes a list of argument lists (aka `List(List(Arg))`)
-/// @important The responsability of creating this store, and its contained lists, lays on the creator of the Proc object.
+/// @important The responsibility of creating this store, and its contained lists, lays on the creator of the Proc object.
 pub const ArgStore = Proc.Arg.Store;
 //____________________________
 /// @descr Describes the List of pragmas of this Proc
-/// @important The responsability of creating this list, and the Store type that holds them, lays on the creator of the Proc object.
+/// @important The responsibility of creating this list, and the Store type that holds them, lays on the creator of the Proc object.
 pub const Pragmas = Proc.Pragma.List;
 /// @descr Describes a list of pragma lists (aka `List(List(Pragma))`)
-/// @important The responsability of creating this store, and its contained lists, lays on the creator of the Proc object.
+/// @important The responsibility of creating this store, and its contained lists, lays on the creator of the Proc object.
 pub const PragmaStore = Proc.Pragma.Store;
 //____________________________
 pub const Return = struct {
   /// @descr Describes the position of the data for the return type of this Proc in the global List of types.
-  /// @important The responsability of creating the Types list lays on the creator of the Proc object.
+  /// @important The responsibility of creating the Types list lays on the creator of the Proc object.
   @"type" :Type.List.Pos= .None,
   /// @descr Whether the data can be read from or not
   read    :bool=  true,
@@ -70,9 +70,9 @@ pub const Return = struct {
 };
 //____________________________
 /// @descr Describes the List of Statements that define the body of this Proc
-/// @important The responsability of creating this list, and the Store type that holds them, lays on the creator of the Proc object.
+/// @important The responsibility of creating this list, and the Store type that holds them, lays on the creator of the Proc object.
 pub const Body = Stmt.List;
 /// @descr Describes a list of Body lists (aka `List(List(Stmt))`)
-/// @important The responsability of creating this store, and its contained lists, lays on the creator of the Proc object.
+/// @important The responsibility of creating this store, and its contained lists, lays on the creator of the Proc object.
 pub const BodyStore = Stmt.Store;
 
