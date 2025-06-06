@@ -121,7 +121,7 @@ func digit *(L :var Lex) :void=
     L.move(1)
     if L.last: break # FIX: This shouldn't be here
   L.add lexeme_Id.number, source.Loc(start:start, End:End)
-  # L.move(-1) # FIX: Is this missing here? Found it while porting to the TS version
+  L.move(-1) # FIX: Is this missing here? Found it while porting to the TS version
 
 
 #_______________________________________
