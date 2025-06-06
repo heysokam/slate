@@ -74,8 +74,7 @@ type LexerError = object of CatchableError
 type UnknownFirstCharacterError = object of LexerError
 type InvalidFirstCharacterError = object of LexerError
 template fail *(Err :typedesc[CatchableError]; msg :varargs[string, `$`])=
-  ## Marks a block of code as an unrecoverable fatal error. Raises an exception when entering the block.
-  ## For debugging unexpected errors on the buildsystem.
+  ## @descr Marks a block of code as an unrecoverable fatal error. Raises an exception when entering the block.
   const inst = instantiationInfo()
   const info = "$#($#,$#): " % [inst.fileName, $inst.line, $inst.column]
   {.cast(noSideEffect).}: raise newException(Err, info & "\n " & msg.join(" "))
@@ -122,6 +121,7 @@ func digit *(L :var Lex) :void=
     L.move(1)
     if L.last: break # FIX: This shouldn't be here
   L.add lexeme_Id.number, source.Loc(start:start, End:End)
+  # L.move(-1) # FIX: Is this missing here? Found it while porting to the TS version
 
 
 #_______________________________________
