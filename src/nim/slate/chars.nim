@@ -50,7 +50,7 @@ func tilde        *(_:typedesc[Ch]=Ch) :set[char] {.inline.}= {'~'}
 func undefined    *(_:typedesc[Ch]=Ch) :set[char] {.inline.}= {0xAA}
 func EOF          *(_:typedesc[Ch]=Ch) :set[char] {.inline.}= {0}
 # Character Groups
-func numeric      *(_:typedesc[Ch]=Ch) :set[char] {.inline.}= digit + digitLetters + underscore
+func numeric      *(_:typedesc[Ch]=Ch) :set[char] {.inline.}= Ch.digit + Ch.digitLetters + Ch.underscore
 func quote        *(_:typedesc[Ch]=Ch) :set[char] {.inline.}= Ch.quote_D + Ch.quote_S + Ch.quote_B
 func parenthesis  *(_:typedesc[Ch]=Ch) :set[char] {.inline.}= Ch.paren_L + Ch.paren_R
 func slash        *(_:typedesc[Ch]=Ch) :set[char] {.inline.}= Ch.slash_F + Ch.slash_B
