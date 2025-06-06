@@ -33,22 +33,25 @@ export const KnownKinds = Object.values(clang.id)
 //____________________________
 export namespace spec {
   // General
-  export const KnownKinds      = "must be one of the implemented clang node Kinds/IDs"
+  export const KnownKinds           = "must be one of the implemented clang node Kinds/IDs"
 
   // Module: Root
   export namespace root {
-  export const TranslationUnit = `must have a ${clang.id.TranslationUnit} node as the entry point of the clang AST`
-  export const inner_Type      = "must have an array with name 'inner' as a field of its entry point"
+  export const TranslationUnit      = `must have a ${clang.id.TranslationUnit} node as the entry point of the clang AST`
+  export const inner_Type           = "must have an array with name 'inner' as a field of its entry point"
+  export const SourceInfo_root      = "must have a SourceInfo object that contains the generator name and the source code of the AST (note: added by the generator, not by clang)"
+  export const SourceInfo_generator = "must have a SourceInfo object that contains a .generator field representing the AST generator's name (note: added by the generator, not by clang)"
+  export const SourceInfo_code      = "must have a SourceInfo object that contains a .code field representing the AST's source code (note: added by the generator, not by clang)"
   } //:: clang.spec.root
 
   // TopLevel: Proc
   export namespace proc {
-  export const body_Statements = "must have only one `CompoundStmt` child that contains all of its statements"
+  export const body_Statements      = "must have only one `CompoundStmt` child that contains all of its statements"
   } //:: clang.spec.proc
 
   export namespace statement {
     export namespace retrn {
-      export const Value = "must have only one Expression child that contains the resulting value."
+      export const Value            = "must have only one Expression child that contains the resulting value."
     } //:: clang.spec.statement.retrn
   } //:: clang.spec.statement
 } //:: clang.spec
@@ -103,6 +106,11 @@ export const node_implemented = (node :any) :void=> clang.assert.kind_implemente
 
 export const toplevel = (json :JsonObject) :void=> {
   clang.assert.node_implemented(json)
+  std_assert.notEqual(json.SourceInfo,           undefined, clang.spec.root.SourceInfo_root)
+  // @ts-expect-error Makes no sense? Should be an Object just fine
+  std_assert.notEqual(json.SourceInfo.generator, undefined, clang.spec.root.SourceInfo_generator)
+  // @ts-expect-error Makes no sense? Should be an Object just fine
+  std_assert.notEqual(json.SourceInfo.code,      undefined, clang.spec.root.SourceInfo_code)
   std_assert.equal(json.kind, clang.id.TranslationUnit, clang.spec.root.TranslationUnit)
   std_assert.notDeepEqual(json.inner, [], clang.spec.root.inner_Type)
 } //:: clang.assert.toplevel
@@ -154,6 +162,7 @@ export class Parser {
     this.result = {} as astTF
     this.entry  = json
     this.nodes  = clang.strip_implicit(json.inner as JsonArray) // Cleanup the Node Tree
+    this.result.data.source = this.entry.SourceInfo.code
   }
 
   proc_arg(arg: JsonObject): any {
@@ -237,7 +246,6 @@ export class Parser {
   }
 
   process(): void {
-    this.result.data.source = this.entry.SourceInfo.code
     for (const toplevel of this.nodes) {
       clang.assert.node_implemented(toplevel)
       switch (toplevel.kind) {
