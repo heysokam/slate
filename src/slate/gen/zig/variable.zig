@@ -27,11 +27,11 @@ const attributes = struct {
       V        : slate.Variable,
       src      : source.Code,
       pragmas  : slate.Pragma.Store,
-      result   : *zstd.str,
+      result   : *zstd.string,
     ) !void {_=src;_=pragmas;
-    if (V.public and V.depth.scope == 0) try result.appendSlice(kw.Pub++spc);
-    if (!V.data.write)                   try result.appendSlice(kw.Const++spc)
-    else                                 try result.appendSlice(kw.Var++spc);
+    if (V.public and V.depth.scope == 0) try result.add(kw.Pub++spc);
+    if (!V.data.write)                   try result.add(kw.Const++spc)
+    else                                 try result.add(kw.Var++spc);
   } //:: Gen.zig.variable.attributes.render
 }; //:: Gen.zig.variable.attributes
 
@@ -40,9 +40,9 @@ const name = struct {
   fn render(
       V      : slate.Variable,
       src    : source.Code,
-      result : *zstd.str,
+      result : *zstd.string,
     ) !void {
-    try result.appendSlice(V.data.id.from(src));
+    try result.add(V.data.id.from(src));
   }
 }; //:: Gen.zig.variable.name
 
@@ -54,9 +54,9 @@ const @"type" = struct {
       V      : slate.Variable,
       src    : source.Code,
       types  : slate.Type.List,
-      result : *zstd.str,
+      result : *zstd.string,
     ) !void {
-    try result.appendSlice(spc++variable.type.start);
+    try result.add(spc++variable.type.start);
     try slate.type.render(types.at(V.data.type.?).?, src, types, V.data.write, result);
   } //:: Gen.zig.variable.type.render
 }; //:: Gen.zig.variable.type
@@ -70,14 +70,14 @@ const assignment = struct {
       V       : slate.Variable,
       src     : source.Code,
       pragmas : slate.Pragma.Store,
-      result  : *zstd.str,
+      result  : *zstd.string,
     ) !void {
     const hasAssignment = V.data.value != null and V.data.value.? != .Empty;
     if (hasAssignment) {
-      try result.appendSlice(assignment.start++spc);
+      try result.add(assignment.start++spc);
       try slate.expr.render(V.data.value.?, src, pragmas, result);
     }
-    try result.appendSlice(assignment.end);
+    try result.add(assignment.end);
   } //:: Gen.zig.variable.assignment.render
 }; //:: Gen.zig.variable.assignment
 
@@ -87,7 +87,7 @@ pub fn render (
     src      : source.Code,
     types    : slate.Type.List,
     pragmas  : slate.Pragma.Store,
-    result   : *zstd.str,
+    result   : *zstd.string,
   ) !void {
   try variable.attributes.render(N.Var.Var, src, pragmas, result);
   try variable.name.render(N.Var.Var, src, result);

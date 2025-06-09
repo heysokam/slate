@@ -25,7 +25,7 @@ pub fn render (
     pragmas : slate.Pragma.Store,
     args    : slate.Proc.Arg.Store,
     stmts   : slate.Stmt.Store,
-    result  : *zstd.str,
+    result  : *zstd.string,
   ) !void {
   switch (N) {
     .Proc => try proc.render(N, src, types, pragmas, args, stmts, result),

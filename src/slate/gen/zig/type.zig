@@ -28,28 +28,28 @@ pub fn render (
     src    : source.Code,
     types  : slate.Type.List,
     write  : bool,
-    result : *zstd.str,
+    result : *zstd.string,
   ) !void {
-  if (T.isOpt()) try result.appendSlice(Opt);
+  if (T.isOpt()) try result.add(Opt);
   // Array or Slice case. Takes {.readonly.} into account
   if (T.isArr()) {
     // FIX: C Arrays
     // FIX: * Arrays
-    try result.append('[');
+    try result.add_one('[');
     const slice = Type.isSlice(T.array, src);
-    if (!slice) try result.appendSlice(T.array.count.?.from(src));
-    try result.append(']');
-    if (!write and slice) try result.appendSlice(kw.Const++spc);
-    if (types.at(T.array.type).?.isOpt()) try result.appendSlice(Opt);
-    if (T.isPtr(types)) try result.appendSlice(Ptr);
-    if (!T.isMut(types)) try result.appendSlice(kw.Const++spc);
+    if (!slice) try result.add(T.array.count.?.from(src));
+    try result.add_one(']');
+    if (!write and slice) try result.add(kw.Const++spc);
+    if (types.at(T.array.type).?.isOpt()) try result.add(Opt);
+    if (T.isPtr(types)) try result.add(Ptr);
+    if (!T.isMut(types)) try result.add(kw.Const++spc);
   // Pointer case. Ignores {.readonly.}
   } else if (T.isPtr(types)) {
-    try result.appendSlice(Ptr);
-    if (!write) try result.appendSlice(kw.Const++spc);
+    try result.add(Ptr);
+    if (!write) try result.add(kw.Const++spc);
   }
   // Add name
   const tName = T.getLoc(types);
-  try result.appendSlice(tName.from(src));
+  try result.add(tName.from(src));
 } //:: slate.Gen.Type
 

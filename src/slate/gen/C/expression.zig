@@ -22,9 +22,9 @@ pub fn render (
     S        : slate.Expr,
     src      : source.Code,
     pragmas  : slate.Pragma.Store,
-    result   : *zstd.str,
+    result   : *zstd.string,
   ) !void {_=pragmas;
   // FIX: Remove hardcoded Int Literal
-  try result.appendSlice(S.Lit.Intgr.loc.from(src));
+  try result.add(S.Lit.Intgr.loc.from(src));
 } //:: Gen.C.expression.render
 

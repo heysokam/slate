@@ -28,25 +28,25 @@ const attributes = struct {
       N      : slate.Node,
       src    : source.Code,
       data   : slate.Pragma.Store,
-      result : *zstd.str,
+      result : *zstd.string,
     ) !void {_=src;
-    if (N.Proc.public) try result.appendSlice(attributes.public);
+    if (N.Proc.public) try result.add(attributes.public);
     if (N.Proc.pragmas != .None) {
       const pragmas = data.at(N.Proc.pragmas).?;
-      if (pragmas.has(.import)) try result.appendSlice(attributes.Extern);
-      if (pragmas.has(.Inline)) try result.appendSlice(attributes.Inline);
+      if (pragmas.has(.import)) try result.add(attributes.Extern);
+      if (pragmas.has(.Inline)) try result.add(attributes.Inline);
     }
-    try result.appendSlice(kw.Func ++ spc);
+    try result.add(kw.Func ++ spc);
   }
 }; //:: Gen.zig.proc.attributes
 
 const name = struct {
   fn render(
-      N        : slate.Node,
-      src      : source.Code,
-      result   : *zstd.str,
+      N      : slate.Node,
+      src    : source.Code,
+      result : *zstd.string,
     ) !void {
-    try result.appendSlice(N.Proc.name.from(src));
+    try result.add(N.Proc.name.from(src));
   }
 }; //:: Gen.zig.proc.name
 
@@ -59,10 +59,10 @@ const args = struct {
   fn last (list :[]slate.Proc.Arg, id :usize) bool { return list.len == 1 or id == list.len-1; }
 
   fn @"type" (
-      arg     : slate.Data,
-      src     : source.Code,
-      types   : slate.Type.List,
-      result : *zstd.str
+      arg    : slate.Data,
+      src    : source.Code,
+      types  : slate.Type.List,
+      result : *zstd.string,
     ) !void {
     if (arg.type == null) return error.slate_gen_zig_Proc_ArgumentsMustHaveTypes;
     if (types.at(arg.type.?) == null) return error.slate_gen_zig_Proc_ArgumentsMustHaveTypes;
@@ -72,9 +72,9 @@ const args = struct {
   fn name (
       arg    : slate.Data,
       src    : source.Code,
-      result : *zstd.str
+      result : *zstd.string,
     ) !void {
-    try result.appendSlice(arg.id.from(src));
+    try result.add(arg.id.from(src));
   } //:: Gen.proc.args.name
 
   fn render(
@@ -82,19 +82,19 @@ const args = struct {
       src      : source.Code,
       types    : slate.Type.List,
       argsData : slate.Proc.Arg.Store,
-      result   : *zstd.str,
+      result   : *zstd.string,
     ) !void {
-    try result.appendSlice(spc);
-    try result.appendSlice(start);
-    if (N.Proc.args == .None) { try result.appendSlice(args.end); return; }
+    try result.add(spc);
+    try result.add(start);
+    if (N.Proc.args == .None) { try result.add(args.end); return; }
     const list = argsData.at(N.Proc.args).?.items();
     for (list, 0..) |arg, id| {
       try proc.args.name(arg, src, result);
-      try result.appendSlice(args.sep_type);
+      try result.add(args.sep_type);
       try proc.args.type(arg, src, types, result);
-      if (!args.last(list,id)) try result.appendSlice(args.sep);
+      if (!args.last(list,id)) try result.add(args.sep);
     }
-    try result.appendSlice(args.end);
+    try result.add(args.end);
   }
 }; //:: Gen.zig.proc.args
 
@@ -105,15 +105,15 @@ const returnT = struct {
       N        : slate.Node,
       src      : source.Code,
       types    : slate.Type.List,
-      result   : *zstd.str,
+      result   : *zstd.string,
     ) !void {
-    try result.appendSlice(spc);
-    if (N.Proc.ret.type == .None) { try result.appendSlice(kw.Void); return; } // FIX: noreturn pragma
+    try result.add(spc);
+    if (N.Proc.ret.type == .None) { try result.add(kw.Void); return; } // FIX: noreturn pragma
     if (types.at(N.Proc.ret.type) == null) return error.slate_gen_zig_Proc_ReturnTypeMustExistWhenDeclared;
     // Error return
     if (N.Proc.err != null) {
-      try result.appendSlice(N.Proc.err.?.from(src));
-      try result.appendSlice(proc.returnT.ErrorSep);
+      try result.add(N.Proc.err.?.from(src));
+      try result.add(proc.returnT.ErrorSep);
     }
     // Return Type
     const retT :slate.Type= types.at(N.Proc.ret.type).?;
@@ -141,24 +141,24 @@ const body = struct {
   fn newline (
       N        : slate.Node,
       bodyData : slate.Proc.BodyStore,
-      result   : *zstd.str
+      result   : *zstd.string,
     ) !void {
-    if (body.oneline(N, bodyData)) { try result.appendSlice(spc); }
-    else                           { try result.appendSlice(nl ); }
+    if (body.oneline(N, bodyData)) { try result.add(spc); }
+    else                           { try result.add(nl ); }
   }
 
   fn start (
       N        : slate.Node,
       bodyData : slate.Proc.BodyStore,
-      result   : *zstd.str
+      result   : *zstd.string,
     ) !void {
-    try result.appendSlice(spc);
-    try result.appendSlice(def.start);
+    try result.add(spc);
+    try result.add(def.start);
     try proc.body.newline(N, bodyData, result);
   }
 
-  fn end (N :slate.Node, result :*zstd.str) !void {_=N;
-    try result.appendSlice(def.end);
+  fn end (N :slate.Node, result :*zstd.string) !void {_=N;
+    try result.add(def.end);
   }
 
   const stmt = struct {
@@ -168,18 +168,18 @@ const body = struct {
         S        : slate.Stmt,
         bodyData : slate.Proc.BodyStore,
         src      : source.Code,
-        result   : *zstd.str,
+        result   : *zstd.string,
       ) !void {
       if (!oneline(N, bodyData)) try indent(result, 1);  // TODO: Deeper indentation
       // FIX: Hardcoded  return N
-      try result.appendSlice(kw.Return);
+      try result.add(kw.Return);
       switch (S.Retrn.body orelse .Empty) {
         .Lit => {
-          try result.appendSlice(spc);
-          try result.appendSlice(S.Retrn.body.?.Lit.Intgr.loc.from(src)); },
+          try result.add(spc);
+          try result.add(S.Retrn.body.?.Lit.Intgr.loc.from(src)); },
         .Empty => {},
         }
-      try result.appendSlice(body.stmt.end);
+      try result.add(body.stmt.end);
       try newline(N, bodyData, result);
     }
   };
@@ -188,9 +188,9 @@ const body = struct {
       N        : slate.Node,
       src      : source.Code,
       bodyData : slate.Proc.BodyStore,
-      result   : *zstd.str,
+      result   : *zstd.string,
     ) !void {
-    if (N.Proc.body == .None) { try result.appendSlice(proto.end); return; }
+    if (N.Proc.body == .None) { try result.add(proto.end); return; }
     try proc.body.start(N, bodyData, result);
     for (bodyData.at(N.Proc.body).?.items()) |S| try proc.body.stmt.render(N, S, bodyData, src, result);
     try proc.body.end(N, result);
@@ -204,7 +204,7 @@ pub fn render (
     pragmas  : slate.Pragma.Store,
     argsData : slate.Proc.Arg.Store,
     bodyData : slate.Proc.BodyStore,
-    result   : *zstd.str,
+    result   : *zstd.string,
   ) !void {
   try proc.attributes.render(N, src, pragmas, result);
   try proc.name.render(N, src, result);

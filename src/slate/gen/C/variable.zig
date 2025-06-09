@@ -28,10 +28,10 @@ const attributes = struct {
       src      : source.Code,
       pragmas  : slate.Pragma.Store,
       toplevel : bool,
-      result   : *zstd.str,
+      result   : *zstd.string,
     ) !void {_=src;_=pragmas;
-    if (toplevel and !V.public) try result.appendSlice(kw.Static++spc); // FIX: Extern declarations
-    if (!V.data.write and !V.data.runtime) try result.appendSlice(kw.Constexpr++spc);
+    if (toplevel and !V.public) try result.add(kw.Static++spc); // FIX: Extern declarations
+    if (!V.data.write and !V.data.runtime) try result.add(kw.Constexpr++spc);
   } //:: Gen.C.variable.attributes.render
 }; //:: Gen.C.variable.attributes
 
@@ -40,9 +40,9 @@ const name = struct {
   fn render(
       V      : slate.Variable,
       src    : source.Code,
-      result : *zstd.str,
+      result : *zstd.string,
     ) !void {
-    try result.appendSlice(V.data.id.from(src));
+    try result.add(V.data.id.from(src));
   }
 }; //:: Gen.C.variable.name
 
@@ -52,7 +52,7 @@ const @"type" = struct {
       V      : slate.Variable,
       src    : source.Code,
       types  : slate.Type.List,
-      result : *zstd.str,
+      result : *zstd.string,
     ) !void {
     try slate.type.name(types.at(V.data.type.?).?, src, types, V.data.write, V.data.runtime, result);
   } //:: Gen.C.variable.type.render
@@ -61,7 +61,7 @@ const @"type" = struct {
       V      : slate.Variable,
       src    : source.Code,
       types  : slate.Type.List,
-      result : *zstd.str,
+      result : *zstd.string,
     ) !void {
     try slate.type.array(types.at(V.data.type.?).?, src, result);
   } //:: Gen.C.variable.type.render
@@ -77,13 +77,13 @@ const assignment = struct {
       V       : slate.Variable,
       src     : source.Code,
       pragmas : slate.Pragma.Store,
-      result  : *zstd.str,
+      result  : *zstd.string,
     ) !void {
     if (V.data.value != null) {
-      try result.appendSlice(spc++assignment.start++spc);
+      try result.add(spc++assignment.start++spc);
       try slate.expr.render(V.data.value.?, src, pragmas, result);
     }
-    try result.appendSlice(assignment.end);
+    try result.add(assignment.end);
   } //:: Gen.C.variable.assignment.render
 }; //:: Gen.C.variable.assignment
 
@@ -94,7 +94,7 @@ pub fn render (
     types    : slate.Type.List,
     pragmas  : slate.Pragma.Store,
     toplevel : bool,
-    result   : *zstd.str,
+    result   : *zstd.string,
   ) !void {
   try variable.attributes.render(N.Var.Var, src, pragmas, toplevel, result);
   try variable.type.name(N.Var.Var, src, types, result);

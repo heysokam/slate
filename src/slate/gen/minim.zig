@@ -20,9 +20,9 @@ pub fn render (
     N      : Node,
     src    : source.Code,
     types  : slate.Type.List,
-    result : *zstd.str,
+    result : *zstd.string,
   ) !void {_=N; _=src; _=types;
   zstd.fail("TODO: UNIMPLEMENTED\n", .{});
-  try result.appendSlice("TODO: UNIMPLEMENTED | Minim Codegen");
+  try result.add("TODO: UNIMPLEMENTED | Minim Codegen");
 }
 

@@ -12,7 +12,7 @@ const slate    = @import("../../slate.zig");
 const proc     = @import("./C/proc.zig");
 const variable = @import("./C/variable.zig");
 
-fn todo (kind :zstd.cstr) !void { zstd.prnt("TODO:C Render TopLevel {s}\n", .{kind}); }
+fn todo (kind :zstd.cstring) !void { zstd.prnt("TODO:C Render TopLevel {s}\n", .{kind}); }
 
 //______________________________________
 /// @descr
@@ -25,7 +25,7 @@ pub fn render (
     pragmas : slate.Pragma.Store,
     args    : slate.Proc.Arg.Store,
     stmts   : slate.Stmt.Store,
-    result  : *zstd.str,
+    result  : *zstd.string,
   ) !void {
   const toplevel = true;
   switch (N) {
