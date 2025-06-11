@@ -50,5 +50,10 @@ pub const Loc  = struct {
   /// @note Returns an empty string when {@arg L} does not represent a valid location.
   /// @note Does not perform bounds check on {@arg src}. It will fail when the location is out of bounds.
   pub fn from (L :*const Loc, src :source.Code) source.Str { return if (L.valid()) src[L.start..L.max()] else ""; }
+
+  //______________________________________
+  /// @descr Returns the lenght of the {@arg L} location,
+  /// @note Result is the difference between (start,end), +1 to turn it into a .len
+  pub fn len (L :*const Loc) source.Pos { return L.end-L.start + 1; }
 }; //:: slate.source.Loc
 
