@@ -5,7 +5,7 @@ when not defined(nimscript):  import system/nimscript  # Silence nimsuggest erro
 
 # Package
 packageName   = "slate"
-version       = "0.5.10"
+version       = "0.5.11"
 author        = "sOkam"
 description   = "*Slate | StoS Compiler Helper for Nim syntax"
 license       = "MIT"

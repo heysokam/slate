@@ -9,6 +9,7 @@ pub const Loc      = source.Loc;
 pub const Distinct = @import("./zstd.zig").Distinct;
 pub const DataList = @import("./zstd.zig").DataList;
 pub const Depth    = @import("./slate/element/depth.zig");
+pub const Scope    = @import("./slate/element/scope.zig");
 //__________________________________________________________
 pub const Ch       = @import("./slate/char.zig");
 pub const Lx       = @import("./slate/lex/lexeme.zig");

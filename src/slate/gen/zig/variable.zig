@@ -29,9 +29,9 @@ const attributes = struct {
       pragmas  : slate.Pragma.Store,
       result   : *zstd.string,
     ) !void {_=src;_=pragmas;
-    if (V.public and V.depth.scope == 0) try result.add(kw.Pub++spc);
-    if (!V.data.write)                   try result.add(kw.Const++spc)
-    else                                 try result.add(kw.Var++spc);
+    if (V.public and V.depth.scope == .Root) try result.add(kw.Pub++spc);
+    if (!V.data.write) try result.add(kw.Const++spc)
+    else               try result.add(kw.Var++spc);
   } //:: Gen.zig.variable.attributes.render
 }; //:: Gen.zig.variable.attributes
 
