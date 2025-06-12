@@ -36,7 +36,10 @@ pub const Stmt = union(enum) {
     body   :?slate.Expr=  null,
     /// @descr The level of scope/indentation depth that this element is tagged with.
     depth  :slate.Depth=  .default(),
-    pub fn create (E :slate.Expr) Stmt { return Stmt{ .Retrn= Stmt.Return{ .body= E } }; }
+    pub fn create (E :slate.Expr, D :slate.Depth) Stmt { return Stmt{ .Retrn= Stmt.Return{
+      .body  = E,
+      .depth = D,
+    }};}
   };
 
   pub const Variable = struct {

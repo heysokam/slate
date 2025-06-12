@@ -16,6 +16,7 @@ const std = @import("std");
 // @deps zstd
 const zstd = @import("../../zstd.zig");
 // @deps *Slate
+const slate = struct { const Depth = @import("./depth.zig"); };
 pub const Ident = @import("./ident.zig").Ident;
 pub const Expr  = @import("./expression.zig").Expr;
 pub const Type  = @import("./type.zig").Type;
@@ -34,6 +35,8 @@ type   :?Type.List.Pos=  null,
 ///  Such a case is distinct to the value being assignable but undefined.
 ///  _(eg. A function parameter in C cannot define a default value, since the language does not allow it)_
 value  :?Expr=  null,
+/// @descr Describes the indentation/scope levels of this Node
+depth  :slate.Depth= .default(),
 
 
 /// @descr Whether the data can be read from or not

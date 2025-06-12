@@ -11,6 +11,7 @@ const zstd = @import("../../zstd.zig");
 const Node    = @import("./node.zig").Node;
 const source  = @import("../source.zig").source;
 const Pragma  = @import("./pragma.zig").Pragma;
+const slate = struct { const Depth = @import("./depth.zig"); };
 
 pub const Type = union(enum) {
   any     :Type.Any,
@@ -27,6 +28,8 @@ pub const Type = union(enum) {
     ptr     :bool=  false,  // FIX: Should not be here
     opt     :bool=  false,  // FIX: Should not be here
     pragma  :Pragma.Store.Pos= .None,
+    /// @descr Describes the indentation/scope levels of this Node
+    depth   :slate.Depth= .default(),
     pub fn create (name :source.Loc) Type { return Type{.any= Type.Any{.name= name} }; }
   }; //:: slate.Type.Any
 
@@ -37,6 +40,8 @@ pub const Type = union(enum) {
     ptr     :bool=         false,  // FIX: Should not be here
     opt     :bool=         false,  // FIX: Should not be here
     pragma  :Pragma.Store.Pos= .None,
+    /// @descr Describes the indentation/scope levels of this Node
+    depth   :slate.Depth= .default(),
     pub fn create (T :Node.List.Pos) Type { return Type{.array = Type.Array{.type= T}}; }
   }; //:: slate.Type.Array
 
@@ -45,15 +50,19 @@ pub const Type = union(enum) {
     mut   :bool=  false,  // FIX: Should not be here
     ptr   :bool=  false,  // FIX: Should not be here
     opt   :bool=  false,  // FIX: Should not be here
+    /// @descr Describes the indentation/scope levels of this Node
+    depth :slate.Depth= .default(),
     kind  :Type.Number.Kind,
     pub const Kind = enum { signed, unsigned, float };
     pub fn create (size :usize) Type { return Type{.number= Type.Number{.size= size} }; }
   };
 
   pub const String = struct {
-    kind  :Type.String.Kind,
     ptr   :bool=  false,  // FIX: Should not be here
     opt   :bool=  false,  // FIX: Should not be here
+    /// @descr Describes the indentation/scope levels of this Node
+    depth :slate.Depth= .default(),
+    kind  :Type.String.Kind,
     pub const Kind = enum { normal, multiline, raw, char };
     pub fn create (kind :Type.String.Kind) Type { return Type{.string= Type.String{.kind= kind} }; }
   };

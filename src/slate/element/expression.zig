@@ -13,6 +13,7 @@ const std = @import("std");
 const zstd = @import("../../zstd.zig");
 const todo = zstd.todo;
 // @deps *Slate
+const slate = struct { const Depth = @import("./depth.zig"); };
 const source = @import("../source.zig").source;
 
 
@@ -35,7 +36,12 @@ const @"type" = union(enum) {
       loc     :source.Loc,
       signed  :todo=  null,  // TODO: Pass in Int sign
       size    :todo=  null,  // TODO: Pass in Int size
-      pub fn create (loc :source.Loc) Expr { return Expr{ .Lit= Expr.Literal{ .Intgr= Expr.Literal.Int{ .loc= loc }}}; } //:: slate.Expr.Literal.Int.create
+      /// @descr Describes the indentation/scope levels of this Node
+      depth   :slate.Depth= .default(),
+      pub fn create (loc :source.Loc, depth :slate.Depth) Expr { return Expr{ .Lit= Expr.Literal{ .Intgr= Expr.Literal.Int{
+        .loc   = loc,
+        .depth = depth,
+      }}};} //:: slate.Expr.Literal.Int.create
     }; //:: slate.Expr.Literal.Int
 
     // const Float = struct {
