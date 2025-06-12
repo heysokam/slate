@@ -16,11 +16,11 @@ pub fn Id (comptime T :type) type { return enum(T) {
   None = std.math.maxInt(@This().Base),
   _,
   pub inline fn value (id :*const @This()) @This().Base { return @intFromEnum(id); }
-  pub inline fn empty (id :*const @This()) bool { return id == .None; }
+  pub inline fn empty (id :*const @This()) bool { return id.* == .None; }
   pub inline fn eq    (id :*const @This(), B :@This()) bool { return @intFromEnum(id) == @intFromEnum(B); }
   pub inline fn from  (num :anytype) @This() { return @enumFromInt(@as(@This().Base, @intCast(num))); }
   pub inline fn next  (id :*const @This()) @This() { return @This().from(
-    if (id.empty()) 0 else @intFromEnum(id+1)
+    if (id.empty()) 0 else @intFromEnum(id.*) + 1
   );}
 };} //:: Base.Id
 
