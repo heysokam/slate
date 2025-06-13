@@ -30,7 +30,7 @@ pub fn contains (A :*const Depth, B :Depth) bool {
   if (A.scope == B.scope)  return true;
   // One scope cannot contain another scope with higher id (ids are incremental)
   // and an indent lower than itself
-  if (B.scope > A.scope and B.indent < A.indent) return false;
+  if (B.scope.value() > A.scope.value() and B.indent < A.indent) return false;
   // Otherwise, any scope with indent bigger than the reference
   // is considered to be contained in it
   if (A.indent >= B.indent) return true;
