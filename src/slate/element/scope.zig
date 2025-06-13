@@ -48,3 +48,8 @@ pub fn increase (S :*Scope, indent :slate.Depth.Level) !void {
   });
 }
 
+pub fn decrease (S :*Scope, indent :slate.Depth.Level) !void {
+  if (S.history.items.len == 0) return error.Scope_decrease_history_isEmpty;
+  while (S.current().indent > indent) _ = S.history.pop() orelse break;
+}
+
