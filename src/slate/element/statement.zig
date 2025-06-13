@@ -49,7 +49,11 @@ pub const Stmt = union(enum) {
     /// @descr The level of scope/indentation depth that this element is tagged with.
     depth   :slate.Depth=  .default(),
     pub const Data = @import("./data.zig").Data;
-    pub fn create (D :Data, public :bool) Stmt { return Stmt{ .Var= Stmt.Variable{ .data= D, .public= public } }; }
+    pub fn create (D :Data, public :bool, depth :slate.Depth) Stmt { return Stmt{.Var= Stmt.Variable{
+      .data   = D,
+      .public = public,
+      .depth  = depth,
+    }};}
   };
 
   // pub const If      = todo;
