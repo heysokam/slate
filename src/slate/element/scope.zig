@@ -74,10 +74,19 @@ pub fn increase (S :*Scope, indent :slate.Depth.Level) !void {
 
 //______________________________________
 /// @descr
+///  Returns whether or not the given {@arg indent} should trigger a scope decrease
+///  Any indentation level lower than the {@arg scope} indent level will trigger a decrease.
+pub fn should_decrease (S :*const Scope, indent :slate.Depth.Level) bool {
+  if (S.history.items.len == 0) return false;
+  return S.current().indent > indent;
+}
+
+//______________________________________
+/// @descr
 ///  Removes the last scope entry from the History,
 ///  until a matching scope is found
 pub fn decrease (S :*Scope, indent :slate.Depth.Level) !void {
   if (S.history.items.len == 0) return error.Scope_decrease_history_isEmpty;
-  while (S.current().indent > indent) _ = S.history.pop() orelse break;
+  while (S.should_decrease(indent)) _= S.history.pop() orelse break;
 }
 
