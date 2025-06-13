@@ -18,8 +18,25 @@ scope   :Scope.Id,
 ///  For meaningful indentation tagging.
 indent  :Depth.Level,
 
+
+//______________________________________
+/// @descr Returns a {@link Depth} object with the default values assigned to it
 pub fn default () Depth { return Depth{.indent= 0, .scope= Scope.Id.from(0)}; }
 
+//______________________________________
+/// @descr Returns whether or not indent/scope {@arg B} is contained within this scope
+pub fn contains (A :*const Depth, B :Depth) bool {
+  // Any scope contains itself, independent of indentation levels
+  if (A.scope == B.scope)  return true;
+  // One scope cannot contain another scope with higher id (ids are incremental)
+  // and an indent lower than itself
+  if (B.scope > A.scope and B.indent < A.indent) return false;
+  // Otherwise, any scope with indent bigger than the reference
+  // is considered to be contained in it
+  if (A.indent >= B.indent) return true;
+  // If all the above failed to match, then the scope is not contained
+  return false;
+}
 
 //______________________________________
 /// @descr Type used to represent the indentation amount/depth of this tag
