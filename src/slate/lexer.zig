@@ -117,7 +117,7 @@ pub const space      = whitespace.space;
 //__________________________
 /// @descr Lexer Process: Entry Point
 pub fn process(L:*Lex) !void {
-  while (L.pos < L.src.len) : (L.pos += 1) {
+  while (L.pos <= L.src.len) : (L.pos += 1) {
     const c = L.ch();
     switch (c) {
     'a'...'z',
