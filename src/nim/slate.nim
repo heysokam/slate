@@ -9,5 +9,7 @@ import ./slate/errors   ; export errors    ## @descr Error Management tools
 import ./slate/elements ; export elements  ## @descr AST Elements access API
 import ./slate/chars    ; export chars     ## @descr Character recognition tools
 import ./slate/source   ; export source    ## @descr SourceCode types and tools
+#____________________________________________________________________
 import ./slate/lexer    ; export lexer     ## @descr Generic Lexer
+import ./slate/depth    ; export depth     ## @descr Generic Depth/Indentation type
 
