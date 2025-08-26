@@ -15,12 +15,16 @@ func root *(_:typedesc[ScopeID]) :ScopeID= ScopeID(0)
 func none *(_:typedesc[ScopeID]) :ScopeID= ScopeID(uint32.high)
 func value *(id :ScopeID) :uint32= id.uint32
 func `==` *(A,B :ScopeID) :bool {.borrow.}
+func `<`  *(A,B :ScopeID) :bool {.borrow.}
+func `+`  *(A,B :ScopeID) :ScopeID {.borrow.}
 func empty *(id :ScopeID) :bool= id == ScopeID.none
+func `$` *(id :ScopeID) :string=
+  if id.empty: "none" else: $id.value
 func next *(id :ScopeID) :ScopeID=
   if id.empty : ScopeID.root()
   else        : ScopeID(id.uint32 + 1)
 
 type Depth * = object
-  scope  *:ScopeID
   indent *:DepthLevel
+  scope  *:ScopeID= ScopeID.none()
 
