@@ -28,3 +28,7 @@ type Depth * = object
   indent *:DepthLevel
   scope  *:ScopeID= ScopeID.none()
 
+func contains *(A,B :Depth) :bool=
+  A.scope  >  B.scope and
+  A.indent >= B.indent
+
