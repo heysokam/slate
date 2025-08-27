@@ -17,11 +17,6 @@ Tools to convert the Nim-like syntax used by [MiniM](https://github.com/heysokam
 > _TODO_  
 
 
-## Slate.Nim
-_(deprecated: Will be removed in favor of the MiniM syntax above)_  
-Tools to convert the _untyped_ Nim AST into any language.  
-
-
 ## How to use
 > _TODO: Example showcase of the API_  
 > In the meantime, see the [MiniM Compiler](https://github.com/heysokam/minim) for a reference of how *Slate is used.  
