@@ -195,11 +195,15 @@ typedef enum slate_lexeme_Id {
   slate_lexeme_pipe,               // |
   slate_lexeme_tilde,              // ~
   slate_lexeme_eof,                // \0
+  // clang-format off
+  slate_lexeme_Id_Force32 = 0x7FFFFFFF,
+  // clang-format on
 } slate_lexeme_Id;
 
 typedef struct slate_Lexeme {
-  slate_lexeme_Id       id;
   slate_source_Location loc;
+  slate_lexeme_Id       id;
+  char                  priv_pad[4];
 } slate_Lexeme;
 
 typedef struct slate_lexeme_List {
