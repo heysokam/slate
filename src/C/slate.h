@@ -6,4 +6,5 @@
 #ifndef H_slate
 #define H_slate
 #include "./slate/lexer.h"
+#include "./slate/depth.h"
 #endif  // H_slate
