@@ -470,7 +470,7 @@ inline void slate_lexer_destroy (
   L->src.len = 0;
   L->src.ptr = NULL;
   L->res.len = 0;
-  L->res.ptr = NULL;
+  if (L->res.ptr) free(L->res.ptr);
 }
 
 inline void slate_lexer_add (
