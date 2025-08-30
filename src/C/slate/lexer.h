@@ -154,6 +154,8 @@ slate_bool slate_source_location_adjacent (slate_source_Location const* const A,
 /// They are required to be adjacent.
 slate_source_Location slate_source_location_add (slate_source_Location const* const A, slate_source_Location const* const B);
 
+slate_bool slate_source_location_equal (slate_source_Location const* const loc, slate_source_Code const src, slate_cstring const trg);
+
 
 //______________________________________
 // @section Lexeme: Types
@@ -383,6 +385,15 @@ inline slate_source_Location slate_source_location_add (
   if (!slate_source_location_adjacent(A, B)) slate_error(
     "Tried to add a location to another, but the locations are not adjacent. %zu != %zu", B->start, A->end + 1);  // clang-format on
   return (slate_source_Location){ .start = A->start, .end = B->end };
+}
+
+
+inline slate_bool slate_source_location_equal (
+  slate_source_Location const* const loc,
+  slate_source_Code const            src,
+  slate_cstring const                trg
+) {
+  return strcmp(trg, slate_source_location_from(loc, src)) == 0;
 }
 
 
