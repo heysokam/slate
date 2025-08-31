@@ -510,8 +510,9 @@ inline void slate_lexer_report (
   printf("%s\n", L->src.ptr);
   printf("..............................\n");
   for (slate_size id = 0; id < L->res.len; ++id) /* clang-format off */ {
-    printf("%02zu : Lexeme.Id.%s : `%s`\n",
-      id, slate_lexeme_toString(L->res.ptr[id].id), slate_source_location_from(&(L->res.ptr[id].loc), L->src.ptr));
+    slate_cstring code = slate_source_location_from(&(L->res.ptr[id].loc), L->src.ptr);
+    printf("%02zu : Lexeme.Id.%s : `%s`\n", id, slate_lexeme_toString(L->res.ptr[id].id), code);
+    free((void*)code);
   } /* clang-format on */
   printf("..................................................\n");
 }
