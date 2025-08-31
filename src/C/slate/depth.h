@@ -5,11 +5,13 @@
 //______________________________________________________________|
 #ifndef H_slate_depth
 #define H_slate_depth
+#include <stdint.h>
 #include "./lexer.h"
 
 typedef slate_size                slate_depth_Level;
 typedef slate_size                slate_depth_Column;
 typedef slate_size /* Distinct */ slate_depth_Scope;
+enum { slate_depth_scope_None = SIZE_MAX };
 
 typedef struct slate_Depth {
   slate_depth_Column column;
