@@ -365,7 +365,7 @@ inline slate_cstring slate_source_location_from (
 ) {
   slate_size len    = loc->end - loc->start + 1;
   char*      result = malloc(len * sizeof(char));
-  result            = strncpy(result, src + loc->start, len);
+  result            = memcpy(result, src + loc->start, len);
   result[len]       = 0;
   return result;
 }
