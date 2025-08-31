@@ -366,6 +366,7 @@ inline slate_cstring slate_source_location_from (
   slate_size len    = loc->end - loc->start + 1;
   char*      result = malloc(len * sizeof(char));
   result            = strncpy(result, src + loc->start, len);
+  result[len]       = 0;
   return result;
 }
 
@@ -481,7 +482,9 @@ inline void slate_lexer_destroy (
   L->src.len = 0;
   L->src.ptr = NULL;
   L->res.len = 0;
+  L->res.cap = 0;
   if (L->res.ptr) free(L->res.ptr);
+  L->res.ptr = NULL;
 }
 
 inline void slate_lexer_add (
