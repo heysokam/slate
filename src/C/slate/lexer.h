@@ -55,6 +55,7 @@ typedef bool       slate_bool;
 typedef size_t     slate_size;
 typedef char const slate_Ch;
 typedef slate_Ch*  slate_cstring;
+#define slate_cstring_equal(A, B) ((A) == NULL || (B == NULL)) ? 0 : strcmp(A, B) == 0
 
 
 //_______________________________________
